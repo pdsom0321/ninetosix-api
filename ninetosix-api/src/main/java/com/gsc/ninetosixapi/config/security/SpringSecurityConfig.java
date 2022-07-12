@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -8,7 +9,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurityConfig {
+
+    private final CustomUserDetailService customUserDetailService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -35,6 +39,7 @@ public class SpringSecurityConfig {
                 .defaultSuccessUrl("/main", true)
                 .permitAll()
                 .and()
+                .userDetailsService(customUserDetailService)
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc"));
 
