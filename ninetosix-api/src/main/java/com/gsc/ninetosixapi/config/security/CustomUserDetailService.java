@@ -3,7 +3,7 @@ package com.gsc.ninetosixapi.config.security;
 import com.gsc.ninetosixapi.user.dto.UserDetailsDTO;
 import com.gsc.ninetosixapi.user.entity.User;
 import com.gsc.ninetosixapi.user.entity.UserRole;
-import com.gsc.ninetosixapi.user.repositories.UserRepository;
+import com.gsc.ninetosixapi.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;

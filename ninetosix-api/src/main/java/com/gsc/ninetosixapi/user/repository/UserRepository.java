@@ -1,13 +1,15 @@
-package com.gsc.ninetosixapi.user.repositories;
+package com.gsc.ninetosixapi.user.repository;
 
 import com.gsc.ninetosixapi.user.entity.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
+@Transactional
 public class UserRepository {
 
     @PersistenceContext

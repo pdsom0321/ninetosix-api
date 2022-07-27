@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +14,22 @@ import java.util.Set;
 @Table(name = "TB_USER")
 public class User {
 
+    public User(String email, String name, String pwd, String contact, String empNo, String deptCd, String compCd, String pushAgreeYn) {
+        this.email = email;
+        this.name = name;
+        this.pwd = pwd;
+        this.contact = contact;
+        this.empNo = empNo;
+        this.deptCd = deptCd;
+        this.compCd = compCd;
+        this.pushAgreeYn = pushAgreeYn;
+        // this.addRole(role);
+        // addRole("ROLE_ADMIN");
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "user_id")
     private long id;
 
     @Column(name = "EMAIL", nullable = false, length = 100)
@@ -46,26 +59,23 @@ public class User {
     @Column(name = "PUSH_AGREE_YN", length = 1)
     private String pushAgreeYn;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "PWD_MOD_DT")
+    private LocalDateTime pwdModDt;
+
+    @Column(name = "LOGIN_FAIL_CNT", length = 10)
+    private int loginFailCnt;
+
     @Column(name = "INS_DT")
-    private Date insDt;
+    private LocalDateTime insDt;
 
     @Column(name = "INS_ID", length = 20)
     private String insId;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UPD_DT")
-    private Date updDt;
+    private LocalDateTime updDt;
 
     @Column(name = "UPD_ID", length = 20)
     private String updId;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PWD_MOD_DT")
-    private Date pwdModDt;
-
-    @Column(name = "LOGIN_FAIL_CNT", length = 10)
-    private int loginFailCnt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> role = new HashSet<>();
