@@ -7,14 +7,16 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class UserRepository {
 
     @PersistenceContext
     private EntityManager em;
 
+    @Transactional
     public void save(User user) {
         em.persist(user);
     }
@@ -28,9 +30,10 @@ public class UserRepository {
                 .getResultList();
     }
 
-    public User findByEmail(String email) {
-        return em.createQuery("select u from User u where u.email = :email", User.class)
+    public Optional<User> findByEmail(String email) {
+        List<User> user = em.createQuery("select u from User u where u.email = :email", User.class)
                 .setParameter("email", email)
-                .getSingleResult();
+                .getResultList();
+        return user.stream().findAny();
     }
 }

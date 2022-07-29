@@ -14,7 +14,7 @@ import java.util.Set;
 @Table(name = "TB_USER")
 public class User {
 
-    public User(String email, String name, String pwd, String contact, String empNo, String deptCd, String compCd, String pushAgreeYn) {
+    public User(String email, String name, String pwd, String contact, String empNo, String deptCd, String compCd, String pushAgreeYn, String role) {
         this.email = email;
         this.name = name;
         this.pwd = pwd;
@@ -23,8 +23,7 @@ public class User {
         this.deptCd = deptCd;
         this.compCd = compCd;
         this.pushAgreeYn = pushAgreeYn;
-        // this.addRole(role);
-        // addRole("ROLE_ADMIN");
+        this.addRole(role);
     }
 
     @Id

@@ -16,26 +16,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
-
     private UserRepository userRepository;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username)
+                .map(this::createUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+    }
 
-        User user = userRepository.findByEmail(username);
-
-        if(user == null) throw new UsernameNotFoundException("User Not Found");
-
+    private UserDetails createUserDetails(User user) {
         return new UserDetailsDTO(
                 user.getEmail(),
                 user.getPwd(),
