@@ -1,16 +1,21 @@
 package com.gsc.ninetosixapi.user.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor
-@Getter
+
+
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "TB_USER")
 public class User {
 
@@ -31,49 +36,49 @@ public class User {
     @Column(name = "user_id")
     private long id;
 
-    @Column(name = "EMAIL", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(name = "NAME", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(name = "PWD", nullable = false, length = 256)
+    @Column(nullable = false, length = 256)
     private String pwd;
 
-    @Column(name = "CONTACT", length = 50)
+    @Column(length = 50)
     private String contact;
 
-    @Column(name = "EMP_NO", nullable = false, length = 10)
+    @Column(nullable = false, length = 10)
     private String empNo;
 
-    @Column(name = "COMP_CD", length = 10)
+    @Column(length = 10)
     private String compCd;
 
-    @Column(name = "DEPT_CD", length = 10)
+    @Column(length = 10)
     private String deptCd;
 
-    @Column(name = "DEL_YN", length = 1)
+    @Column(length = 1)
     private String delYn;
 
-    @Column(name = "PUSH_AGREE_YN", length = 1)
+    @Column(length = 1)
     private String pushAgreeYn;
 
-    @Column(name = "PWD_MOD_DT")
+    @Column()
     private LocalDateTime pwdModDt;
 
-    @Column(name = "LOGIN_FAIL_CNT", length = 10)
+    @Column(length = 10)
     private int loginFailCnt;
 
-    @Column(name = "INS_DT")
+    @Column
     private LocalDateTime insDt;
 
-    @Column(name = "INS_ID", length = 20)
+    @Column(length = 20)
     private String insId;
 
-    @Column(name = "UPD_DT")
+    @Column
     private LocalDateTime updDt;
 
-    @Column(name = "UPD_ID", length = 20)
+    @Column(length = 20)
     private String updId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
@@ -87,4 +92,12 @@ public class User {
 
         this.getRole().add(newRole);
     }
+
+    @PrePersist
+    public void prePersist() {
+        this.insDt = LocalDateTime.now();
+        this.delYn = "N";
+        this.loginFailCnt = 0;
+    }
+
 }

@@ -16,16 +16,9 @@ public class MyPageService {
     private final UserRepository userRepository;
 
     public MyPageDto init(String user_email){
+        // TODO : MyPageDto 코드 정리 필요
         Optional<User> user = userRepository.findByEmail(user_email);
-        return new MyPageDto(
-                user.get().getEmail()
-                , user.get().getName()
-                , user.get().getContact()
-                , user.get().getEmpNo()
-                , user.get().getCompCd()
-                , user.get().getDeptCd()
-                , user.get().getPushAgreeYn()
-        );
+        return MyPageDto.from(user);
     }
 
     public long modify(String user_email){
