@@ -15,14 +15,16 @@ import java.util.Optional;
 public class MyPageService {
     private final UserRepository userRepository;
 
-    public MyPageDto init(String user_email){
-        // TODO : MyPageDto 코드 정리 필요
-        Optional<User> user = userRepository.findByEmail(user_email);
+    public MyPageDto getUserInfo(String email){
+        Optional<User> user = userRepository.findByEmail(email);
         return MyPageDto.from(user);
     }
 
-    public long modify(String user_email){
-        Optional<User> userInfo = userRepository.findByEmail(user_email);
-        return userInfo.get().getId();
+    public void modify(MyPageDto myPageDto){
+        long id = 0L;
+        Optional<User> userInfo = userRepository.findByEmail(myPageDto.getEmail());
+        if(userInfo != null){
+
+        }
     }
 }

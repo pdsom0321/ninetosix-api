@@ -13,7 +13,6 @@ public class MyPageViewController {
 
     @GetMapping("/mypage")
     public String myPage(Model model){
-
         return "myPage";
     }
 

@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
 @Api(tags = {"MyPage API"})
 public class MyPageApiController {
     private final MyPageService myPageService;
 
-    @PostMapping("")
-    public ResponseEntity<?> init(@RequestParam String email, Model model){
-        MyPageDto result = myPageService.init(email);
+    @PostMapping("/mypage")
+    public ResponseEntity<?> getUserInfo(@RequestParam String email, Model model){
+        MyPageDto result = myPageService.getUserInfo(email);
         return new ResponseEntity<MyPageDto>(result,HttpStatus.OK);
     }
 
-    @PostMapping("/modify")
+    @PostMapping("/mypage/modify")
     @ApiOperation(value = "수정", response = MyPageApiController.class)
     public ResponseEntity<?> modify(@RequestBody MyPageDto myPageDto){
+        myPageService.modify(myPageDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
