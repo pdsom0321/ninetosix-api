@@ -14,9 +14,7 @@ public class MyPageDto {
     private String email;
     private String name;
     private String contact;
-    private String employeeNumber;
     private String companyCode;
-    private String departmentCode;
     private String pushAgreeYN;
 
     // AllArgsConstructor 사용
@@ -35,21 +33,17 @@ public class MyPageDto {
             user.get().getName()
             , user.get().getEmail()
             , user.get().getContact()
-            , user.get().getEmpNo()
-            , user.get().getCompCd()
-            , user.get().getDeptCd()
+            , user.get().getCompanyCode()
             , user.get().getPushAgreeYn()
         );
     }
 
-    public static MyPageDto of(String name, String email, String contact, String employeeNumber, String companyCode, String departmentCode, String pushAgreeYN){
+    public static MyPageDto of(String name, String email, String contact, String companyCode, String pushAgreeYN){
         return new MyPageDto(
             name
             , email
             , contact
-            , employeeNumber
             , companyCode
-            , departmentCode
             , pushAgreeYN
         );
     }

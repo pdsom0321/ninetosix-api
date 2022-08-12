@@ -13,7 +13,7 @@ public class UserInfoDTO {
     private String password;
     private String contact;
 //    private String employeeCode;
-    private String CompanyCode;
+    private String companyCode;
 //    private String departmentCode;
-    private String pushAgreeYN;
+    private String pushAgreeYn;
 }

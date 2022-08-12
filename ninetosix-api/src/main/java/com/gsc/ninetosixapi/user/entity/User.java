@@ -91,7 +91,8 @@ public class User {
 //        newUser.employeeCode = userInfoDTO.getEmployeeCode();
 //        newUser.departmentCode = userInfoDTO.getDepartmentCode();
         newUser.companyCode = userInfoDTO.getCompanyCode();
-        newUser.pushAgreeYn = userInfoDTO.getPushAgreeYN();
+        newUser.deleteYn = "N";
+        newUser.pushAgreeYn = userInfoDTO.getPushAgreeYn();
         newUser.loginFailCnt = 0;
         newUser.insertDate = LocalDateTime.now();
         newUser.addRole(Role.ROLE_ADMIN.name());
