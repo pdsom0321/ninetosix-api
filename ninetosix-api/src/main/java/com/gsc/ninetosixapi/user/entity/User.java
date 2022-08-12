@@ -1,7 +1,8 @@
 package com.gsc.ninetosixapi.user.entity;
 
+import com.gsc.ninetosixapi.company.entity.Company;
 import com.gsc.ninetosixapi.user.dto.UserInfoDTO;
-import com.gsc.ninetosixapi.vo.Role;
+import com.gsc.ninetosixapi.user.vo.YNCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 
 
 @Entity
@@ -40,22 +40,15 @@ public class User {
     @Column(length = 50)
     private String contact;
 
-//    @Column(nullable = false, length = 10)
-//    private String employeeCode;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 1)
+    private YNCode deleteYn;
 
-    @Column(length = 10)
-    private String companyCode;
-
-//    @Column(length = 10)
-//    private String departmentCode;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 1)
+    private YNCode pushAgreeYn;
 
     @Column(length = 1)
-    private String deleteYn;
-
-    @Column(length = 1)
-    private String pushAgreeYn;
-
-    @Column(length = 10)
     private int loginFailCnt;
 
     private LocalDateTime passwordModifyDate;
@@ -64,40 +57,28 @@ public class User {
 
     private LocalDateTime updateDate;
 
-//    @Column(length = 20)
-//    private String insId;
-
-//    @Column(length = 20)
-//    private String updId;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> role = new HashSet<>();
 
-    public void addRole(String role) {
-        UserRole newRole = UserRole.builder()
-                .role(role)
-                .user(this)
-                .build();
-
-        this.getRole().add(newRole);
-    }
+    @Transient
+    private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
     public static User createUser(UserInfoDTO userInfoDTO, PasswordEncoder passwordEncoder) {
-        User newUser = new User();
-        newUser.email = userInfoDTO.getEmail();
-        newUser.name = userInfoDTO.getName();
-        newUser.password = passwordEncoder.encode(userInfoDTO.getPassword());
-        newUser.contact = userInfoDTO.getContact();
-//        newUser.employeeCode = userInfoDTO.getEmployeeCode();
-//        newUser.departmentCode = userInfoDTO.getDepartmentCode();
-        newUser.companyCode = userInfoDTO.getCompanyCode();
-        newUser.deleteYn = "N";
-        newUser.pushAgreeYn = userInfoDTO.getPushAgreeYn();
-        newUser.loginFailCnt = 0;
-        newUser.insertDate = LocalDateTime.now();
-        newUser.addRole(Role.ROLE_ADMIN.name());
-
-        return newUser;
+        return User.builder()
+                .email(userInfoDTO.getEmail())
+                .name(userInfoDTO.getName())
+                .password(passwordEncoder.encode(userInfoDTO.getPassword()))
+                .contact(userInfoDTO.getContact())
+//                .company()
+                .deleteYn(YNCode.N)
+                .pushAgreeYn(YNCode.valueOf(userInfoDTO.getPushAgreeYn()))
+                .loginFailCnt(INIT_LOGIN_FAIL_CNT)
+                .insertDate(LocalDateTime.now())
+                .build();
     }
 
 }

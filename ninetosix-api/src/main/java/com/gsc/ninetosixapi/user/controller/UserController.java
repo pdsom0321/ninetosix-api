@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user/vi")
 @Api(tags = {"User API"})
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/new")
+    @PostMapping("/user")
     @ApiOperation(value = "회원가입", response = UserController.class)
     public ResponseEntity<Object> create(@RequestBody UserInfoDTO userInfoDTO) {
         userService.create(userInfoDTO);

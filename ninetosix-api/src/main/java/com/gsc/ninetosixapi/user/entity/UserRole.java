@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.user.entity;
 
+import com.gsc.ninetosixapi.vo.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +26,11 @@ public class UserRole {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public static UserRole createUserRole(User user) {
+        return UserRole.builder()
+                .role(Role.ROLE_ADMIN.name())
+                .user(user)
+                .build();
+    }
 }
