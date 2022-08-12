@@ -1,35 +1,27 @@
 package com.gsc.ninetosixapi.user.entity;
 
+import com.gsc.ninetosixapi.user.dto.UserInfoDTO;
+import com.gsc.ninetosixapi.vo.Role;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 
 
 @Entity
+@Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "TB_USER")
 public class User {
-
-    public User(String email, String name, String pwd, String contact, String empNo, String deptCd, String compCd, String pushAgreeYn, String role) {
-        this.email = email;
-        this.name = name;
-        this.pwd = pwd;
-        this.contact = contact;
-        this.empNo = empNo;
-        this.deptCd = deptCd;
-        this.compCd = compCd;
-        this.pushAgreeYn = pushAgreeYn;
-        this.addRole(role);
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,43 +35,40 @@ public class User {
     private String name;
 
     @Column(nullable = false, length = 256)
-    private String pwd;
+    private String password;
 
     @Column(length = 50)
     private String contact;
 
-    @Column(nullable = false, length = 10)
-    private String empNo;
+//    @Column(nullable = false, length = 10)
+//    private String employeeCode;
 
     @Column(length = 10)
-    private String compCd;
+    private String companyCode;
 
-    @Column(length = 10)
-    private String deptCd;
+//    @Column(length = 10)
+//    private String departmentCode;
 
     @Column(length = 1)
-    private String delYn;
+    private String deleteYn;
 
     @Column(length = 1)
     private String pushAgreeYn;
 
-    @Column()
-    private LocalDateTime pwdModDt;
-
     @Column(length = 10)
     private int loginFailCnt;
 
-    @Column
-    private LocalDateTime insDt;
+    private LocalDateTime passwordModifyDate;
 
-    @Column(length = 20)
-    private String insId;
+    private LocalDateTime insertDate;
 
-    @Column
-    private LocalDateTime updDt;
+    private LocalDateTime updateDate;
 
-    @Column(length = 20)
-    private String updId;
+//    @Column(length = 20)
+//    private String insId;
+
+//    @Column(length = 20)
+//    private String updId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> role = new HashSet<>();
@@ -93,11 +82,21 @@ public class User {
         this.getRole().add(newRole);
     }
 
-    @PrePersist
-    public void prePersist() {
-        this.insDt = LocalDateTime.now();
-        this.delYn = "N";
-        this.loginFailCnt = 0;
+    public static User createUser(UserInfoDTO userInfoDTO, PasswordEncoder passwordEncoder) {
+        User newUser = new User();
+        newUser.email = userInfoDTO.getEmail();
+        newUser.name = userInfoDTO.getName();
+        newUser.password = passwordEncoder.encode(userInfoDTO.getPassword());
+        newUser.contact = userInfoDTO.getContact();
+//        newUser.employeeCode = userInfoDTO.getEmployeeCode();
+//        newUser.departmentCode = userInfoDTO.getDepartmentCode();
+        newUser.companyCode = userInfoDTO.getCompanyCode();
+        newUser.pushAgreeYn = userInfoDTO.getPushAgreeYN();
+        newUser.loginFailCnt = 0;
+        newUser.insertDate = LocalDateTime.now();
+        newUser.addRole(Role.ROLE_ADMIN.name());
+
+        return newUser;
     }
 
 }

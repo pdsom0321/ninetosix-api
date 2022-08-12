@@ -36,7 +36,7 @@ public class CustomUserDetailService implements UserDetailsService {
     private UserDetails createUserDetails(User user) {
         return new UserDetailsDTO(
                 user.getEmail(),
-                user.getPwd(),
+                user.getPassword(),
                 this.converSimpleAuthorities(user.getRole())
         );
     }

@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "TB_USER_ROLE")
 public class UserRole {
 

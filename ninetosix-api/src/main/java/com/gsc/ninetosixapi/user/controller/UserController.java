@@ -23,7 +23,7 @@ public class UserController {
     @PostMapping("/new")
     @ApiOperation(value = "회원가입", response = UserController.class)
     public ResponseEntity<Object> create(@RequestBody UserInfoDTO userInfoDTO) {
-        userService.join(userInfoDTO);
+        userService.create(userInfoDTO);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

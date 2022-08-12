@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 public class UserInfoDTO {
     private String email;
     private String name;
-    private String pwd;
+    private String password;
     private String contact;
-    private String empNo;
-    private String compCd;
-    private String deptCd;
+//    private String employeeCode;
+    private String CompanyCode;
+//    private String departmentCode;
     private String pushAgreeYN;
 }
