@@ -1,10 +1,13 @@
 package com.gsc.ninetosixapi.user.entity;
 
-import com.gsc.ninetosixapi.company.entity.Company;
 import com.gsc.ninetosixapi.attend.entity.Attend;
+import com.gsc.ninetosixapi.company.entity.Company;
 import com.gsc.ninetosixapi.user.dto.UserInfoDTO;
-import com.gsc.ninetosixapi.user.vo.YNCode;
-import lombok.*;
+import com.gsc.ninetosixapi.vo.YNCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -16,7 +19,6 @@ import java.util.Set;
 @Entity
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_USER")
@@ -48,15 +50,15 @@ public class User {
     private YNCode pushAgreeYn;
 
     @Column(length = 1)
-    private int loginFailCnt;
+    private Integer loginFailCnt;
 
-    private LocalDateTime passwordModifyDate;
+    private LocalDateTime passwordModifiedDate;
 
     private LocalDateTime insertDate;
 
     private LocalDateTime updateDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
@@ -69,13 +71,13 @@ public class User {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(UserInfoDTO userInfoDTO, PasswordEncoder passwordEncoder) {
+    public static User createUser(UserInfoDTO userInfoDTO, PasswordEncoder passwordEncoder, Company company1) {
         return User.builder()
                 .email(userInfoDTO.getEmail())
                 .name(userInfoDTO.getName())
                 .password(passwordEncoder.encode(userInfoDTO.getPassword()))
                 .contact(userInfoDTO.getContact())
-//                .company()
+                .company(company1)
                 .deleteYn(YNCode.N)
                 .pushAgreeYn(YNCode.valueOf(userInfoDTO.getPushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)

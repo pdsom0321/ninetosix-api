@@ -1,6 +1,6 @@
 package com.gsc.ninetosixapi.user.entity;
 
-import com.gsc.ninetosixapi.vo.Role;
+import com.gsc.ninetosixapi.user.vo.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

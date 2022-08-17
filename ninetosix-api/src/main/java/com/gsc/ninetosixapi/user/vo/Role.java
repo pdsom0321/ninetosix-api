@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.vo;
+package com.gsc.ninetosixapi.user.vo;
 
 public enum Role {
     ROLE_ADMIN("관리자"), ROLE_MEMBER("사용자");
