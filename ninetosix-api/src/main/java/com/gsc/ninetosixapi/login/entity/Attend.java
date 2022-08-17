@@ -1,5 +1,7 @@
-package com.gsc.ninetosixapi.attend.entity;
+package com.gsc.ninetosixapi.login.entity;
 
+import com.gsc.ninetosixapi.company_location.entity.Company_Location;
+import com.gsc.ninetosixapi.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,4 +39,11 @@ public class Attend {
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalDateTime outTime;
 
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "company_location_id")
+    private Company_Location companyLocation;
 }

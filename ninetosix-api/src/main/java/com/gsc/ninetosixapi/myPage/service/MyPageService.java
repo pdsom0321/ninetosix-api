@@ -24,7 +24,8 @@ public class MyPageService {
         long id = 0L;
         Optional<User> userInfo = userRepository.findByEmail(myPageDto.getEmail());
         if(userInfo != null){
-
+            // TODO [MyPage] 수정 로직 개발 필요
+            userInfo.get().setName(myPageDto.getName());
         }
     }
 }

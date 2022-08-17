@@ -1,12 +1,10 @@
 package com.gsc.ninetosixapi.user.entity;
 
 import com.gsc.ninetosixapi.company.entity.Company;
+import com.gsc.ninetosixapi.login.entity.Attend;
 import com.gsc.ninetosixapi.user.dto.UserInfoDTO;
 import com.gsc.ninetosixapi.user.vo.YNCode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -18,6 +16,7 @@ import java.util.Set;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_USER")
@@ -63,6 +62,9 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> role = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Attend> attend = new HashSet<>();
 
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
