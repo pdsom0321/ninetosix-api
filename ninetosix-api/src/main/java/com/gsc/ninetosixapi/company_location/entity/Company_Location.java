@@ -2,7 +2,7 @@ package com.gsc.ninetosixapi.company_location.entity;
 
 import com.gsc.ninetosixapi.company.entity.Company;
 import com.gsc.ninetosixapi.location.entity.Location;
-import com.gsc.ninetosixapi.login.entity.Attend;
+import com.gsc.ninetosixapi.attend.entity.Attend;
 import lombok.*;
 
 import javax.persistence.*;

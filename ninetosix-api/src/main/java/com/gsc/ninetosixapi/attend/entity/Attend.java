@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.login.entity;
+package com.gsc.ninetosixapi.attend.entity;
 
 import com.gsc.ninetosixapi.company_location.entity.Company_Location;
 import com.gsc.ninetosixapi.user.entity.User;
@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,7 +39,7 @@ public class Attend {
     private LocalDateTime outTime;
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne

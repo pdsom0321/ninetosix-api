@@ -1,7 +1,7 @@
 package com.gsc.ninetosixapi.user.entity;
 
 import com.gsc.ninetosixapi.company.entity.Company;
-import com.gsc.ninetosixapi.login.entity.Attend;
+import com.gsc.ninetosixapi.attend.entity.Attend;
 import com.gsc.ninetosixapi.user.dto.UserInfoDTO;
 import com.gsc.ninetosixapi.user.vo.YNCode;
 import lombok.*;
