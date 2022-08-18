@@ -9,7 +9,7 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create # 운영에는 create 하면 안됨 >서버 재구동 시 모두 없어지므로.. update
     properties:
       hibernate:
         format_sql: true
