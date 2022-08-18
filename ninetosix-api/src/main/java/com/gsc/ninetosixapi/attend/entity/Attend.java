@@ -1,16 +1,14 @@
 package com.gsc.ninetosixapi.attend.entity;
 
-import com.gsc.ninetosixapi.company_location.entity.Company_Location;
+import com.gsc.ninetosixapi.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.user.entity.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -44,5 +42,5 @@ public class Attend {
 
     @ManyToOne
     @JoinColumn(name = "company_location_id")
-    private Company_Location companyLocation;
+    private CompanyLocation companyLocation;
 }

@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -66,7 +68,7 @@ public class User {
     private Set<UserRole> role = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Attend> attend = new HashSet<>();
+    private List<Attend> attend = new ArrayList<>();
 
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
