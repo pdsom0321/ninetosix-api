@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.company_location.entity;
+package com.gsc.ninetosixapi.companyLocation.entity;
 
 import com.gsc.ninetosixapi.company.entity.Company;
 import com.gsc.ninetosixapi.location.entity.Location;
@@ -6,8 +6,8 @@ import com.gsc.ninetosixapi.attend.entity.Attend;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TB_COMPANY_LOCATION")
-public class Company_Location {
+public class CompanyLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,6 @@ public class Company_Location {
     private Location location;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyLocation", fetch = FetchType.EAGER)
-    private Set<Attend> attend = new HashSet<>();
+    private List<Attend> attend = new ArrayList<>();
 
 }
