@@ -4,11 +4,11 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.user.dto.UserInfoDTO;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
-import com.gsc.ninetosixapi.core.util.PasswordEncryptConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,7 +37,6 @@ public class User {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Convert(converter = PasswordEncryptConverter.class)
     @Column(nullable = false, length = 256)
     private String password;
 
@@ -69,16 +68,16 @@ public class User {
     private Set<UserRole> role = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Attend> attend = new ArrayList<>();
+    private List<Attend> attends = new ArrayList<>();
 
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(UserInfoDTO userInfoDTO, Company company1) {
+    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder) {
         return User.builder()
                 .email(userInfoDTO.getEmail())
                 .name(userInfoDTO.getName())
-                .password(userInfoDTO.getPassword())
+                .password(passwordEncoder.encode(userInfoDTO.getPassword()))
                 .contact(userInfoDTO.getContact())
                 .company(company1)
                 .deleteYn(YNCode.N)

@@ -1,29 +1,37 @@
 package com.gsc.ninetosixapi.ninetosix.user.controller;
 
+import com.gsc.ninetosixapi.ninetosix.user.dto.UserResponseDTO;
 import com.gsc.ninetosixapi.ninetosix.user.service.UserService;
-import com.gsc.ninetosixapi.ninetosix.user.dto.UserInfoDTO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user/vi")
+@RequestMapping("/user/v1")
 @Api(tags = {"User API"})
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMyMemberInfo() {
+        return ResponseEntity.ok(userService.getMyInfo());
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<UserResponseDTO> getMemberInfo(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getMemberInfo(email));
+    }
+
+    /*@PostMapping("/user")
     @ApiOperation(value = "회원가입", response = UserController.class)
     public ResponseEntity<Object> create(@RequestBody UserInfoDTO userInfoDTO) {
         userService.create(userInfoDTO);
+
         return new ResponseEntity(HttpStatus.OK);
-    }
+    }*/
 }

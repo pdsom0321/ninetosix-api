@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.core.config.swagger;
+package com.gsc.ninetosixapi.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
