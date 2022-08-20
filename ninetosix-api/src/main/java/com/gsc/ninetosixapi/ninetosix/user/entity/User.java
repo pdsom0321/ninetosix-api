@@ -54,6 +54,9 @@ public class User {
     @Column(length = 1)
     private Integer loginFailCnt;
 
+    @Column(nullable = false)
+    private Long companyLocationId;
+
     private LocalDateTime passwordModifiedDate;
 
     private LocalDateTime insertDate;
