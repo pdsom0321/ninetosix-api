@@ -1,12 +1,9 @@
 package com.gsc.ninetosixapi.ninetosix.user.service;
 
 import com.gsc.ninetosixapi.core.util.SecurityUtil;
-import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
 import com.gsc.ninetosixapi.ninetosix.user.dto.UserResponseDTO;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
-import com.gsc.ninetosixapi.ninetosix.user.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final UserRoleRepository userRoleRepository;
-
-    private final CompanyService companyService;
-
-    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public UserResponseDTO getMemberInfo(String email) {
@@ -33,7 +24,7 @@ public class UserService {
     // 현재 SecurityContext 에 있는 유저 정보 가져오기
     @Transactional(readOnly = true)
     public UserResponseDTO getMyInfo() {
-        return userRepository.findById(SecurityUtil.getCurrentUserId())
+        return userRepository.findByEmail(SecurityUtil.getCurrentUserId())
                 .map(UserResponseDTO::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
