@@ -1,9 +1,11 @@
 package com.gsc.ninetosixapi.ninetosix.attend.repository;
 
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
+import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AttendRepository extends JpaRepository<Attend, Long> {
-    Attend findById(long id);
+import java.util.Optional;
 
+public interface AttendRepository extends JpaRepository<Attend, Long> {
+    Optional<Attend> findByUser(User user);
 }
