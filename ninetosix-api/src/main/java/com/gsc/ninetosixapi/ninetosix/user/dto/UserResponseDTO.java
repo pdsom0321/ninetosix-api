@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponseDTO {
     private String email;
+    private String name;
+    private String contact;
 
     public static UserResponseDTO of(User user) {
-        return new UserResponseDTO(user.getEmail());
+        return new UserResponseDTO(user.getEmail(), user.getName(), user.getContact());
     }
 }

@@ -29,7 +29,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String email;
@@ -54,14 +54,13 @@ public class User {
     @Column(length = 1)
     private Integer loginFailCnt;
 
-    @Column(nullable = false)
-    private Long companyLocationId;
-
     private LocalDateTime passwordModifiedDate;
 
     private LocalDateTime insertDate;
 
     private LocalDateTime updateDate;
+
+    private Boolean emailAuth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
@@ -76,7 +75,7 @@ public class User {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder) {
+    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder, Boolean emailAuth) {
         return User.builder()
                 .email(userInfoDTO.getEmail())
                 .name(userInfoDTO.getName())
@@ -87,7 +86,12 @@ public class User {
                 .pushAgreeYn(YNCode.valueOf(userInfoDTO.getPushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)
                 .insertDate(LocalDateTime.now())
+                .emailAuth(emailAuth)
                 .build();
+    }
+
+    public void emailVerifiedSuccess() {
+        this.emailAuth = true;
     }
 
 }

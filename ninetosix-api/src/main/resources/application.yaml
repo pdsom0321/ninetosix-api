@@ -16,6 +16,22 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  # Gmail SMTP 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: pds.gsitm@gmail.com
+    password: jigtrfonifeztrch  #  2022년 5월 30일부터는 보안 수준이 낮은 앱의 액세스가 활성된 계정으로는 SMTP 서버를 이용할 수 없게 되었습니다. >> 2단계 인증 후 앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+#          connectiontimeout: 5000
+#          timeout: 5000
+#          writetimeout: 5000
 
 logging:
   level:

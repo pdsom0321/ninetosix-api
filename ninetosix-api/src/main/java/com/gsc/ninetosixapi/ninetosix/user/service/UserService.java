@@ -28,15 +28,4 @@ public class UserService {
                 .map(UserResponseDTO::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
-
-    /*public void create(UserInfoDTO userInfoDTO) {
-        if(userRepository.findByEmail(userInfoDTO.getEmail()).isEmpty()) {
-            Company company = companyService.getCompany(userInfoDTO.getCompanyCode());
-            User user = userRepository.save(User.createUser(userInfoDTO, company, passwordEncoder));
-            userRoleRepository.save(UserRole.createUserRole(user));
-        } else {
-            throw new DuplicateKeyException("중복된 이메일 입니다.");
-        }
-    }*/
-
 }

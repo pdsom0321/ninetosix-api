@@ -27,11 +27,4 @@ public class UserController {
         return ResponseEntity.ok(userService.getMemberInfo(email));
     }
 
-    /*@PostMapping("/user")
-    @ApiOperation(value = "회원가입", response = UserController.class)
-    public ResponseEntity<Object> create(@RequestBody UserInfoDTO userInfoDTO) {
-        userService.create(userInfoDTO);
-
-        return new ResponseEntity(HttpStatus.OK);
-    }*/
 }

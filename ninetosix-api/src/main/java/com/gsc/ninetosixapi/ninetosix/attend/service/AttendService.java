@@ -22,29 +22,6 @@ public class AttendService {
     private final CompanyLocationRepository companyLocationRepository;
 
     public void attendanceCheck(AttendDto attendDto){
-        String email = attendDto.getEmail();
 
-        // 유저 출근정보 확인
-        Optional<Attend> attendOptional = attendRepository.findByUser(attendDto.getUser());
-
-        // 유저정보 확인
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if(userOptional != null){
-            Optional<CompanyLocation> companyLocationOptional = companyLocationRepository.findById(userOptional.get().getCompanyLocationId());
-
-            // 설정된 위치정보 확인
-            if (companyLocationOptional != null) {
-                Location location = companyLocationOptional.get().getLocation();
-
-                // 설정된 위치 좌표
-                float locationX = location.getX();
-                float locationY = location.getY();
-                // 유저 현재 위치 좌표
-                float userX = attendDto.getX();
-                float userY = attendDto.getY();
-
-
-            }
-        }
     }
 }
