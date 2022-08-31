@@ -6,12 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class AttendDto {
-    private User user;
-    private float x;
-    private float y;
     private String email;
-    private String companyLocationId;
+    private String userStatus;
+    private Long companyLocationId;
 }
