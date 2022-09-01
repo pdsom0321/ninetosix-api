@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table
 public class Company {
 
     @Id

@@ -23,7 +23,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TB_USER")
+@Table(name = "USERS")
 public class User {
 
     @Id
@@ -60,8 +60,6 @@ public class User {
 
     private LocalDateTime updateDate;
 
-    private Boolean emailAuth;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
@@ -75,7 +73,7 @@ public class User {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder, Boolean emailAuth) {
+    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder) {
         return User.builder()
                 .email(userInfoDTO.getEmail())
                 .name(userInfoDTO.getName())
@@ -86,12 +84,7 @@ public class User {
                 .pushAgreeYn(YNCode.valueOf(userInfoDTO.getPushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)
                 .insertDate(LocalDateTime.now())
-                .emailAuth(emailAuth)
                 .build();
-    }
-
-    public void emailVerifiedSuccess() {
-        this.emailAuth = true;
     }
 
 }

@@ -4,7 +4,6 @@ import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
 import com.gsc.ninetosixapi.ninetosix.user.dto.*;
-import com.gsc.ninetosixapi.ninetosix.user.entity.EmailAuth;
 import com.gsc.ninetosixapi.ninetosix.user.entity.RefreshToken;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.entity.UserRole;
@@ -27,8 +26,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final CompanyService companyService;
-
-    private final EmailAuthService emailAuthService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
@@ -39,14 +36,9 @@ public class AuthService {
             throw new RuntimeException("이미 가입한 사용자 입니다.");
         }
 
-        EmailAuth emailAuth = emailAuthService.save(userInfoDTO);
-
         Company company = companyService.getCompany(userInfoDTO.getCompanyCode());
-        User user = userRepository.save(User.createUser(userInfoDTO, company, passwordEncoder, false));
+        User user = userRepository.save(User.createUser(userInfoDTO, company, passwordEncoder));
         userRoleRepository.save(UserRole.createUserRole(user));
-
-        // 이메일 인증
-        emailAuthService.send(emailAuth.getEmail(), emailAuth.getAuthToken());
 
         return UserResponseDTO.of(user);
     }
@@ -55,9 +47,6 @@ public class AuthService {
 
         User user = userRepository.findByEmail(userRequestDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
-
-        if (!user.getEmailAuth())
-            throw new RuntimeException("이메일 인증이 필요합니다.");
 
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성

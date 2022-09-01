@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TB_USER_ROLE")
+@Table
 public class UserRole {
 
     @Id

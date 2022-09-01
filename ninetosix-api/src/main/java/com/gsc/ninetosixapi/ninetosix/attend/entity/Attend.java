@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TB_ATTEND")
+@Table
 public class Attend {
 
     @Id

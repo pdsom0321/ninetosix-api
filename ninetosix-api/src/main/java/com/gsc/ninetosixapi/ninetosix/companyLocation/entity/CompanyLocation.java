@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TB_COMPANY_LOCATION")
+@Table
 public class CompanyLocation {
 
     @Id
