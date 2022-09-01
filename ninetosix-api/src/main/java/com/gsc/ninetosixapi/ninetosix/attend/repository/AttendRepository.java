@@ -4,8 +4,12 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface AttendRepository extends JpaRepository<Attend, Long> {
-    Optional<Attend> findByUser(User user);
+    Attend findByUser(User user);
+    Optional<Attend> findByUserAndAttendDate(User user, String attendDate);
+
+
 }

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class AttendApiController {
+public class AttendController {
     private final AttendService attendService;
 
     @PostMapping("/attendance")
     public void attendanceCheck(@RequestBody AttendDto attendDto, Model model){
-
+        attendService.attendanceCheck(attendDto);
     }
 }

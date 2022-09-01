@@ -29,7 +29,7 @@ public class CompanyLocation {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyLocation", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyLocation", fetch = FetchType.LAZY)
     private List<Attend> attend = new ArrayList<>();
 
 }
