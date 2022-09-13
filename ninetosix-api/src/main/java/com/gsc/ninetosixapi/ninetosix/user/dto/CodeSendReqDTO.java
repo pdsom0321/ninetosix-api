@@ -4,8 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CodeCheckRequestDTO {
+public class CodeSendReqDTO {
     String email;
     String fromType;
-    String ranCode;
 }

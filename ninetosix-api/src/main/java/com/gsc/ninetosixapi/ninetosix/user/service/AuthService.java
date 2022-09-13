@@ -11,6 +11,8 @@ import com.gsc.ninetosixapi.ninetosix.user.repository.RefreshTokenRepository;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,30 +29,31 @@ public class AuthService {
     private final UserRoleRepository userRoleRepository;
     private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public UserResponseDTO signup(UserInfoDTO userInfoDTO) {
-        if (userRepository.existsByEmail(userInfoDTO.getEmail())) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserResDTO signup(signupReqDTO signupReqDTO) {
+        if (userRepository.existsByEmail(signupReqDTO.getEmail())) {
             throw new RuntimeException("이미 가입한 사용자 입니다.");
         }
 
-        Company company = companyService.getCompany(userInfoDTO.getCompanyCode());
-        User user = userRepository.save(User.createUser(userInfoDTO, company, passwordEncoder));
+        Company company = companyService.getCompany(signupReqDTO.getCompanyCode());
+        User user = userRepository.save(User.createUser(signupReqDTO, company, passwordEncoder));
         userRoleRepository.save(UserRole.createUserRole(user));
 
-        return UserResponseDTO.of(user);
+        return UserResDTO.of(user);
     }
 
-    public TokenDTO login(UserRequestDTO userRequestDTO) {
+    public TokenDTO login(LoginReqDTO reqDTO) {
 
-        User user = userRepository.findByEmail(userRequestDTO.getEmail())
+        userRepository.findByEmail(reqDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
 
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = userRequestDTO.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = reqDTO.toAuthentication();
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
@@ -71,21 +74,31 @@ public class AuthService {
         return tokenDTO;
     }
 
-    public TokenDTO reissue(TokenRequestDTO tokenRequestDto) {
+    public ResponseEntity pwdChange(PwdChangeReqDTO reqDTO) {
+        User user = userRepository.findByEmail(reqDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+
+        user.updatePassword(reqDTO.getPassword(), passwordEncoder);
+        userRepository.save(user);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public TokenDTO reissue(TokenReqDTO reqDTO) {
         // 1. Refresh Token 검증
-        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+        if (!tokenProvider.validateToken(reqDTO.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+        Authentication authentication = tokenProvider.getAuthentication(reqDTO.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+        if (!refreshToken.getValue().equals(reqDTO.getRefreshToken())) {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 

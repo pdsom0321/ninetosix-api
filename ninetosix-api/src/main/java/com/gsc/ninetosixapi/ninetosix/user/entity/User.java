@@ -2,12 +2,13 @@ package com.gsc.ninetosixapi.ninetosix.user.entity;
 
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
-import com.gsc.ninetosixapi.ninetosix.user.dto.UserInfoDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.signupReqDTO;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -51,6 +52,7 @@ public class User {
     @Column(length = 1)
     private YNCode pushAgreeYn;
 
+    /** TODO : 로그인 실패횟수 체크 안할거면 삭제 필요 */
     @Column(length = 1)
     private Integer loginFailCnt;
 
@@ -73,18 +75,22 @@ public class User {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(UserInfoDTO userInfoDTO, Company company1, PasswordEncoder passwordEncoder) {
+    public static User createUser(signupReqDTO signupReqDTO, Company company1, PasswordEncoder passwordEncoder) {
         return User.builder()
-                .email(userInfoDTO.getEmail())
-                .name(userInfoDTO.getName())
-                .password(passwordEncoder.encode(userInfoDTO.getPassword()))
-                .contact(userInfoDTO.getContact())
+                .email(signupReqDTO.getEmail())
+                .name(signupReqDTO.getName())
+                .password(passwordEncoder.encode(signupReqDTO.getPassword()))
+                .contact(signupReqDTO.getContact())
                 .company(company1)
                 .deleteYn(YNCode.N)
-                .pushAgreeYn(YNCode.valueOf(userInfoDTO.getPushAgreeYn()))
+                .pushAgreeYn(YNCode.valueOf(signupReqDTO.getPushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)
                 .insertDate(LocalDateTime.now())
                 .build();
+    }
+
+    public void updatePassword(String newPassword, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(newPassword);
     }
 
 }

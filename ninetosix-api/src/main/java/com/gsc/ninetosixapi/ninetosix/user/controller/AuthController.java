@@ -13,18 +13,23 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> signup(@RequestBody UserInfoDTO userInfoDTO) {
-        return ResponseEntity.ok(authService.signup(userInfoDTO));
+    public ResponseEntity<UserResDTO> signup(@RequestBody signupReqDTO reqDTO) {
+        return ResponseEntity.ok(authService.signup(reqDTO));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody UserRequestDTO userRequestDTO) {
-        return ResponseEntity.ok(authService.login(userRequestDTO));
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginReqDTO reqDTO) {
+        return ResponseEntity.ok(authService.login(reqDTO));
+    }
+
+    @PostMapping("pwd")
+    public ResponseEntity pwdChange(@RequestBody PwdChangeReqDTO reqDTO) {
+        return ResponseEntity.ok(authService.pwdChange(reqDTO));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDTO> reissue(@RequestBody TokenRequestDTO tokenRequestDTO) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDTO));
+    public ResponseEntity<TokenDTO> reissue(@RequestBody TokenReqDTO reqDTO) {
+        return ResponseEntity.ok(authService.reissue(reqDTO));
     }
 
 }

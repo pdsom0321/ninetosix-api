@@ -1,7 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.user.service;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckRequestDTO;
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendRequestDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckReqDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.user.entity.AuthCode;
 import com.gsc.ninetosixapi.ninetosix.user.repository.AuthCodeRepository;
 import com.gsc.ninetosixapi.ninetosix.user.vo.AuthCodeFrom;
@@ -24,9 +24,9 @@ public class AuthCodeService {
 
     private final AuthCodeRepository authCodeRepository;
 
-    public void sendCode(CodeSendRequestDTO requestDTO) {
-        String email = requestDTO.getEmail();
-        String from = requestDTO.getFromType();
+    public void sendCode(CodeSendReqDTO reqDTO) {
+        String email = reqDTO.getEmail();
+        String from = reqDTO.getFromType();
 
         String subject = "";
         if(from.equals(AuthCodeFrom.SIGNUP.name())) {
@@ -61,10 +61,11 @@ public class AuthCodeService {
         return authCodeRepository.save(AuthCode.createAuthCode(email, from, ranCode));
     }
 
-    public Boolean checkCode(CodeCheckRequestDTO requestDTO) {
-        AuthCode authCode = authCodeRepository.findByEmailAndRanCodeAndFromTypeAndExpireDateGreaterThanAndExpired(requestDTO.getEmail(), requestDTO.getRanCode(), AuthCodeFrom.valueOf(requestDTO.getFromType()), LocalDateTime.now(), false)
+    public Boolean checkCode(CodeCheckReqDTO reqDTO) {
+        AuthCode authCode = authCodeRepository.findByEmailAndRanCodeAndFromTypeAndExpireDateGreaterThanAndExpired(reqDTO.getEmail(), reqDTO.getRanCode(), AuthCodeFrom.valueOf(reqDTO.getFromType()), LocalDateTime.now(), false)
                 .orElseThrow(() -> new RuntimeException("code 유저 정보가 없습니다."));
 
+        // 인증 TRUE 업데이트
         authCode.isTrue();
         authCodeRepository.save(authCode);
         return true;

@@ -1,6 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.user.controller;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.UserResponseDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.UserResDTO;
 import com.gsc.ninetosixapi.ninetosix.user.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> getMyMemberInfo() {
+    public ResponseEntity<UserResDTO> getMyMemberInfo() {
         return ResponseEntity.ok(userService.getMyInfo());
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<UserResponseDTO> getMemberInfo(@PathVariable String email) {
+    public ResponseEntity<UserResDTO> getMemberInfo(@PathVariable String email) {
         return ResponseEntity.ok(userService.getMemberInfo(email));
     }
 

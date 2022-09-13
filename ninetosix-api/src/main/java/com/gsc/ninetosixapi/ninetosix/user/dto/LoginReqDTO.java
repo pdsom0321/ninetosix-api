@@ -8,8 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestDTO {
-
+public class LoginReqDTO {
     private String email;
     private String password;
 

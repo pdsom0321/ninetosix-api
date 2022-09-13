@@ -1,7 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.user.controller;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckRequestDTO;
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendRequestDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckReqDTO;
+import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.user.service.AuthCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,13 @@ public class AuthCodeController {
     private final AuthCodeService authCodeService;
 
     @GetMapping("/send")
-    public void sendCode(@ModelAttribute CodeSendRequestDTO requestDTO) {
-        authCodeService.sendCode(requestDTO);
+    public void sendCode(@ModelAttribute CodeSendReqDTO reqDTO) {
+        authCodeService.sendCode(reqDTO);
     }
 
     @GetMapping("/check")
-    public Boolean checkCode(@ModelAttribute CodeCheckRequestDTO requestDTO) {
-        return authCodeService.checkCode(requestDTO);
+    public Boolean checkCode(@ModelAttribute CodeCheckReqDTO reqDTO) {
+        return authCodeService.checkCode(reqDTO);
     }
 
 }

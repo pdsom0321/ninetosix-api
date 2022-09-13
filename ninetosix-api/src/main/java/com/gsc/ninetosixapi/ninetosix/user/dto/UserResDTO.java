@@ -8,12 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDTO {
+public class UserResDTO {
     private String email;
     private String name;
-    private String contact;
 
-    public static UserResponseDTO of(User user) {
-        return new UserResponseDTO(user.getEmail(), user.getName(), user.getContact());
+    public static UserResDTO of(User user) {
+        return new UserResDTO(user.getEmail(), user.getName());
     }
 }
