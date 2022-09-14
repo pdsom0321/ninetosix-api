@@ -47,9 +47,7 @@ public class AuthService {
     }
 
     public TokenDTO login(LoginReqDTO reqDTO) {
-
-        userRepository.findByEmail(reqDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+        User user = isUser(reqDTO.getEmail());
 
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -75,8 +73,7 @@ public class AuthService {
     }
 
     public ResponseEntity pwdChange(PwdChangeReqDTO reqDTO) {
-        User user = userRepository.findByEmail(reqDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+        User user = isUser(reqDTO.getEmail());
 
         user.updatePassword(reqDTO.getPassword(), passwordEncoder);
         userRepository.save(user);
@@ -111,5 +108,12 @@ public class AuthService {
 
         // 토큰 발급
         return tokenDTO;
+    }
+
+    public User isUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+
+        return user;
     }
 }

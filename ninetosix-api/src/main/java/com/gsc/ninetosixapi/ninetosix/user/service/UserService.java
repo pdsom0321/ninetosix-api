@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
-
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
     public UserResDTO getMemberInfo(String email) {
         return userRepository.findByEmail(email)
                 .map(UserResDTO::of)
@@ -22,7 +20,6 @@ public class UserService {
     }
 
     // 현재 SecurityContext 에 있는 유저 정보 가져오기
-    @Transactional(readOnly = true)
     public UserResDTO getMyInfo() {
         return userRepository.findByEmail(SecurityUtil.getCurrentUserId())
                 .map(UserResDTO::of)

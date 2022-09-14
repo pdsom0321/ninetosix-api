@@ -7,22 +7,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/new")
     public ResponseEntity<UserResDTO> signup(@RequestBody signupReqDTO reqDTO) {
         return ResponseEntity.ok(authService.signup(reqDTO));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginReqDTO reqDTO) {
         return ResponseEntity.ok(authService.login(reqDTO));
     }
 
-    @PostMapping("pwd")
+    @PutMapping("/auth/pwd")
     public ResponseEntity pwdChange(@RequestBody PwdChangeReqDTO reqDTO) {
         return ResponseEntity.ok(authService.pwdChange(reqDTO));
     }

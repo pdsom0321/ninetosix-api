@@ -18,10 +18,6 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @Table
 public class Attend {
-    @Transient
-    private LocalDateTime currentDateTime = LocalDateTime.now();
-    @Transient
-    private String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +44,15 @@ public class Attend {
     @JoinColumn(name = "company_location_id")
     private CompanyLocation companyLocation;
 
+    private LocalDateTime insertDate;
+
+    private LocalDateTime updateDate;
+
+    @Transient
+    private LocalDateTime currentDateTime = LocalDateTime.now();
+    @Transient
+    private String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
+
     public void setGoToWorkTime(){
         this.goToWorkTime = hms;
     }
@@ -65,5 +70,21 @@ public class Attend {
                 .user(user)
                 .status(status)
                 .build();
+    }
+
+    public static Attend addCode(String date, User user, String code) {
+        return Attend
+                .builder()
+                .attendDate(date)
+                .user(user)
+                .status(code)
+                .insertDate(LocalDateTime.now())
+                .build();
+    }
+    public void editCode(String date, User user, String code) {
+        this.attendDate = date;
+        this.user = user;
+        this.status = code;
+        this.updateDate = LocalDateTime.now();
     }
 }

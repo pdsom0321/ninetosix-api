@@ -8,8 +8,6 @@ import com.gsc.ninetosixapi.ninetosix.user.vo.AuthCodeFrom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
-@EnableAsync
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthCodeService {
     private final JavaMailSender javaMailSender;
 
@@ -46,7 +44,6 @@ public class AuthCodeService {
         save(email, from, ranCode);
     }
 
-    @Async
     public void send(String email, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -61,13 +58,13 @@ public class AuthCodeService {
         return authCodeRepository.save(AuthCode.createAuthCode(email, from, ranCode));
     }
 
+    @Transactional
     public Boolean checkCode(CodeCheckReqDTO reqDTO) {
         AuthCode authCode = authCodeRepository.findByEmailAndRanCodeAndFromTypeAndExpireDateGreaterThanAndExpired(reqDTO.getEmail(), reqDTO.getRanCode(), AuthCodeFrom.valueOf(reqDTO.getFromType()), LocalDateTime.now(), false)
                 .orElseThrow(() -> new RuntimeException("code 유저 정보가 없습니다."));
 
         // 인증 TRUE 업데이트
         authCode.isTrue();
-        authCodeRepository.save(authCode);
         return true;
     }
 
