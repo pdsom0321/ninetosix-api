@@ -1,13 +1,13 @@
 package com.gsc.ninetosixapi.ninetosix.attend.dto;
 
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
-public class AttendDto {
+public class AttendReqDTO {
     private String email;
     private String userStatus;
     private Long companyLocationId;

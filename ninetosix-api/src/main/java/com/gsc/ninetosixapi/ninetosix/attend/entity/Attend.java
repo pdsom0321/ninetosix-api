@@ -6,10 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Builder
 @Entity
 @Getter
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table
 public class Attend {
+    private LocalDateTime currentDateTime = LocalDateTime.now();
+    private String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +28,12 @@ public class Attend {
 
     @Column(nullable = false)
     private String attendDate;
-    private String inTime;
-    private String outTime;
+
+    @Column(name = "inTime")
+    private String goToWorkTime;
+
+    @Column(name = "outTime")
+    private String leaveWorkTime;
 
     @Column(nullable = false)
     private String status;
@@ -39,15 +46,22 @@ public class Attend {
     @JoinColumn(name = "company_location_id")
     private CompanyLocation companyLocation;
 
-    public static Attend createAttend(String attendDate, String inTime, String outTime, User user, CompanyLocation companyLocation, String status){
+    public void setGoToWorkTime(){
+        this.goToWorkTime = hms;
+    }
+
+    public void setLeaveWorkTime(){
+        this.leaveWorkTime = hms;
+    }
+
+    public static Attend createAttend(String attendDate, String inTime, CompanyLocation companyLocation, User user, String status){
         return Attend
                 .builder()
-                    .attendDate(attendDate)
-                    .inTime(inTime)
-                    .outTime(outTime)
-                    .user(user)
-                    .companyLocation(companyLocation)
-                    .status(status)
+                .attendDate(attendDate)
+                .goToWorkTime(inTime)
+                .companyLocation(companyLocation)
+                .user(user)
+                .status(status)
                 .build();
     }
 }

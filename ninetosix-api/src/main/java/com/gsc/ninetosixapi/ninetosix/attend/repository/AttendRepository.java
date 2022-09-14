@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface AttendRepository extends JpaRepository<Attend, Long> {
     Attend findByUser(User user);
-    Optional<Attend> findByUserAndAttendDate(User user, String attendDate);
+    Attend findByUserAndAttendDate(User user, String attendDate);
 
 
 }

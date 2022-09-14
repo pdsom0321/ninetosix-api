@@ -1,6 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.attend.service;
 
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendDto;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static com.gsc.ninetosixapi.ninetosix.vo.AttendStatus.*;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,36 +24,36 @@ public class AttendService {
     private final CompanyLocationRepository companyLocationRepository;
 
     @Transactional
-    public void attendanceCheck(AttendDto attendDto){
-        String status = attendDto.getUserStatus();
+    public void attendCheck(AttendReqDTO attendReqDTO){
         LocalDateTime currentDateTime = LocalDateTime.now();
         String ymd = currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
 
-        // TODO JWT 상태 확인 로직 필요
-        switch (status){
-            case "ST001":
-            {
-                // 정상 출근
-                User user = userRepository.findByEmail(attendDto.getEmail()).get();
-                CompanyLocation companyLocation = companyLocationRepository.findById(attendDto.getCompanyLocationId()).get();
+        User user = userRepository.findByEmail(attendReqDTO.getEmail())
+                .orElseThrow(RuntimeException :: new);
 
-                if(attendRepository.findByUserAndAttendDate(user, ymd).isEmpty()){
-                    attendRepository.save(Attend.createAttend(ymd, hms, null, user, companyLocation, status));
-                }
-                // 정상 퇴근
-                else {
-                    attendRepository.save(Attend.createAttend(ymd, null, hms, user, companyLocation, status));
-                }
-            }
-            case "ST006":
-            {
-                // 재택 근무
-            }
-            case "ST007":
-            {
-                // 휴가
-            }
-        }
+        Attend attend = Optional.ofNullable(attendRepository.findByUserAndAttendDate(user, ymd))
+                .map(_attend -> {
+                    String status = _attend.getStatus();
+
+                    if(AttendStatus.ATTEND_STATUS_DAY_HOLLY.getAttendStatusCode().equals(status) || AttendStatus.ATTEND_STATUS_WORK_HOME.equals(status)){
+                        // 휴가 또는 재택근무
+
+                    } else if(AttendStatus.ATTEND_STATUS_WORK_PM.equals(status)) {
+                        // PM
+                        String yesterday = currentDateTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                        attendRepository.findByUserAndAttendDate(user, yesterday);
+
+                    }
+
+                    return _attend;
+                })
+                .orElseGet(()->{
+                    String status = attendReqDTO.getUserStatus();
+                    CompanyLocation companyLocation = companyLocationRepository.findById(attendReqDTO.getCompanyLocationId())
+                            .orElse(null);
+                    return Attend.createAttend(ymd, hms, companyLocation, user, status);
+                });
+        attendRepository.save(attend);
     }
 }
