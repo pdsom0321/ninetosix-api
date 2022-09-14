@@ -7,7 +7,7 @@ import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
-import com.gsc.ninetosixapi.ninetosix.vo.AttendStatus;
+import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,10 +36,10 @@ public class AttendService {
                 .map(_attend -> {
                     String status = _attend.getStatus();
 
-                    if(AttendStatus.ATTEND_STATUS_DAY_HOLLY.getAttendStatusCode().equals(status) || AttendStatus.ATTEND_STATUS_WORK_HOME.equals(status)){
+                    if(AttendCode.ATTEND_CODE_DAY_HOLLY.getAttendCode().equals(status) || AttendCode.ATTEND_CODE_WORK_HOME.equals(status)){
                         // 휴가 또는 재택근무
 
-                    } else if(AttendStatus.ATTEND_STATUS_WORK_PM.equals(status)) {
+                    } else if(AttendCode.ATTEND_CODE_WORK_PM.equals(status)) {
                         // PM
                         String yesterday = currentDateTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                         attendRepository.findByUserAndAttendDate(user, yesterday);
@@ -49,7 +49,7 @@ public class AttendService {
                     return _attend;
                 })
                 .orElseGet(()->{
-                    String status = attendReqDTO.getUserStatus();
+                    String status = attendReqDTO.getAttendStatus();
                     CompanyLocation companyLocation = companyLocationRepository.findById(attendReqDTO.getCompanyLocationId())
                             .orElse(null);
                     return Attend.createAttend(ymd, hms, companyLocation, user, status);

@@ -18,7 +18,9 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @Table
 public class Attend {
+    @Transient
     private LocalDateTime currentDateTime = LocalDateTime.now();
+    @Transient
     private String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
 
     @Id
