@@ -34,7 +34,7 @@ public class Attend {
     private String leaveWorkTime;
 
     @Column(nullable = false)
-    private String status;
+    private String attendCode;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

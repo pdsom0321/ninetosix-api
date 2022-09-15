@@ -6,19 +6,17 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
+import com.gsc.ninetosixapi.ninetosix.companyLocation.service.CompanyLocationService;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
 import com.gsc.ninetosixapi.ninetosix.user.service.AuthService;
-import com.gsc.ninetosixapi.ninetosix.user.service.UserService;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -29,8 +27,9 @@ import java.util.Optional;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
-    private final CompanyLocationRepository companyLocationRepository;
+    private final CompanyLocationService companyLocationService;
 
+    @Transactional
     public void attendCheck(AttendReqDTO attendReqDTO){
         LocalDateTime currentDateTime = LocalDateTime.now();
         String ymd = currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -40,7 +39,7 @@ public class AttendService {
 
         Attend attend = Optional.ofNullable(attendRepository.findByUserAndAttendDate(user, ymd))
                 .map(_attend -> {
-                    String status = _attend.getStatus();
+                    String status = _attend.getAttendCode();
 
                     if(AttendCode.ATTEND_CODE_DAY_HOLLY.getAttendCode().equals(status) || AttendCode.ATTEND_CODE_WORK_HOME.equals(status)){
                         // 휴가 또는 재택근무
@@ -55,7 +54,7 @@ public class AttendService {
                 })
                 .orElseGet(()->{
                     String status = attendReqDTO.getAttendStatus();
-                    CompanyLocation companyLocation = companyLocationRepository.findById(attendReqDTO.getCompanyLocationId())
+                    CompanyLocation companyLocation = companyLocationService.isCompanyLocation(attendReqDTO.getCompanyLocationId())
                             .orElse(null);
                     return Attend.createAttend(ymd, hms, companyLocation, user, status);
                 });
