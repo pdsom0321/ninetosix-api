@@ -29,14 +29,13 @@ public class CompanyLocationService {
     }
 
     public List<CompanyLocationsResDTO> companyLocations(String email) {
-        User user = userService.getUser(email);
-        // Company company = companyService.getCompanyByUser(user);
+        /*User user = userService.getUser(email);
         List<CompanyLocation> companyLocations = companyLocationRepository.findByCompany(user.getCompany());
 
         for(CompanyLocation companyLocation : companyLocations) {
             List<Location> locations = locationService.getLocationByCompanyLocation(companyLocation);
             System.out.println(locations.get(0).getName());
-        }
+        }*/
 
 
         return null;
