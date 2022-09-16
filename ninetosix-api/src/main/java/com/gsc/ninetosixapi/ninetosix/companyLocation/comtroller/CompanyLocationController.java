@@ -2,7 +2,6 @@ package com.gsc.ninetosixapi.ninetosix.companyLocation.comtroller;
 
 import com.gsc.ninetosixapi.ninetosix.companyLocation.dto.CompanyLocationsResDTO;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.service.CompanyLocationService;
-import com.gsc.ninetosixapi.ninetosix.user.dto.UserResDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
