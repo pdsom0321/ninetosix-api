@@ -36,13 +36,13 @@ public class Attend {
 
     private String locationCode;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     private LocalDateTime insertDate;
 
     private LocalDateTime updateDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public static Attend createAttend(String attendDate, String inTime, String locationCode, User user, String code){
         return Attend

@@ -4,13 +4,8 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
-import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
-import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
-import com.gsc.ninetosixapi.ninetosix.companyLocation.service.CompanyLocationService;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
 import com.gsc.ninetosixapi.ninetosix.user.service.AuthService;
-import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +23,6 @@ import java.util.Optional;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
-    private final CompanyLocationService companyLocationService;
 
     public ResponseEntity attendCheck(@NotNull AttendReqDTO reqDTO){
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -58,14 +52,20 @@ public class AttendService {
         String email = reqDTO.getEmail();
 
         User user = authService.isUser(email);
+
+        /*Optional<Attend> attend = attendRepository.findByUserAndAttendDate(user, day);
+        if(attend.isPresent()) {
+
+        } else {
+
+        }
+        */
         Attend attend = attendRepository.findByUserAndAttendDate(user, day)
                 .map(_attend -> {
                     _attend.editCode(day, user, code);
                     return _attend;
                 })
-                .orElseGet(() -> {
-                    return attendRepository.save(Attend.addCode(day, user, code));
-                });
+                .orElseGet(() -> attendRepository.save(Attend.addCode(day, user, code)));
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -5,7 +5,6 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,9 +17,8 @@ public class AttendController {
 
     }
 
-    @PostMapping("/attend/check")
+    @PostMapping("/attend")
     public ResponseEntity attendCheck(@RequestBody AttendReqDTO attendReqDTO){
-
         return ResponseEntity.ok(attendService.attendCheck(attendReqDTO));
     }
 
