@@ -1,7 +1,9 @@
 package com.gsc.ninetosixapi.ninetosix.user.service;
 
 import com.gsc.ninetosixapi.core.util.SecurityUtil;
+import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.user.dto.UserResDTO;
+import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,5 +26,10 @@ public class UserService {
         return userRepository.findByEmail(SecurityUtil.getCurrentUserId())
                 .map(UserResDTO::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+    }
+
+    public User getUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow();
     }
 }

@@ -29,7 +29,7 @@ public class UserRole {
 
     public static UserRole createUserRole(User user) {
         return UserRole.builder()
-                .role(Role.ROLE_ADMIN.name())
+                .role(Role.ROLE_MEMBER.name())
                 .user(user)
                 .build();
     }

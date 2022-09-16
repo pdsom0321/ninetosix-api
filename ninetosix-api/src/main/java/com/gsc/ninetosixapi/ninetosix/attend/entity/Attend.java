@@ -68,7 +68,7 @@ public class Attend {
                 .goToWorkTime(inTime)
                 .companyLocation(companyLocation)
                 .user(user)
-                .status(status)
+                .attendCode(status)
                 .build();
     }
 
@@ -77,14 +77,14 @@ public class Attend {
                 .builder()
                 .attendDate(date)
                 .user(user)
-                .status(code)
+                .attendCode(code)
                 .insertDate(LocalDateTime.now())
                 .build();
     }
     public void editCode(String date, User user, String code) {
         this.attendDate = date;
         this.user = user;
-        this.status = code;
+        this.attendCode = code;
         this.updateDate = LocalDateTime.now();
     }
 }

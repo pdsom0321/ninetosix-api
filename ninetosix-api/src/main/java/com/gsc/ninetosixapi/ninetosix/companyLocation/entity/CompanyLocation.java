@@ -30,6 +30,6 @@ public class CompanyLocation {
     private Location location;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyLocation", fetch = FetchType.LAZY)
-    private List<Attend> attend = new ArrayList<>();
+    private List<Attend> attends = new ArrayList<>();
 
 }
