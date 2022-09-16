@@ -15,8 +15,4 @@ import java.util.List;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-
-    public List<Location> getLocationByCompanyLocation(CompanyLocation companyLocation) {
-        return locationRepository.findByCompanyLocation(companyLocation);
-    }
 }

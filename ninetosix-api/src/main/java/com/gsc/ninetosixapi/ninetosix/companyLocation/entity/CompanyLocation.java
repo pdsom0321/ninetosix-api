@@ -21,6 +21,8 @@ public class CompanyLocation {
     @Column(name = "company_location_id")
     private Long id;
 
+    private String code;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;

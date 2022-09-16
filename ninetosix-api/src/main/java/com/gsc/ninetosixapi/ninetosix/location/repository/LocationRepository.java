@@ -9,6 +9,4 @@ import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
     Optional<Location> findById(Long id);
-
-    List<Location> findByCompanyLocation(CompanyLocation companyLocation);
 }
