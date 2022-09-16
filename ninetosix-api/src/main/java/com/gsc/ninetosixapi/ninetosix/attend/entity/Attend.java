@@ -27,48 +27,32 @@ public class Attend {
     @Column(nullable = false)
     private String attendDate;
 
-    @Column(name = "inTime")
-    private String goToWorkTime;
+    private String inTime;
 
-    @Column(name = "outTime")
-    private String leaveWorkTime;
+    private String outTime;
 
     @Column(nullable = false)
     private String attendCode;
+
+    private String locationCode;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "company_location_id")
-    private CompanyLocation companyLocation;
-
     private LocalDateTime insertDate;
 
     private LocalDateTime updateDate;
 
-    @Transient
-    private LocalDateTime currentDateTime = LocalDateTime.now();
-    @Transient
-    private String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
-
-    public void setGoToWorkTime(){
-        this.goToWorkTime = hms;
-    }
-
-    public void setLeaveWorkTime(){
-        this.leaveWorkTime = hms;
-    }
-
-    public static Attend createAttend(String attendDate, String inTime, CompanyLocation companyLocation, User user, String status){
+    public static Attend createAttend(String attendDate, String inTime, String locationCode, User user, String code){
         return Attend
                 .builder()
                 .attendDate(attendDate)
-                .goToWorkTime(inTime)
-                .companyLocation(companyLocation)
+                .inTime(inTime)
+                .locationCode(locationCode)
                 .user(user)
-                .attendCode(status)
+                .attendCode(code)
+                .insertDate(LocalDateTime.now())
                 .build();
     }
 
@@ -85,6 +69,11 @@ public class Attend {
         this.attendDate = date;
         this.user = user;
         this.attendCode = code;
+        this.updateDate = LocalDateTime.now();
+    }
+
+    public void changeOutTime(String time){
+        this.outTime = time;
         this.updateDate = LocalDateTime.now();
     }
 }

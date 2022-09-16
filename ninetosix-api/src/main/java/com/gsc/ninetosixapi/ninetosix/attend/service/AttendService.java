@@ -11,6 +11,7 @@ import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
 import com.gsc.ninetosixapi.ninetosix.user.service.AuthService;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
+import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,50 +30,42 @@ public class AttendService {
     private final AuthService authService;
     private final CompanyLocationService companyLocationService;
 
-    @Transactional
-    public void attendCheck(AttendReqDTO attendReqDTO){
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        String ymd = currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String hms = currentDateTime.format(DateTimeFormatter.ofPattern("HHmmss"));
+    public ResponseEntity attendCheck(@NotNull AttendReqDTO reqDTO){
+        String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String inTime = reqDTO.getInTime();
+        String outTime = reqDTO.getOutTime();
+        String attendCode = reqDTO.getAttendCode();
+        String locationCode = reqDTO.getLocationCode();
+        User user = authService.isUser(reqDTO.getEmail());
 
-        User user = authService.isUser(attendReqDTO.getEmail());
-
-        Attend attend = Optional.ofNullable(attendRepository.findByUserAndAttendDate(user, ymd))
+        Attend attend = attendRepository.findByUserAndAttendDate(user, ymd)
                 .map(_attend -> {
-                    String status = _attend.getAttendCode();
-
-                    if(AttendCode.ATTEND_CODE_DAY_HOLLY.getAttendCode().equals(status) || AttendCode.ATTEND_CODE_WORK_HOME.equals(status)){
-                        // 휴가 또는 재택근무
-
-                    } else if(AttendCode.ATTEND_CODE_WORK_PM.equals(status)) {
-                        // PM
-                        String yesterday = currentDateTime.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        attendRepository.findByUserAndAttendDate(user, yesterday);
-                    }
-
+                    _attend.changeOutTime(outTime);
                     return _attend;
                 })
-                .orElseGet(()->{
-                    String status = attendReqDTO.getAttendStatus();
-                    CompanyLocation companyLocation = companyLocationService.isCompanyLocation(attendReqDTO.getCompanyLocationId())
-                            .orElse(null);
-                    return Attend.createAttend(ymd, hms, companyLocation, user, status);
+                .orElseGet(() -> {
+                    String _attendCode = Optional.ofNullable(attendCode)
+                            .filter(code -> !code.isEmpty() && !code.isBlank())
+                            .orElse("ST01");
+                    return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
                 });
-        attendRepository.save(attend);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    public ResponseEntity attendCode(AttendCodeReqDTO reqDTO) {
+    public ResponseEntity attendCode(@NotNull AttendCodeReqDTO reqDTO) {
         String day = reqDTO.getDate();
         String code = reqDTO.getAttendCode();
         String email = reqDTO.getEmail();
 
         User user = authService.isUser(email);
-        Attend attend = attendRepository.findByUserAndAttendDate(user, day);
-        if(attend != null) {
-            attend.editCode(day, user, code);
-        } else {
-            attendRepository.save(Attend.addCode(day, user, code));
-        }
+        Attend attend = attendRepository.findByUserAndAttendDate(user, day)
+                .map(_attend -> {
+                    _attend.editCode(day, user, code);
+                    return _attend;
+                })
+                .orElseGet(() -> {
+                    return attendRepository.save(Attend.addCode(day, user, code));
+                });
 
         return new ResponseEntity(HttpStatus.OK);
     }

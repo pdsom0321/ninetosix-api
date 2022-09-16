@@ -19,8 +19,9 @@ public class AttendController {
     }
 
     @PostMapping("/attend/check")
-    public void attendCheck(@RequestBody AttendReqDTO attendReqDTO){
-        attendService.attendCheck(attendReqDTO);
+    public ResponseEntity attendCheck(@RequestBody AttendReqDTO attendReqDTO){
+
+        return ResponseEntity.ok(attendService.attendCheck(attendReqDTO));
     }
 
     @PostMapping("/attend/code")

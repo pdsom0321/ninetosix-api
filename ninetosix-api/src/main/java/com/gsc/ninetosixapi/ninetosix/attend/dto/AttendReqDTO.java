@@ -9,6 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AttendReqDTO {
     private String email;
-    private String attendStatus;
-    private Long companyLocationId;
+    private String inTime;
+    private String outTime;
+    private String attendCode;
+    private String locationCode;
 }
