@@ -24,14 +24,12 @@ public class Attend {
     @Column(name = "attend_id")
     private Long id;
 
-    @Column(nullable = false)
     private String attendDate;
 
     private String inTime;
 
     private String outTime;
 
-    @Column(nullable = false)
     private String attendCode;
 
     private String locationCode;

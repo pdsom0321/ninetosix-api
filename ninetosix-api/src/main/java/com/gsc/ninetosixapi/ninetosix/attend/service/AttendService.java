@@ -2,8 +2,10 @@ package com.gsc.ninetosixapi.ninetosix.attend.service;
 
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
+import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendSpecification;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.service.AuthService;
 import com.sun.istack.NotNull;
@@ -13,8 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,13 +57,6 @@ public class AttendService {
 
         User user = authService.isUser(email);
 
-        /*Optional<Attend> attend = attendRepository.findByUserAndAttendDate(user, day);
-        if(attend.isPresent()) {
-
-        } else {
-
-        }
-        */
         Attend attend = attendRepository.findByUserAndAttendDate(user, day)
                 .map(_attend -> {
                     _attend.editCode(day, user, code);
@@ -68,5 +65,31 @@ public class AttendService {
                 .orElseGet(() -> attendRepository.save(Attend.addCode(day, user, code)));
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public AttendResDTO attendList(@NotNull String email, String startDate, String endDate){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
+
+        String startDay = "01";
+        //String endDay =
+        String startTime = "000000";
+        String endTime = "235959";
+
+
+        String _yesterday = LocalDateTime.now().minusDays(1).format(dateFormatter) + startTime;
+        String _today = LocalDateTime.now().format(dateFormatter) + endTime;
+
+        if(!startDate.isEmpty() && !endDate.isEmpty()){
+            if(!startDate.isBlank() && !endDate.isBlank()){
+
+            }
+        }
+
+
+        LocalDateTime today = LocalDateTime.parse(_today, dateTimeFormatter);
+        LocalDateTime yesterday = LocalDateTime.parse(_yesterday, dateTimeFormatter);
+        return new AttendResDTO(attendRepository.findAll(AttendSpecification.betweenYesterdayAndToday(yesterday, today)));
     }
 }
