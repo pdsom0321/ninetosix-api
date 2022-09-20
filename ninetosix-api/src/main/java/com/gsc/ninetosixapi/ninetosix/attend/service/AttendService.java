@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -36,17 +37,17 @@ public class AttendService {
         String locationCode = reqDTO.getLocationCode();
         User user = authService.isUser(reqDTO.getEmail());
 
-        Attend attend = attendRepository.findByUserAndAttendDate(user, ymd)
-                .map(_attend -> {
-                    _attend.changeOutTime(outTime);
-                    return _attend;
-                })
-                .orElseGet(() -> {
-                    String _attendCode = Optional.ofNullable(attendCode)
-                            .filter(code -> !code.isEmpty() && !code.isBlank())
-                            .orElse("ST01");
-                    return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
-                });
+        attendRepository.findByUserAndAttendDate(user, ymd)
+            .map(_attend -> {
+                _attend.changeOutTime(outTime);
+                return _attend;
+            })
+            .orElseGet(() -> {
+                String _attendCode = Optional.ofNullable(attendCode)
+                        .filter(code -> !code.isEmpty() && !code.isBlank())
+                        .orElse("ST01");
+                return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
+            });
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -63,40 +64,30 @@ public class AttendService {
             attendRepository.save(Attend.addCode(day, user, code));
         }
 
-        // 규짱
-        /*Attend attend = attendRepository.findByUserAndAttendDate(user, day)
-                .map(_attend -> {
-                    _attend.editCode(day, user, code);
-                    return _attend;
-                })
-                .orElseGet(() -> attendRepository.save(Attend.addCode(day, user, code)));*/
-
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public AttendResDTO attendList(@NotNull String email, String startDate, String endDate){
+    public AttendResDTO attendList(@NotNull String email, String stdt, String eddt, String curYearMonth){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
 
         String startDay = "01";
-        //String endDay =
+        String endDay = String.valueOf(YearMonth.from(LocalDate.parse(curYearMonth, DateTimeFormatter.ofPattern("yyyyMM"))).lengthOfMonth());
         String startTime = "000000";
         String endTime = "235959";
 
+        String startDate = LocalDateTime.now().minusDays(1).format(dateFormatter) + startTime;
+        String endDate = LocalDateTime.now().format(dateFormatter) + endTime;
 
-        String _yesterday = LocalDateTime.now().minusDays(1).format(dateFormatter) + startTime;
-        String _today = LocalDateTime.now().format(dateFormatter) + endTime;
-
-        if(!startDate.isEmpty() && !endDate.isEmpty()){
-            if(!startDate.isBlank() && !endDate.isBlank()){
+        if(!stdt.isEmpty() && !eddt.isEmpty()){
+            if(!stdt.isBlank() && !eddt.isBlank()){
 
             }
         }
 
-
-        LocalDateTime today = LocalDateTime.parse(_today, dateTimeFormatter);
-        LocalDateTime yesterday = LocalDateTime.parse(_yesterday, dateTimeFormatter);
+        LocalDateTime yesterday = LocalDateTime.parse(startDate, dateTimeFormatter);
+        LocalDateTime today = LocalDateTime.parse(endDate, dateTimeFormatter);
         return new AttendResDTO(attendRepository.findAll(AttendSpecification.betweenYesterdayAndToday(yesterday, today)));
     }
 }

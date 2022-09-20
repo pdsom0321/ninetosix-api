@@ -14,8 +14,8 @@ public class AttendController {
     private final AttendService attendService;
 
     @GetMapping("/attends")
-    public ResponseEntity attendList(@RequestParam String email, @RequestParam String startDate, @RequestParam String endDate){
-        AttendResDTO attendResDTO = attendService.attendList(email, startDate, endDate);
+    public ResponseEntity attendList(@RequestParam String email, @RequestParam String startDate, @RequestParam String endDate, @RequestParam String curYearMonth){
+        AttendResDTO attendResDTO = attendService.attendList(email, startDate, endDate, curYearMonth);
         return ResponseEntity.ok(attendResDTO);
     }
 
