@@ -56,13 +56,20 @@ public class AttendService {
         String email = reqDTO.getEmail();
 
         User user = authService.isUser(email);
+        Optional<Attend> attend = attendRepository.findByUserAndAttendDate(user, day);
+        if(attend.isPresent()) {
+            attend.get().editCode(day, user, code);
+        } else {
+            attendRepository.save(Attend.addCode(day, user, code));
+        }
 
-        Attend attend = attendRepository.findByUserAndAttendDate(user, day)
+        // 규짱
+        /*Attend attend = attendRepository.findByUserAndAttendDate(user, day)
                 .map(_attend -> {
                     _attend.editCode(day, user, code);
                     return _attend;
                 })
-                .orElseGet(() -> attendRepository.save(Attend.addCode(day, user, code)));
+                .orElseGet(() -> attendRepository.save(Attend.addCode(day, user, code)));*/
 
         return new ResponseEntity(HttpStatus.OK);
     }
