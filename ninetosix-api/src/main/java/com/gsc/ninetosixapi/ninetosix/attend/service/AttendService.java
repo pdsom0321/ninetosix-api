@@ -39,7 +39,7 @@ public class AttendService {
 
         attendRepository.findByUserAndAttendDate(user, ymd)
             .map(_attend -> {
-                _attend.changeOutTime(outTime);
+                _attend.editOutTime(outTime);
                 return _attend;
             })
             .orElseGet(() -> {
@@ -67,27 +67,23 @@ public class AttendService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public AttendResDTO attendList(@NotNull String email, String stdt, String eddt, String curYearMonth){
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
+    public List<Attend> attends(@NotNull String email){
+        User user = authService.isUser(email);
+        String startDate = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        String startDay = "01";
-        String endDay = String.valueOf(YearMonth.from(LocalDate.parse(curYearMonth, DateTimeFormatter.ofPattern("yyyyMM"))).lengthOfMonth());
-        String startTime = "000000";
-        String endTime = "235959";
+        List<Attend> attendList = attendRepository.findByUserAndAttendDateBetween(user, startDate, endDate);
 
-        String startDate = LocalDateTime.now().minusDays(1).format(dateFormatter) + startTime;
-        String endDate = LocalDateTime.now().format(dateFormatter) + endTime;
-
-        if(!stdt.isEmpty() && !eddt.isEmpty()){
-            if(!stdt.isBlank() && !eddt.isBlank()){
-
-            }
+        for(int i = attendList.size(); i < 2; i++){
+            attendList.add(new Attend());
         }
 
-        LocalDateTime yesterday = LocalDateTime.parse(startDate, dateTimeFormatter);
-        LocalDateTime today = LocalDateTime.parse(endDate, dateTimeFormatter);
-        return new AttendResDTO(attendRepository.findAll(AttendSpecification.betweenYesterdayAndToday(yesterday, today)));
+        return attendList;
     }
+
+    public List<Attend> monthAttends(@NotNull String email, @NotNull String date){
+        User user = authService.isUser(email);
+        return attendRepository.findByUserAndAttendDateContains(user, date);
+    }
+
 }

@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface AttendRepository extends JpaRepository<Attend, Long>, JpaSpecificationExecutor<Attend> {
     Attend findByUser(User user);
     Optional<Attend> findByUserAndAttendDate(User user, String attendDate);
+
+    List<Attend> findByUserAndAttendDateContains(User user, String attendDate);
+    List<Attend> findByUserAndAttendDateBetween(User user, String startDate, String endDate);
 }

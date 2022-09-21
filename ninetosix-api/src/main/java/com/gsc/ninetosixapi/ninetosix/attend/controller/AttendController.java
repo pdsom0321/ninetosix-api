@@ -14,9 +14,13 @@ public class AttendController {
     private final AttendService attendService;
 
     @GetMapping("/attends")
-    public ResponseEntity attendList(@RequestParam String email, @RequestParam String startDate, @RequestParam String endDate, @RequestParam String curYearMonth){
-        AttendResDTO attendResDTO = attendService.attendList(email, startDate, endDate, curYearMonth);
-        return ResponseEntity.ok(attendResDTO);
+    public ResponseEntity attends(){
+        return ResponseEntity.ok(new AttendResDTO(attendService.attends("it1485@gsitm.com")));
+    }
+
+    @GetMapping("/attends/month")
+    public ResponseEntity monthAttends(@RequestParam String date){
+        return ResponseEntity.ok(new AttendResDTO(attendService.monthAttends("it1485@gsitm.com", date)));
     }
 
     @PostMapping("/attend")

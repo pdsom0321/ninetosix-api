@@ -15,7 +15,7 @@ public class AttendSpecification {
         return new Specification<Attend>() {
             @Override
             public Predicate toPredicate(Root<Attend> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.between(root.get("insertDate"),yesterday, today);
+                return criteriaBuilder.between(root.get("attend_date"),yesterday, today);
             }
         };
     }

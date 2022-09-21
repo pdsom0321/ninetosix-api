@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.attend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class Attend {
 
     private LocalDateTime updateDate;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -70,7 +72,7 @@ public class Attend {
         this.updateDate = LocalDateTime.now();
     }
 
-    public void changeOutTime(String time){
+    public void editOutTime(String time){
         this.outTime = time;
         this.updateDate = LocalDateTime.now();
     }
