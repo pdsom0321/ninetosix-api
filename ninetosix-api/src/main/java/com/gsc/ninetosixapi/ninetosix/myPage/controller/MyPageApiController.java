@@ -17,8 +17,8 @@ public class MyPageApiController {
     private final MyPageService myPageService;
 
     @PostMapping("/mypage")
-    public ResponseEntity<?> getUserInfo(@RequestParam String email, Model model){
-        MyPageDto result = myPageService.getUserInfo(email);
+    public ResponseEntity<?> getMemberInfo(@RequestParam String email, Model model){
+        MyPageDto result = myPageService.getMemberInfo(email);
         return new ResponseEntity<MyPageDto>(result,HttpStatus.OK);
     }
 

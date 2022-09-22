@@ -2,12 +2,11 @@ package com.gsc.ninetosixapi.ninetosix.attend.service;
 
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
-import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendSpecification;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import com.gsc.ninetosixapi.ninetosix.user.service.AuthService;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
+import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
+import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -35,44 +32,44 @@ public class AttendService {
         String outTime = reqDTO.getOutTime();
         String attendCode = reqDTO.getAttendCode();
         String locationCode = reqDTO.getLocationCode();
-        User user = authService.isUser(reqDTO.getEmail());
+        Member member = authService.getMember(reqDTO.getEmail());
 
-        attendRepository.findByUserAndAttendDate(user, ymd)
+        attendRepository.findByMemberAndAttendDate(member, ymd)
             .map(_attend -> {
-                _attend.editOutTime(outTime);
+                _attend.updateOutTime(outTime);
                 return _attend;
             })
             .orElseGet(() -> {
                 String _attendCode = Optional.ofNullable(attendCode)
                         .filter(code -> !code.isEmpty() && !code.isBlank())
-                        .orElse("ST01");
-                return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
+                        .orElse(AttendCode.ATTEND_CODE_DAY_NORMAL.getAttendCode());
+                return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, member, _attendCode));
             });
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public ResponseEntity attendCode(@NotNull AttendCodeReqDTO reqDTO) {
+    public ResponseEntity createAttendByCode(@NotNull AttendCodeReqDTO reqDTO) {
         String day = reqDTO.getDate();
         String code = reqDTO.getAttendCode();
         String email = reqDTO.getEmail();
 
-        User user = authService.isUser(email);
-        Optional<Attend> attend = attendRepository.findByUserAndAttendDate(user, day);
+        Member member = authService.getMember(email);
+        Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, day);
         if(attend.isPresent()) {
-            attend.get().editCode(day, user, code);
+            attend.get().updateCode(member, code);
         } else {
-            attendRepository.save(Attend.createAttendByCode(day, user, code));
+            attendRepository.save(Attend.createAttendByCode(day, member, code));
         }
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
     public List<Attend> attends(@NotNull String email){
-        User user = authService.isUser(email);
+        Member member = authService.getMember(email);
         String startDate = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        List<Attend> attendList = attendRepository.findByUserAndAttendDateBetween(user, startDate, endDate);
+        List<Attend> attendList = attendRepository.findByMemberAndAttendDateBetween(member, startDate, endDate);
 
         for(int i = attendList.size(); i < 2; i++){
             attendList.add(new Attend());
@@ -82,8 +79,8 @@ public class AttendService {
     }
 
     public List<Attend> attendsMonth(@NotNull String email, @NotNull String month){
-        User user = authService.isUser(email);
-        return attendRepository.findByUserAndAttendDateContains(user, month);
+        Member member = authService.getMember(email);
+        return attendRepository.findByMemberAndAttendDateContains(member, month);
     }
 
 }

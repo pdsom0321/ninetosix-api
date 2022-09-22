@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.ninetosix.user.vo;
+package com.gsc.ninetosixapi.ninetosix.member.vo;
 
 public enum AuthCodeFrom {
     SIGNUP, PASSWORD

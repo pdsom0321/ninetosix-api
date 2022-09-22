@@ -1,15 +1,15 @@
-package com.gsc.ninetosixapi.ninetosix.user.service;
+package com.gsc.ninetosixapi.ninetosix.member.service;
 
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
-import com.gsc.ninetosixapi.ninetosix.user.dto.*;
-import com.gsc.ninetosixapi.ninetosix.user.entity.RefreshToken;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import com.gsc.ninetosixapi.ninetosix.user.entity.UserRole;
-import com.gsc.ninetosixapi.ninetosix.user.repository.RefreshTokenRepository;
-import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
-import com.gsc.ninetosixapi.ninetosix.user.repository.UserRoleRepository;
+import com.gsc.ninetosixapi.ninetosix.member.dto.*;
+import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
+import com.gsc.ninetosixapi.ninetosix.member.entity.MemberRole;
+import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
+import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
+import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
     private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -34,19 +34,19 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserResDTO signup(signupReqDTO signupReqDTO) {
-        if (userRepository.existsByEmail(signupReqDTO.getEmail())) {
+    public MemberResDTO signup(signupReqDTO signupReqDTO) {
+        if (memberRepository.existsByEmail(signupReqDTO.getEmail())) {
             throw new RuntimeException("이미 가입한 사용자 입니다.");
         }
 
         Company company = companyService.getCompany(signupReqDTO.getCompanyCode());
-        User user = userRepository.save(User.createUser(signupReqDTO, company, passwordEncoder));
-        userRoleRepository.save(UserRole.createUserRole(user));
+        Member member = memberRepository.save(Member.createUser(signupReqDTO, company, passwordEncoder));
+        memberRoleRepository.save(MemberRole.createUserRole(member));
 
-        return UserResDTO.of(user);
+        return MemberResDTO.of(member);
     }
 
-    public TokenDTO login(LoginReqDTO reqDTO) {
+    public LoginResDTO login(LoginReqDTO reqDTO) {
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = reqDTO.toAuthentication();
@@ -56,30 +56,28 @@ public class AuthService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
+        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication);
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
-                .value(tokenDTO.getRefreshToken())
+                .value(loginResDTO.getRefreshToken())
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
         // 5. 토큰 발급
-        return tokenDTO;
+        return loginResDTO;
     }
 
     public ResponseEntity pwdChange(PwdChangeReqDTO reqDTO) {
-        User user = isUser(reqDTO.getEmail());
-
-        user.updatePassword(reqDTO.getPassword(), passwordEncoder);
-        userRepository.save(user);
+        Member member = getMember(reqDTO.getEmail());
+        member.updatePassword(reqDTO.getPassword(), passwordEncoder);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public TokenDTO reissue(TokenReqDTO reqDTO) {
+    public LoginResDTO reissue(TokenReqDTO reqDTO) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.getRefreshToken())) {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
@@ -98,20 +96,20 @@ public class AuthService {
         }
 
         // 5. 새로운 토큰 생성
-        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
+        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication);
 
         // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDTO.getRefreshToken());
+        RefreshToken newRefreshToken = refreshToken.updateValue(loginResDTO.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
         // 토큰 발급
-        return tokenDTO;
+        return loginResDTO;
     }
 
-    public User isUser(String email) {
-        User user = userRepository.findByEmail(email)
+    public Member getMember(String email) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
 
-        return user;
+        return member;
     }
 }

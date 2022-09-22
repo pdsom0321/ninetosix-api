@@ -37,7 +37,7 @@ public class AttendController {
     }
 
     @PostMapping("/attend/code")
-    public ResponseEntity attendCode(@RequestBody AttendCodeReqDTO reqDTO) {
-        return ResponseEntity.ok(attendService.attendCode(reqDTO));
+    public ResponseEntity createAttendByCode(@RequestBody AttendCodeReqDTO reqDTO) {
+        return ResponseEntity.ok(attendService.createAttendByCode(reqDTO));
     }
 }

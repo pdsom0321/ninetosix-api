@@ -1,7 +1,7 @@
-package com.gsc.ninetosixapi.ninetosix.user.repository;
+package com.gsc.ninetosixapi.ninetosix.member.repository;
 
-import com.gsc.ninetosixapi.ninetosix.user.entity.AuthCode;
-import com.gsc.ninetosixapi.ninetosix.user.vo.AuthCodeFrom;
+import com.gsc.ninetosixapi.ninetosix.member.entity.AuthCode;
+import com.gsc.ninetosixapi.ninetosix.member.vo.AuthCodeFrom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

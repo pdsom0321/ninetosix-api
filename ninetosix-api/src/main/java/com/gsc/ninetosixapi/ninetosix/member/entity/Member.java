@@ -1,8 +1,8 @@
-package com.gsc.ninetosixapi.ninetosix.user.entity;
+package com.gsc.ninetosixapi.ninetosix.member.entity;
 
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
-import com.gsc.ninetosixapi.ninetosix.user.dto.signupReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.dto.signupReqDTO;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,12 +23,12 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "USERS")
-public class User {
+@Table
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -65,17 +65,17 @@ public class User {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserRole> role = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
+    private Set<MemberRole> role = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
     private List<Attend> attends = new ArrayList<>();
 
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static User createUser(signupReqDTO signupReqDTO, Company company1, PasswordEncoder passwordEncoder) {
-        return User.builder()
+    public static Member createUser(signupReqDTO signupReqDTO, Company company1, PasswordEncoder passwordEncoder) {
+        return Member.builder()
                 .email(signupReqDTO.getEmail())
                 .name(signupReqDTO.getName())
                 .password(passwordEncoder.encode(signupReqDTO.getPassword()))
@@ -90,6 +90,8 @@ public class User {
 
     public void updatePassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(newPassword);
+        this.passwordModifiedDate = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
     }
 
 }

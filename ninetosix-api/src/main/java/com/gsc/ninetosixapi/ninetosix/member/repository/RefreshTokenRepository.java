@@ -1,8 +1,7 @@
-package com.gsc.ninetosixapi.ninetosix.user.repository;
+package com.gsc.ninetosixapi.ninetosix.member.repository;
 
-import com.gsc.ninetosixapi.ninetosix.user.entity.RefreshToken;
+import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

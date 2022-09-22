@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,10 +19,7 @@ public class CompanyLocationController {
     private final CompanyLocationService companyLocationService;
 
     @GetMapping("/company-locations")
-    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(Authentication authentication) {
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-        String email = userDetails.getUsername();
-
-        return ResponseEntity.ok(companyLocationService.companyLocations(email));
+    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(Principal principal) {
+        return ResponseEntity.ok(companyLocationService.companyLocations(principal.getName()));
     }
 }

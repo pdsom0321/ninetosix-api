@@ -1,7 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.myPage.dto;
 
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.*;
 
@@ -19,14 +19,14 @@ public class MyPageDto {
     private Company company;
     private YNCode pushAgreeYN;
 
-    public static MyPageDto from(Optional<User> user) {
+    public static MyPageDto from(Optional<Member> member) {
         return MyPageDto
                 .builder()
-                .name(user.get().getName())
-                .email(user.get().getEmail())
-                .contact(user.get().getContact())
-                .company(user.get().getCompany())
-                .pushAgreeYN(user.get().getPushAgreeYn())
+                .name(member.get().getName())
+                .email(member.get().getEmail())
+                .contact(member.get().getContact())
+                .company(member.get().getCompany())
+                .pushAgreeYN(member.get().getPushAgreeYn())
                 .build();
     }
 

@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.ninetosix.user.entity;
+package com.gsc.ninetosixapi.ninetosix.member.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

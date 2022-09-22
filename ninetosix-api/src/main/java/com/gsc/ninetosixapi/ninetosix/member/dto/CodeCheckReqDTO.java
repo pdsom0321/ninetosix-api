@@ -1,10 +1,11 @@
-package com.gsc.ninetosixapi.ninetosix.user.dto;
+package com.gsc.ninetosixapi.ninetosix.member.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CodeSendReqDTO {
+public class CodeCheckReqDTO {
     String email;
     String fromType;
+    String ranCode;
 }

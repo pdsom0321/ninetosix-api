@@ -1,10 +1,10 @@
-package com.gsc.ninetosixapi.ninetosix.user.service;
+package com.gsc.ninetosixapi.ninetosix.member.service;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckReqDTO;
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendReqDTO;
-import com.gsc.ninetosixapi.ninetosix.user.entity.AuthCode;
-import com.gsc.ninetosixapi.ninetosix.user.repository.AuthCodeRepository;
-import com.gsc.ninetosixapi.ninetosix.user.vo.AuthCodeFrom;
+import com.gsc.ninetosixapi.ninetosix.member.dto.CodeCheckReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.dto.CodeSendReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.entity.AuthCode;
+import com.gsc.ninetosixapi.ninetosix.member.repository.AuthCodeRepository;
+import com.gsc.ninetosixapi.ninetosix.member.vo.AuthCodeFrom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

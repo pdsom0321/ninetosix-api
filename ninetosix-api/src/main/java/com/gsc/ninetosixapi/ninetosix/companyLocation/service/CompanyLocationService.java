@@ -2,8 +2,8 @@ package com.gsc.ninetosixapi.ninetosix.companyLocation.service;
 
 import com.gsc.ninetosixapi.ninetosix.companyLocation.dto.CompanyLocationsResDTO;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import com.gsc.ninetosixapi.ninetosix.user.service.UserService;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
+import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 public class CompanyLocationService {
     private final CompanyLocationRepository companyLocationRepository;
 
-    private final UserService userService;
+    private final MemberService memberService;
 
     public List<CompanyLocationsResDTO> companyLocations(String email) {
-        User user = userService.getUser(email);
+        Member member = memberService.getMember(email);
 
-        return companyLocationRepository.findByCompany(user.getCompany()).stream()
+        return companyLocationRepository.findByCompany(member.getCompany()).stream()
                 .map(CompanyLocationsResDTO::createCompanyLocation)
                 .collect(Collectors.toList());
     }

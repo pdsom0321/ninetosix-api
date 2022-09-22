@@ -1,4 +1,4 @@
-package com.gsc.ninetosixapi.ninetosix.user.dto;
+package com.gsc.ninetosixapi.ninetosix.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

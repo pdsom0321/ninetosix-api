@@ -1,8 +1,8 @@
-package com.gsc.ninetosixapi.ninetosix.user.controller;
+package com.gsc.ninetosixapi.ninetosix.member.controller;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeCheckReqDTO;
-import com.gsc.ninetosixapi.ninetosix.user.dto.CodeSendReqDTO;
-import com.gsc.ninetosixapi.ninetosix.user.service.AuthCodeService;
+import com.gsc.ninetosixapi.ninetosix.member.dto.CodeCheckReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.dto.CodeSendReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.service.AuthCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

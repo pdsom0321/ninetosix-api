@@ -1,5 +1,6 @@
-package com.gsc.ninetosixapi.ninetosix.user.dto;
+package com.gsc.ninetosixapi.ninetosix.member.dto;
 
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TokenDTO {
+public class LoginResDTO {
     private String grantType;
     private String accessToken;
     private String refreshToken;

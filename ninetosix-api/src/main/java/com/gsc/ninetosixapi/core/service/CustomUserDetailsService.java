@@ -1,9 +1,9 @@
 package com.gsc.ninetosixapi.core.service;
 
-import com.gsc.ninetosixapi.ninetosix.user.dto.UserDetailsDTO;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import com.gsc.ninetosixapi.ninetosix.user.entity.UserRole;
-import com.gsc.ninetosixapi.ninetosix.user.repository.UserRepository;
+import com.gsc.ninetosixapi.ninetosix.member.dto.UserDetailsDTO;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
+import com.gsc.ninetosixapi.ninetosix.member.entity.MemberRole;
+import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -31,22 +31,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("############################ loadUserByUsername - username : " + username);
-        return userRepository.findByEmail(username)
+        return memberRepository.findByEmail(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
 
-    private UserDetails createUserDetails(User user) {
+    private UserDetails createUserDetails(Member member) {
         return new UserDetailsDTO(
-                user.getEmail(),
-                user.getPassword(),
-                this.converSimpleAuthorities(user.getRole())
+                member.getEmail(),
+                member.getPassword(),
+                this.converSimpleAuthorities(member.getRole())
         );
     }
 
-    private Set<GrantedAuthority> converSimpleAuthorities(Set<UserRole> roleList) {
+    private Set<GrantedAuthority> converSimpleAuthorities(Set<MemberRole> roleList) {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        for(UserRole item : roleList) {
+        for(MemberRole item : roleList) {
             authorities.add(new SimpleGrantedAuthority(item.getRole()));
         }
         return authorities;

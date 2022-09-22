@@ -1,8 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.attend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
-import com.gsc.ninetosixapi.ninetosix.user.entity.User;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,38 +39,37 @@ public class Attend {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public static Attend createAttend(String attendDate, String inTime, String locationCode, User user, String code){
+    public static Attend createAttend(String attendDate, String inTime, String locationCode, Member member, String code){
         return Attend
                 .builder()
                 .attendDate(attendDate)
                 .inTime(inTime)
                 .locationCode(locationCode)
-                .user(user)
+                .member(member)
                 .attendCode(code)
                 .insertDate(LocalDateTime.now())
                 .build();
     }
 
-    public static Attend createAttendByCode(String date, User user, String code) {
+    public static Attend createAttendByCode(String date, Member member, String code) {
         return Attend
                 .builder()
                 .attendDate(date)
-                .user(user)
+                .member(member)
                 .attendCode(code)
                 .insertDate(LocalDateTime.now())
                 .build();
     }
-    public void editCode(String date, User user, String code) {
-        this.attendDate = date;
-        this.user = user;
+    public void updateCode(Member member, String code) {
+        this.member = member;
         this.attendCode = code;
         this.updateDate = LocalDateTime.now();
     }
 
-    public void editOutTime(String time){
+    public void updateOutTime(String time){
         this.outTime = time;
         this.updateDate = LocalDateTime.now();
     }

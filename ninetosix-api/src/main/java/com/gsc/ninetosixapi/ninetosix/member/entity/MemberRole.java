@@ -1,6 +1,6 @@
-package com.gsc.ninetosixapi.ninetosix.user.entity;
+package com.gsc.ninetosixapi.ninetosix.member.entity;
 
-import com.gsc.ninetosixapi.ninetosix.user.vo.Role;
+import com.gsc.ninetosixapi.ninetosix.member.vo.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,23 +14,23 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table
-public class UserRole {
+public class MemberRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_role_id")
+    @Column(name = "member_role_id")
     private Long id;
 
     private String role;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public static UserRole createUserRole(User user) {
-        return UserRole.builder()
+    public static MemberRole createUserRole(Member member) {
+        return MemberRole.builder()
                 .role(Role.ROLE_MEMBER.name())
-                .user(user)
+                .member(member)
                 .build();
     }
 }

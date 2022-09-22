@@ -1,6 +1,6 @@
-package com.gsc.ninetosixapi.ninetosix.user.entity;
+package com.gsc.ninetosixapi.ninetosix.member.entity;
 
-import com.gsc.ninetosixapi.ninetosix.user.vo.AuthCodeFrom;
+import com.gsc.ninetosixapi.ninetosix.member.vo.AuthCodeFrom;
 import lombok.*;
 
 import javax.persistence.*;
