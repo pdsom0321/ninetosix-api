@@ -1,6 +1,7 @@
 package com.gsc.ninetosixapi.core.filter;
 
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,14 +29,19 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1. Request Header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
 
-        // 2. validateToken 으로 토큰 유효성 검사
-        // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        try {
+            // 2. validateToken 으로 토큰 유효성 검사
+            // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
+            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                Authentication authentication = tokenProvider.getAuthentication(jwt);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        } catch (JwtException e) {
+            logger.error("JwtException !!!!!!");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        }
     }
 
     // Request Header 에서 토큰 정보를 꺼내오기

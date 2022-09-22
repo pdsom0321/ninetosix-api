@@ -47,8 +47,6 @@ public class AuthService {
     }
 
     public TokenDTO login(LoginReqDTO reqDTO) {
-        User user = isUser(reqDTO.getEmail());
-
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = reqDTO.toAuthentication();
