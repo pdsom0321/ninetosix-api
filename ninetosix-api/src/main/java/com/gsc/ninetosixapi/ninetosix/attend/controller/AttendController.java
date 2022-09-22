@@ -5,11 +5,13 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AttendController {
@@ -22,8 +24,8 @@ public class AttendController {
         return ResponseEntity.ok(new AttendResDTO(attendService.attends(email)));
     }
 
-    @GetMapping("/attends/month")
-    public ResponseEntity attendsMonth(Authentication authentication, @RequestParam String month){
+    @GetMapping("/attends/{month}")
+    public ResponseEntity attendsMonth(Authentication authentication, @PathVariable String month){
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         String email = userDetails.getUsername();
         return ResponseEntity.ok(new AttendResDTO(attendService.attendsMonth(email, month)));
