@@ -6,6 +6,8 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,13 +16,17 @@ public class AttendController {
     private final AttendService attendService;
 
     @GetMapping("/attends")
-    public ResponseEntity attends(){
-        return ResponseEntity.ok(new AttendResDTO(attendService.attends("it1485@gsitm.com")));
+    public ResponseEntity attends(Authentication authentication){
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(new AttendResDTO(attendService.attends(email)));
     }
 
     @GetMapping("/attends/month")
-    public ResponseEntity monthAttends(@RequestParam String date){
-        return ResponseEntity.ok(new AttendResDTO(attendService.monthAttends("it1485@gsitm.com", date)));
+    public ResponseEntity attendsMonth(Authentication authentication, @RequestParam String month){
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(new AttendResDTO(attendService.attendsMonth(email, month)));
     }
 
     @PostMapping("/attend")

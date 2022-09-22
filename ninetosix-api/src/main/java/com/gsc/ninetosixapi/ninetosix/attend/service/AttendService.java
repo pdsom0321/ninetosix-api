@@ -81,9 +81,9 @@ public class AttendService {
         return attendList;
     }
 
-    public List<Attend> monthAttends(@NotNull String email, @NotNull String date){
+    public List<Attend> attendsMonth(@NotNull String email, @NotNull String month){
         User user = authService.isUser(email);
-        return attendRepository.findByUserAndAttendDateContains(user, date);
+        return attendRepository.findByUserAndAttendDateContains(user, month);
     }
 
 }
