@@ -2,7 +2,6 @@ package com.gsc.ninetosixapi.ninetosix.attend.repository;
 
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

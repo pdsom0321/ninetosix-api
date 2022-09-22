@@ -1,5 +1,6 @@
-package com.gsc.ninetosixapi.core.jwt;
+package com.gsc.ninetosixapi.core.filter;
 
+import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
