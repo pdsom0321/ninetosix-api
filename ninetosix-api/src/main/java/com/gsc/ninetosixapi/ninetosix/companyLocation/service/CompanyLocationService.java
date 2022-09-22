@@ -1,19 +1,19 @@
 package com.gsc.ninetosixapi.ninetosix.companyLocation.service;
 
 import com.gsc.ninetosixapi.ninetosix.companyLocation.dto.CompanyLocationsResDTO;
-import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
 import com.gsc.ninetosixapi.ninetosix.user.entity.User;
 import com.gsc.ninetosixapi.ninetosix.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CompanyLocationService {
     private final CompanyLocationRepository companyLocationRepository;
 

@@ -1,6 +1,6 @@
 package com.gsc.ninetosixapi.core.config;
 
-import com.gsc.ninetosixapi.core.jwt.JwtFilter;
+import com.gsc.ninetosixapi.core.filter.JwtFilter;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

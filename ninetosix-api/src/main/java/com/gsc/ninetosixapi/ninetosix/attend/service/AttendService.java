@@ -61,7 +61,7 @@ public class AttendService {
         if(attend.isPresent()) {
             attend.get().editCode(day, user, code);
         } else {
-            attendRepository.save(Attend.addCode(day, user, code));
+            attendRepository.save(Attend.createAttendByCode(day, user, code));
         }
 
         return new ResponseEntity(HttpStatus.OK);

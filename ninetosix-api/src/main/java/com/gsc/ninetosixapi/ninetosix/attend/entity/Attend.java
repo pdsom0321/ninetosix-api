@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Builder
 @Entity
@@ -56,7 +55,7 @@ public class Attend {
                 .build();
     }
 
-    public static Attend addCode(String date, User user, String code) {
+    public static Attend createAttendByCode(String date, User user, String code) {
         return Attend
                 .builder()
                 .attendDate(date)
