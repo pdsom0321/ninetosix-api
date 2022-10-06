@@ -37,17 +37,16 @@ public class AttendService {
         String locationCode = reqDTO.getLocationCode();
         User user = authService.isUser(reqDTO.getEmail());
 
-        attendRepository.findByUserAndAttendDate(user, ymd)
-            .map(_attend -> {
-                _attend.editOutTime(outTime);
-                return _attend;
-            })
-            .orElseGet(() -> {
-                String _attendCode = Optional.ofNullable(attendCode)
-                        .filter(code -> !code.isEmpty() && !code.isBlank())
-                        .orElse("ST01");
-                return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
-            });
+        Optional<Attend> optionalAttend = attendRepository.findByUserAndAttendDate(user, ymd);
+        if(optionalAttend.isPresent()){
+            optionalAttend.get().editOutTime(outTime);
+        } else {
+            String _attendCode = Optional.ofNullable(attendCode)
+                    .filter(code -> !code.isEmpty() && !code.isBlank())
+                    .orElse("ST01");
+            attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, user, _attendCode));
+        }
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -72,10 +71,18 @@ public class AttendService {
         String startDate = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        List<Attend> attendList = attendRepository.findByUserAndAttendDateBetween(user, startDate, endDate);
+        List<Attend> attendList = attendRepository.findTop2ByUserAndAttendDateBetweenOrderByAttendDateDesc(user, startDate, endDate);
 
-        for(int i = attendList.size(); i < 2; i++){
-            attendList.add(new Attend());
+        if(attendList != null){
+            if(attendList.size() == 1){
+                if(attendList.get(0).getAttendDate().equals(endDate)){
+                    attendList.add(0, new Attend());
+                }
+            }
+
+            for(int i = attendList.size(); i < 2; i++){
+                attendList.add(new Attend());
+            }
         }
 
         return attendList;

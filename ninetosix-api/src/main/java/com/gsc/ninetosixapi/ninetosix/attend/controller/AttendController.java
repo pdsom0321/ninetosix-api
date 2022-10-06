@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -18,16 +20,15 @@ public class AttendController {
     private final AttendService attendService;
 
     @GetMapping("/attends")
-    public ResponseEntity attends(Authentication authentication){
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-        String email = userDetails.getUsername();
+    public ResponseEntity attends(Principal principal){
+        //String email = principal.getName();
+        String email = "it1485@gsitm.com";
         return ResponseEntity.ok(new AttendResDTO(attendService.attends(email)));
     }
 
     @GetMapping("/attends/{month}")
-    public ResponseEntity attendsMonth(Authentication authentication, @PathVariable String month){
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-        String email = userDetails.getUsername();
+    public ResponseEntity attendsMonth(Principal principal, @PathVariable String month){
+        String email = principal.getName();
         return ResponseEntity.ok(new AttendResDTO(attendService.attendsMonth(email, month)));
     }
 
