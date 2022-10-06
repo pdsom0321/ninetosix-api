@@ -19,8 +19,7 @@ public class AttendController {
 
     @GetMapping("/attends")
     public ResponseEntity attends(Principal principal){
-        //String email = principal.getName();
-        String email = "it1485@gsitm.com";
+        String email = principal.getName();
         return ResponseEntity.ok(new AttendResDTO(attendService.attends(email)));
     }
 
