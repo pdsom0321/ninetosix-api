@@ -3,7 +3,6 @@ package com.gsc.ninetosixapi.core.config;
 import com.gsc.ninetosixapi.core.jwt.JwtAccessDeniedHandler;
 import com.gsc.ninetosixapi.core.jwt.JwtAuthenticationEntryPoint;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
-import com.gsc.ninetosixapi.core.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
