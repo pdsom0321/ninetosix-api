@@ -34,7 +34,7 @@ public class AttendService {
         String locationCode = reqDTO.getLocationCode();
         Member member = authService.getMember(reqDTO.getEmail());
 
-        attendRepository.findByUserAndAttendDate(member, ymd)
+        attendRepository.findByMemberAndAttendDate(member, ymd)
             .map(_attend -> {
                 _attend.updateOutTime(outTime);
                 return _attend;
@@ -54,7 +54,7 @@ public class AttendService {
         String email = reqDTO.getEmail();
 
         Member member = authService.getMember(email);
-        Optional<Attend> attend = attendRepository.findByUserAndAttendDate(member, day);
+        Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, day);
         if(attend.isPresent()) {
             attend.get().updateCode(member, code);
         } else {
@@ -69,14 +69,15 @@ public class AttendService {
         String startDate = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        List<Attend> attendList = attendRepository.findTop2ByUserAndAttendDateBetweenOrderByAttendDateDesc(member, startDate, endDate);
+        List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateDesc(member, startDate, endDate);
 
-        if(attendList != null){
-            if(attendList.size() == 1){
-                if(attendList.get(0).getAttendDate().equals(endDate)){
+        if(attendList != null) {
+            if (attendList.size() == 1) {
+                if (attendList.get(0).getAttendDate().equals(endDate)) {
                     attendList.add(0, new Attend());
                 }
             }
+        }
 
         for(int i = attendList.size(); i < 2; i++){
             attendList.add(new Attend());
@@ -87,7 +88,7 @@ public class AttendService {
 
     public List<Attend> attendsMonth(@NotNull String email, @NotNull String month){
         Member member = authService.getMember(email);
-        return attendRepository.findByUserAndAttendDateContains(member, month);
+        return attendRepository.findByMemberAndAttendDateContains(member, month);
     }
 
 }
