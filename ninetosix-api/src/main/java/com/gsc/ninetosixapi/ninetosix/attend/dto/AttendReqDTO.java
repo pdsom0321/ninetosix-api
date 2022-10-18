@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AttendReqDTO {
-    private String email;
     private String inTime;
     private String outTime;
     private String attendCode;

@@ -26,13 +26,13 @@ public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
 
-    public ResponseEntity attendCheck(@NotNull AttendReqDTO reqDTO){
+    public ResponseEntity attendCheck(String email, @NotNull AttendReqDTO reqDTO){
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String inTime = reqDTO.getInTime();
         String outTime = reqDTO.getOutTime();
         String attendCode = reqDTO.getAttendCode();
         String locationCode = reqDTO.getLocationCode();
-        Member member = authService.getMember(reqDTO.getEmail());
+        Member member = authService.getMember(email);
 
         attendRepository.findByMemberAndAttendDate(member, ymd)
             .map(_attend -> {

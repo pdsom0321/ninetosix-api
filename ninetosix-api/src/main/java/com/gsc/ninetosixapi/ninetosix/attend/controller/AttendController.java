@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 
@@ -30,8 +31,8 @@ public class AttendController {
     }
 
     @PostMapping("/attend")
-    public ResponseEntity attendCheck(@RequestBody AttendReqDTO attendReqDTO){
-        return ResponseEntity.ok(attendService.attendCheck(attendReqDTO));
+    public ResponseEntity attendCheck(@ApiIgnore Principal principal, @RequestBody AttendReqDTO attendReqDTO){
+        return ResponseEntity.ok(attendService.attendCheck(principal.getName(), attendReqDTO));
     }
 
     @PostMapping("/attend/code")
