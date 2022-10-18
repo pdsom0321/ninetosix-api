@@ -20,6 +20,7 @@ public class Company {
     @Column(name = "company_id")
     private Long id;
 
+    @Column(unique = true)
     private String code;
 
     private String name;

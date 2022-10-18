@@ -5,8 +5,8 @@
     <!-- log 변수 값 설정 -->
     <property name="CONSOLE_LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative]  %clr(%-5level) %clr(${PID:-}){magenta} %clr(---){faint} %clr([%15.15thread]){faint} %clr(%-40.40logger{36}){cyan} %clr(:){faint} %msg%n"/>
     <!-- log 디렉토리 설정 -->
-    <property name="LOG_DIR" value="C:/Users/pdsom/OneDrive/바탕 화면" />
-    <property name="LOG_FULL_PATH" value="${LOG_DIR}/ninetosix/api.log" />
+    <property name="LOG_DIR" value="logs" />
+    <property name="LOG_FULL_PATH" value="${LOG_DIR}/api.log" />
 
     <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FULL_PATH}</file>
@@ -33,12 +33,10 @@
     </appender>
 
     <logger name="com.gsc.ninetosixapi.core" level="DEBUG" additibity="false">
-        <appender-ref ref="consoleAppender"/>
         <appender-ref ref="fileAppender"/>
     </logger>
 
     <root level="DEBUG">
         <appender-ref ref="consoleAppender"/>
-        <appender-ref ref="fileAppender"/>
     </root>
 </configuration>

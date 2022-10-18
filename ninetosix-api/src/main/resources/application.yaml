@@ -1,15 +1,12 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/test
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://3.36.28.63:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: gsmobile!@#
   jpa:
     hibernate:
-      ddl-auto: create # 운영에는 create 하면 안됨 >서버 재구동 시 모두 없어지므로.. update
+      ddl-auto: none # 운영에는 create 하면 안됨 >서버 재구동 시 모두 없어지므로..
     properties:
       hibernate:
         format_sql: true
@@ -35,6 +32,9 @@ spring:
 logging:
   level:
     org:
+      springframework:
+        boot:
+          autoconfigure : error
       hibernate:
         SQL: debug
         type:

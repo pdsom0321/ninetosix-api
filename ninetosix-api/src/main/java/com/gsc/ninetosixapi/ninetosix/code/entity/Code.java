@@ -17,12 +17,13 @@ public class Code {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_id")
     private Long id;
-
+    @Column(unique = true)
     private String code;
     private String name;
     private String codeGroup;
     private String key1;
     private String key2;
+    @Column(unique = true)
     private Integer codeOrder;
 
     @Enumerated(EnumType.STRING)
