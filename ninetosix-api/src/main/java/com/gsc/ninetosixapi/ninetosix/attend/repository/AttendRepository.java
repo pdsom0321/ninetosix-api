@@ -14,5 +14,5 @@ public interface AttendRepository extends JpaRepository<Attend, Long>, JpaSpecif
     Optional<Attend> findByMemberAndAttendDate(Member member, String attendDate);
 
     List<Attend> findByMemberAndAttendDateContains(Member member, String attendDate);
-    ArrayList<Attend> findTop2ByMemberAndAttendDateBetweenOrderByAttendDateDesc(Member member, String startDate, String endDate);
+    ArrayList<Attend> findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(Member member, String startDate, String endDate);
 }
