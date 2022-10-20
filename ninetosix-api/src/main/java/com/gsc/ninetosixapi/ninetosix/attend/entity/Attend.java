@@ -42,11 +42,10 @@ public class Attend {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Attend createAttend(String attendDate, String inTime, String locationCode, Member member, String code){
+    public static Attend createAttend(String attendDate, String locationCode, Member member, String code){
         return Attend
                 .builder()
                 .attendDate(attendDate)
-                .inTime(inTime)
                 .locationCode(locationCode)
                 .member(member)
                 .attendCode(code)
@@ -66,6 +65,11 @@ public class Attend {
     public void updateCode(Member member, String code) {
         this.member = member;
         this.attendCode = code;
+        this.updateDate = LocalDateTime.now();
+    }
+
+    public void updateInTime(String time){
+        this.inTime = time;
         this.updateDate = LocalDateTime.now();
     }
 

@@ -27,6 +27,7 @@ public class AttendService {
     private final AuthService authService;
 
     public ResponseEntity attendCheck(String email, @NotNull AttendReqDTO reqDTO){
+        String yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String inTime = reqDTO.getInTime();
         String outTime = reqDTO.getOutTime();
@@ -34,17 +35,21 @@ public class AttendService {
         String locationCode = reqDTO.getLocationCode();
         Member member = authService.getMember(email);
 
-        attendRepository.findByMemberAndAttendDate(member, ymd)
-            .map(_attend -> {
+        Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, ymd);
+
+        if(!attend.isPresent()){
+            Attend _attend = attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode));
+
+            if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
+                _attend.updateInTime(inTime);
+            } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
                 _attend.updateOutTime(outTime);
-                return _attend;
-            })
-            .orElseGet(() -> {
-                String _attendCode = Optional.ofNullable(attendCode)
-                        .filter(code -> !code.isEmpty() && !code.isBlank())
-                        .orElse(AttendCode.ATTEND_CODE_DAY_NORMAL.getAttendCode());
-                return attendRepository.save(Attend.createAttend(ymd, inTime, locationCode, member, _attendCode));
-            });
+            }
+
+        } else {
+            attend.get().updateOutTime(outTime);
+        }
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
