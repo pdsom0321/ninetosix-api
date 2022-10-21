@@ -47,7 +47,11 @@ public class AttendService {
             }
 
         } else {
-            attend.get().updateOutTime(outTime);
+            if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
+                attend.get().updateInTime(inTime);
+            } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
+                attend.get().updateOutTime(outTime);
+            }
         }
 
         return new ResponseEntity(HttpStatus.OK);
