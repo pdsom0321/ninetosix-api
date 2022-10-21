@@ -57,10 +57,9 @@ public class AttendService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public ResponseEntity createAttendByCode(@NotNull AttendCodeReqDTO reqDTO) {
+    public ResponseEntity createAttendByCode(@NotNull String email, @NotNull AttendCodeReqDTO reqDTO) {
         String day = reqDTO.getDate();
         String code = reqDTO.getAttendCode();
-        String email = reqDTO.getEmail();
 
         Member member = authService.getMember(email);
         Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, day);

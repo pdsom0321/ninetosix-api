@@ -10,6 +10,7 @@ import com.gsc.ninetosixapi.ninetosix.member.entity.MemberRole;
 import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
+import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,8 +71,8 @@ public class AuthService {
         return loginResDTO;
     }
 
-    public ResponseEntity pwdChange(PwdChangeReqDTO reqDTO) {
-        Member member = getMember(reqDTO.getEmail());
+    public ResponseEntity pwdChange(@NotNull String email, @NotNull PwdChangeReqDTO reqDTO) {
+        Member member = getMember(email);
         member.updatePassword(reqDTO.getPassword(), passwordEncoder);
 
         return new ResponseEntity(HttpStatus.OK);

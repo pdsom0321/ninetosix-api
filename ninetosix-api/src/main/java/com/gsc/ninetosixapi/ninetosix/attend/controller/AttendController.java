@@ -19,13 +19,12 @@ public class AttendController {
     private final AttendService attendService;
 
     @GetMapping("/attends")
-    public ResponseEntity attends(Principal principal){
-        String email = principal.getName();
-        return ResponseEntity.ok(new AttendResDTO(attendService.attends(email)));
+    public ResponseEntity attends(@ApiIgnore Principal principal){
+        return ResponseEntity.ok(new AttendResDTO(attendService.attends(principal.getName())));
     }
 
     @GetMapping("/attends/{month}")
-    public ResponseEntity attendsMonth(Principal principal, @PathVariable String month){
+    public ResponseEntity attendsMonth(@ApiIgnore Principal principal, @PathVariable String month){
         String email = principal.getName();
         return ResponseEntity.ok(new AttendResDTO(attendService.attendsMonth(email, month)));
     }
@@ -36,7 +35,7 @@ public class AttendController {
     }
 
     @PostMapping("/attend/code")
-    public ResponseEntity createAttendByCode(@RequestBody AttendCodeReqDTO reqDTO) {
-        return ResponseEntity.ok(attendService.createAttendByCode(reqDTO));
+    public ResponseEntity createAttendByCode(@ApiIgnore Principal principal, @RequestBody AttendCodeReqDTO reqDTO) {
+        return ResponseEntity.ok(attendService.createAttendByCode(principal.getName(), reqDTO));
     }
 }
