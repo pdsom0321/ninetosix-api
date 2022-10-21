@@ -1,10 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.member.dto;
 
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
@@ -15,4 +12,11 @@ public class LoginResDTO {
     private String accessToken;
     private String refreshToken;
     private Long accessTokenExpiresIn;
+    private String name;
+
+    public static LoginResDTO memberName(String name) {
+        return LoginResDTO.builder()
+                .name(name)
+                .build();
+    }
 }
