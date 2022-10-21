@@ -35,7 +35,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public LoginResDTO generateTokenDto(Authentication authentication) {
+    public LoginResDTO generateTokenDto(Authentication authentication, String name) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -63,6 +63,7 @@ public class TokenProvider {
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
+                .name(name)
                 .build();
     }
 
