@@ -12,6 +12,7 @@ import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -81,6 +83,7 @@ public class AuthService {
     public LoginResDTO reissue(TokenReqDTO reqDTO) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.getRefreshToken())) {
+            log.error("REQ Refresh Token : " + reqDTO.getRefreshToken());
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
 
@@ -93,6 +96,9 @@ public class AuthService {
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(reqDTO.getRefreshToken())) {
+            log.error("DB Refresh Token : " + refreshToken.getValue());
+            log.error("REQ Refresh Token : " + reqDTO.getRefreshToken());
+            log.error("equals ? : " + refreshToken.getValue().equals(reqDTO.getRefreshToken()));
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 

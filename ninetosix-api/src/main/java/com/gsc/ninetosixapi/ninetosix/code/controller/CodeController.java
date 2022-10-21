@@ -19,7 +19,7 @@ public class CodeController {
     private final CodeService codeService;
 
     @GetMapping("/codes")
-    public ResponseEntity<List<CodesResDTO>> codes(CodesReqDTO reqDTO) {
-        return ResponseEntity.ok(codeService.codes(reqDTO.getCodeGroup()));
+    public ResponseEntity<List<CodesResDTO>> getCodes(CodesReqDTO reqDTO) {
+        return ResponseEntity.ok(codeService.getCodes(reqDTO.getCodeGroup()));
     }
 }

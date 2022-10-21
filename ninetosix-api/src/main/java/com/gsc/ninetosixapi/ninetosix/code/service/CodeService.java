@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class CodeService {
     private final CodeRepository codeRepository;
 
-    public List<CodesResDTO> codes(String codeGroup) {
+    public List<CodesResDTO> getCodes(String codeGroup) {
         return codeRepository.findAllByCodeGroupAndUseYn(codeGroup, YNCode.Y).stream()
                 .map(CodesResDTO::getCodes)
                 .collect(Collectors.toList());
