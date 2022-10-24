@@ -18,7 +18,7 @@ public class AuthCodeController {
     }
 
     @PutMapping("/auth/code")
-    public Boolean checkCode(@ModelAttribute CodeCheckReqDTO reqDTO) {
+    public Boolean checkCode(@RequestBody CodeCheckReqDTO reqDTO) {
         return authCodeService.checkCode(reqDTO);
     }
 
