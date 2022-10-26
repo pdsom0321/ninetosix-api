@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class CodeCheckReqDTO {
-    String email;
-    String fromType;
-    String ranCode;
+    private String email;
+    private String fromType;
+    private String ranCode;
 }

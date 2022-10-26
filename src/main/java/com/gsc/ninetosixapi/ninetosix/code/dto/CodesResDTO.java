@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CodesResDTO {
-    String code;
-    String name;
+    private String code;
+    private String name;
 
     public static CodesResDTO getCodes(Code code) {
         return CodesResDTO.builder()

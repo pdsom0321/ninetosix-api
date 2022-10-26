@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 1. Request Header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
-        log.info("================ " + jwt);
+        log.info("================jwt: " + jwt);
 
         try {
             // 2. validateToken 으로 토큰 유효성 검사
@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
             logger.error("JwtException !!!!!!");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized!!");
         }
     }
 

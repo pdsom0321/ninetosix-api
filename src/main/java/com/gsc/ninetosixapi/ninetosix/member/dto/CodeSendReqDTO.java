@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class PwdChangeReqDTO {
-    String password;
+public class CodeSendReqDTO {
+    private String email;
+    private String fromType;
 }

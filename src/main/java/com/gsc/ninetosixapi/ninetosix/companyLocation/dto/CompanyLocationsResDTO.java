@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CompanyLocationsResDTO {
-    String companyLocationCode;
-    String companyCode;
-    String locationCode;
-    String locationName;
-    Float latitude;
-    Float longitude;
+    private String companyLocationCode;
+    private String companyCode;
+    private String locationCode;
+    private String locationName;
+    private Float latitude;
+    private Float longitude;
 
     public static CompanyLocationsResDTO createCompanyLocation(CompanyLocation companyLocation) {
         return CompanyLocationsResDTO.builder()

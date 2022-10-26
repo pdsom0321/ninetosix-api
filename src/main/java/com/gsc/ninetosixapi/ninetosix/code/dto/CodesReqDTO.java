@@ -5,5 +5,5 @@ import lombok.Setter;
 
 @Getter @Setter
 public class CodesReqDTO {
-    String codeGroup;
+    private String codeGroup;
 }
