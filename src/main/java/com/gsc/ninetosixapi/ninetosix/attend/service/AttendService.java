@@ -28,7 +28,6 @@ public class AttendService {
     private final AuthService authService;
 
     public ResponseEntity attendCheck(String email, @NotNull AttendReqDTO reqDTO){
-        String yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String inTime = reqDTO.getInTime();
         String outTime = reqDTO.getOutTime();
@@ -36,24 +35,21 @@ public class AttendService {
         String locationCode = reqDTO.getLocationCode();
         Member member = authService.getMember(email);
 
-        Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, ymd);
+        Optional<Attend> optionalAttend = attendRepository.findByMemberAndAttendDate(member, ymd);
 
-        if(!attend.isPresent()){
-            Attend _attend = attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode));
-
-            if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
-                _attend.updateInTime(inTime);
-            } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
-                _attend.updateOutTime(outTime);
-            }
-
+        // DB Table에 금일 데이터 유/무 체크
+        if(!optionalAttend.isPresent()){
+            // create attend object and insert
+            optionalAttend = Optional.of(attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode)));
         } else {
-            attend.get().updateCode(member, attendCode);
-            if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
-                attend.get().updateInTime(inTime);
-            } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
-                attend.get().updateOutTime(outTime);
-            }
+            // attend code update
+            optionalAttend.get().updateCode(member, attendCode);
+        }
+
+        if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
+            optionalAttend.get().updateInTime(inTime);
+        } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
+            optionalAttend.get().updateOutTime(outTime);
         }
 
         return new ResponseEntity(HttpStatus.OK);

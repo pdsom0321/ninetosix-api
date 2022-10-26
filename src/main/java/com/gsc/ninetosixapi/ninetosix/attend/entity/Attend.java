@@ -33,6 +33,8 @@ public class Attend {
 
     private String locationCode;
 
+    private String workTime;
+
     private LocalDateTime insertDate;
 
     private LocalDateTime updateDate;
