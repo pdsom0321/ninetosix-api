@@ -6,9 +6,9 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
-import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AttendService {
@@ -59,15 +60,23 @@ public class AttendService {
     }
 
     public ResponseEntity createAttendByCode(@NotNull String email, @NotNull AttendCodeReqDTO reqDTO) {
-        String day = reqDTO.getDate();
         String code = reqDTO.getAttendCode();
+        int from = reqDTO.getFrom();
+        int to = reqDTO.getTo();
+        log.info("================from : " + from);
+        log.info("================to : " + to);
 
-        Member member = authService.getMember(email);
-        Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, day);
-        if(attend.isPresent()) {
-            attend.get().updateCode(member, code);
-        } else {
-            attendRepository.save(Attend.createAttendByCode(day, member, code));
+        int current = from;
+        while(current <= to) {
+            log.info("================current : " + current);
+            Member member = authService.getMember(email);
+            Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, String.valueOf(current));
+            if(attend.isPresent()) {
+                attend.get().updateCode(member, code);
+            } else {
+                attendRepository.save(Attend.createAttendByCode(String.valueOf(current), member, code));
+            }
+            current ++;
         }
 
         return new ResponseEntity(HttpStatus.OK);

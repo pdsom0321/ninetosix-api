@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class AttendCodeReqDTO {
-    private String date;
+    private int from;
+    private int to;
     private String attendCode;
 }
