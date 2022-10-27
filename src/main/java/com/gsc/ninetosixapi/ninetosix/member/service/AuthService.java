@@ -4,9 +4,11 @@ import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
 import com.gsc.ninetosixapi.ninetosix.member.dto.*;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Blacklist;
 import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.entity.MemberRole;
+import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
@@ -15,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -36,9 +37,11 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final BlacklistRepository blacklistRepository;
+
     private final PasswordEncoder passwordEncoder;
 
-    public MemberResDTO signup(signupReqDTO signupReqDTO) {
+    public MemberResDTO signup(SignupReqDTO signupReqDTO) {
         if (memberRepository.existsByEmail(signupReqDTO.getEmail())) {
             throw new RuntimeException("이미 가입한 사용자 입니다.");
         }
@@ -114,6 +117,31 @@ public class AuthService {
 
         // 토큰 발급
         return loginResDTO;
+    }
+
+    public ResponseEntity logout(LogoutReqDTO reqDTO) {
+        String accessToken = reqDTO.getAccessToken();
+        log.info("accessToken : " + accessToken);
+
+        // 1. Access Token 검증
+        if (!tokenProvider.validateToken(accessToken)) {
+            log.error("accessToken : " + accessToken);
+            throw new RuntimeException("access Token 이 유효하지 않습니다.");
+        }
+
+        // 2. Access Token 에서 authentication 을 가져옴
+        Authentication authentication = tokenProvider.getAuthentication(accessToken);
+
+        // 3. DB에 저장된 Refresh Token 제거
+        String email = authentication.getName();
+        refreshTokenRepository.deleteByKey(email);
+
+        // 4. Access Token blacklist에 등록하여 만료시키기
+        // 해당 엑세스 토큰의 남은 유효시간을 얻음 tokenProvider.getExpiration -> insertDate로 변경 추후 배치 돌면서 데이터 삭제 예정
+        // Long expiration = tokenProvider.getExpiration(accessToken);
+        blacklistRepository.save(Blacklist.createBlacklist(accessToken));
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     public Member getMember(String email) {

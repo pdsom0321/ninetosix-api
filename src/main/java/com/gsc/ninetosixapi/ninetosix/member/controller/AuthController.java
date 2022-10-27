@@ -15,7 +15,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/new")
-    public ResponseEntity<MemberResDTO> signup(@RequestBody signupReqDTO reqDTO) {
+    public ResponseEntity<MemberResDTO> signup(@RequestBody SignupReqDTO reqDTO) {
         return ResponseEntity.ok(authService.signup(reqDTO));
     }
 
@@ -32,6 +32,11 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity reissue(@RequestBody TokenReqDTO reqDTO) {
         return ResponseEntity.ok(authService.reissue(reqDTO));
+    }
+
+    @PostMapping("/auth/out")
+    public ResponseEntity logout(@RequestBody LogoutReqDTO reqDTO) {
+        return ResponseEntity.ok(authService.logout(reqDTO));
     }
 
 }

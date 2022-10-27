@@ -1,10 +1,12 @@
 package com.gsc.ninetosixapi.core.jwt;
 
 import com.gsc.ninetosixapi.ninetosix.member.dto.LoginResDTO;
+import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,8 +29,9 @@ public class TokenProvider {
     private static final String BEARER_TYPE = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
-
     private final Key key;
+    @Autowired
+    private BlacklistRepository blacklistRepository;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -53,8 +56,9 @@ public class TokenProvider {
                 .compact();
 
         // Refresh Token 생성
+        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
@@ -90,6 +94,10 @@ public class TokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            if(blacklistRepository.existsByAccessToken(token)) {
+                log.info("blacklist - 로그아웃된 사용자 입니다.");
+                throw new JwtException("로그아웃된 사용자의 JWT 토큰입니다.");
+            }
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
@@ -111,4 +119,23 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+    /**
+     * 해당 엑세스 토큰의 남은 유효시간을 얻음 (redis가 아니어서 사용 안함)
+     * @param accessToken
+     * @return
+     */
+    public Long getExpiration(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+
+        if (claims.get(AUTHORITIES_KEY) == null) {
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        }
+
+        long now = (new Date()).getTime();
+        Date date = new Date(claims.getExpiration().getTime() - now);
+
+        return date.getTime();
+    }
+
 }

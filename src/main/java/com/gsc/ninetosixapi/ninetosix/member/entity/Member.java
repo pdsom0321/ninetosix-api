@@ -2,7 +2,7 @@ package com.gsc.ninetosixapi.ninetosix.member.entity;
 
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
-import com.gsc.ninetosixapi.ninetosix.member.dto.signupReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.dto.SignupReqDTO;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -74,7 +74,7 @@ public class Member {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static Member createUser(signupReqDTO signupReqDTO, Company company1, PasswordEncoder passwordEncoder) {
+    public static Member createUser(SignupReqDTO signupReqDTO, Company company1, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .email(signupReqDTO.getEmail())
                 .name(signupReqDTO.getName())
