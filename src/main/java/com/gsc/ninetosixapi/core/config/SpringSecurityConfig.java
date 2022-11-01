@@ -5,12 +5,14 @@ import com.gsc.ninetosixapi.core.jwt.JwtAuthenticationEntryPoint;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
@@ -55,19 +57,6 @@ public class SpringSecurityConfig {
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
-
-                /*.and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/loginProc")
-                .usernameParameter("id")
-                .passwordParameter("pw")
-                .defaultSuccessUrl("/main", true)
-                .permitAll()
-                .and()
-                .userDetailsService(customUserDetailsService)
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc"));*/
 
         return http.build();
     }
