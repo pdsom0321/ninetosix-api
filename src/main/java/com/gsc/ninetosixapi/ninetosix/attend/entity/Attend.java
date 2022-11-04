@@ -33,7 +33,8 @@ public class Attend {
 
     private String locationCode;
 
-    //private String workTime;
+    @Transient
+    private String workTime;
 
     private LocalDateTime insertDate;
 
@@ -78,5 +79,10 @@ public class Attend {
     public void updateOutTime(String time){
         this.outTime = time;
         this.updateDate = LocalDateTime.now();
+    }
+
+    public void updateWorkTime(long hour, long min){
+        this.workTime = ((hour < 10) ? "0" : "") + hour + "시간 ";
+        this.workTime += ((min < 10) ? "0" : "") +  min + "분";
     }
 }
