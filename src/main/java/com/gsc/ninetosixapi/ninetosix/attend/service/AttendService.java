@@ -140,17 +140,19 @@ public class AttendService {
             AttendCode code = AttendCode.findByStatusCode(attend.getAttendCode());
 
             try{
+                if(in != null && out != null) {
+                    inTime = LocalDateTime.parse(date + in, ofPattern);
+                    outTime = LocalDateTime.parse(date + out, ofPattern);
+                }
+
                 switch (code){
                     case ATTEND_CODE_DAY_NORMAL :
                     case ATTEND_CODE_DAY_HALF_MORNING :
                     case ATTEND_CODE_DAY_HALF_HALF_MORNING :
                     case ATTEND_CODE_DAY_HALF_HALF_AFTERNOON :
                     case ATTEND_CODE_WORK_HOME :
-                        if(in != null && out != null) {
-                            inTime = LocalDateTime.parse(date + in, ofPattern);
-                            outTime = LocalDateTime.parse(date + out, ofPattern);
-                        }
-                        else if(in != null && out == null) {
+
+                        if(in != null && out == null) {
                             inTime = LocalDateTime.parse(date + in, ofPattern);
 
                             if(curTime.isAfter(startLunchTime) && curTime.isBefore(endLunchTime)){
@@ -191,13 +193,26 @@ public class AttendService {
                         attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
                         break;
                     case ATTEND_CODE_WORK_PM :
-
+                        if (in != null && out == null) {
+                            inTime = LocalDateTime.parse(date + in, ofPattern);
+                            outTime = midnight.plusDays(1);
+                            if(curTime.isBefore(midnight.plusDays(1))){
+                                outTime = curTime;
+                            }
+                        } else if(in == null && out != null) {
+                            inTime = midnight;
+                            outTime = LocalDateTime.parse(date + out, ofPattern);
+                            if(curTime.isBefore(startWorkTimeFm)){
+                                outTime = curTime;
+                            }
+                        }
+                        duration = Duration.between(inTime, outTime);
+                        if(curTime.isAfter(endLunchTime)){
+                            duration.minusMinutes(60);
+                        }
                         break;
                     case ATTEND_CODE_DAY_HOLLY:
                         if(in != null && out != null) {
-                            inTime = LocalDateTime.parse(date + in, ofPattern);
-                            outTime = LocalDateTime.parse(date + out, ofPattern);
-
                             duration = Duration.between(inTime, outTime);
 
                             if(outTime.isAfter(startLunchTime) && outTime.isBefore(endLunchTime)){
@@ -213,6 +228,8 @@ public class AttendService {
                         }
                         break;
                 }
+
+                attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
             } catch(Exception e){
                 //throw new RuntimeException("");
             }
