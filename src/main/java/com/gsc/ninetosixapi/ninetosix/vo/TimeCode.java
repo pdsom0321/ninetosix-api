@@ -11,7 +11,8 @@ public enum TimeCode {
     TIME_CODE_START_WORK("TC01", "090000")
     , TIME_CODE_END_WORK("TC02", "180000")
     , TIME_CODE_START_LUNCH("TC03", "113000")
-    , TIME_CODE_END_LUNCH("TC04", "123000");
+    , TIME_CODE_END_LUNCH("TC04", "123000")
+    , TIME_CODE_DAY_MIDNIGHT("TC05", "000000");
 
     private String timeCodeName;
     private String timeCodeValue;

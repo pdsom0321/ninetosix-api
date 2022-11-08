@@ -119,16 +119,19 @@ public class AttendService {
     public void calWorkTime(List<Attend> attendList){
         DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.KOREA);
 
-        attendList.forEach(attend -> {
+        for (int i = 0; i < attendList.size(); i++){
+            Attend attend = attendList.get(i);
+
             String date = attend.getAttendDate();
             String in = attend.getInTime();
             String out = attend.getOutTime();
 
             LocalDateTime curTime = LocalDateTime.now();
-            LocalDateTime startLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_LUNCH.getTimeCodeValue(), ofPattern);  // 점심 시작 시간
-            LocalDateTime endLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_LUNCH.getTimeCodeValue(), ofPattern);    // 점심 종료 시간
-            LocalDateTime startWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_WORK.getTimeCodeValue(), ofPattern); // 정상 출근 시간
-            LocalDateTime endWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_WORK.getTimeCodeValue(), ofPattern);   // 정상 퇴근 시간
+            LocalDateTime startLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_LUNCH.getTimeCodeValue(), ofPattern);    // 점심 시작 시간
+            LocalDateTime endLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_LUNCH.getTimeCodeValue(), ofPattern);        // 점심 종료 시간
+            LocalDateTime startWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_WORK.getTimeCodeValue(), ofPattern);    // 정상 출근 시간
+            LocalDateTime endWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_WORK.getTimeCodeValue(), ofPattern);        // 정상 퇴근 시간
+            LocalDateTime midnight = LocalDateTime.parse(date + TimeCode.TIME_CODE_DAY_MIDNIGHT.getTimeCodeValue(), ofPattern);         // 자정
 
             Duration duration = null;
             LocalDateTime inTime = null;
@@ -162,8 +165,12 @@ public class AttendService {
                             }
                         }
                         else if(in == null && out != null) {
-                            // PM일 경우에만 고려(PM을 제외한 나머지 오류)
-                            throw new RuntimeException("출근시간 데이터 없음.");
+                            // PM일 경우에만 고려
+                            inTime = startWorkTimeFm;
+
+                            if(i != 0 && attendList.get(i-1).getAttendCode().equals(AttendCode.ATTEND_CODE_WORK_PM.getAttendCode())){
+                                inTime = midnight;
+                            }
                         }
 
                         duration = Duration.between(inTime, outTime);
@@ -209,6 +216,98 @@ public class AttendService {
             } catch(Exception e){
                 //throw new RuntimeException("");
             }
-        });
+        }
+
+        /*attendList.forEach(attend -> {
+            String date = attend.getAttendDate();
+            String in = attend.getInTime();
+            String out = attend.getOutTime();
+
+            LocalDateTime curTime = LocalDateTime.now();
+            LocalDateTime startLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_LUNCH.getTimeCodeValue(), ofPattern);  // 점심 시작 시간
+            LocalDateTime endLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_LUNCH.getTimeCodeValue(), ofPattern);    // 점심 종료 시간
+            LocalDateTime startWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_WORK.getTimeCodeValue(), ofPattern); // 정상 출근 시간
+            LocalDateTime endWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_WORK.getTimeCodeValue(), ofPattern);   // 정상 퇴근 시간
+
+            Duration duration = null;
+            LocalDateTime inTime = null;
+            LocalDateTime outTime = null;
+
+            AttendCode code = AttendCode.findByStatusCode(attend.getAttendCode());
+
+            try{
+                switch (code){
+                    case ATTEND_CODE_DAY_NORMAL :
+                    case ATTEND_CODE_DAY_HALF_MORNING :
+                    case ATTEND_CODE_DAY_HALF_HALF_MORNING :
+                    case ATTEND_CODE_DAY_HALF_HALF_AFTERNOON :
+                    case ATTEND_CODE_WORK_HOME :
+                        if(in != null && out != null) {
+                            inTime = LocalDateTime.parse(date + in, ofPattern);
+                            outTime = LocalDateTime.parse(date + out, ofPattern);
+                        }
+                        else if(in != null && out == null) {
+                            inTime = LocalDateTime.parse(date + in, ofPattern);
+
+                            if(curTime.isAfter(startLunchTime) && curTime.isBefore(endLunchTime)){
+                                // 점심시간
+                                outTime = startLunchTime;
+                            } else if((curTime.isAfter(startWorkTimeFm) && curTime.isBefore(startLunchTime) || (curTime.isAfter(endLunchTime) && curTime.isBefore(endWorkTimeFm)))){
+                                // 근무시간
+                                outTime = LocalDateTime.parse(curTime.format(ofPattern), ofPattern);
+                            } else if(curTime.isAfter(endWorkTimeFm)){
+                                // 퇴근
+                                outTime = endWorkTimeFm;
+                            }
+                        }
+                        else if(in == null && out != null) {
+                            // PM일 경우에만 고려
+
+                        }
+
+                        duration = Duration.between(inTime, outTime);
+                        // 점심시간 근무시간에서 제외
+                        if(curTime.isAfter(endLunchTime)){
+                            duration.minusMinutes(60);
+                        }
+
+                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
+                        break;
+                    case ATTEND_CODE_DAY_HALF_AFTERNOON :
+                        if (curTime.isBefore(endWorkTimeFm)) {
+                            outTime = curTime;
+                        } else {
+                            outTime = endWorkTimeFm;
+                        }
+                        duration = Duration.between(inTime, outTime);
+                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
+                        break;
+                    case ATTEND_CODE_WORK_PM :
+
+                        break;
+                    case ATTEND_CODE_DAY_HOLLY:
+                        if(in != null && out != null) {
+                            inTime = LocalDateTime.parse(date + in, ofPattern);
+                            outTime = LocalDateTime.parse(date + out, ofPattern);
+
+                            duration = Duration.between(inTime, outTime);
+
+                            if(outTime.isAfter(startLunchTime) && outTime.isBefore(endLunchTime)){
+                                outTime = startLunchTime;
+                            }
+                            if(outTime.isAfter(endLunchTime)){
+                                duration.minusMinutes(60);
+                            }
+
+                            attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
+                        } else {
+                            attend.updateWorkTime(0, 0);
+                        }
+                        break;
+                }
+            } catch(Exception e){
+                //throw new RuntimeException("");
+            }
+        });*/
     }
 }
