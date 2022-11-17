@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.attend.service;
 
+import com.gsc.ninetosixapi.ninetosix.attend.util.DateTimeUtil;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
@@ -17,11 +18,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -31,6 +30,8 @@ import java.util.Optional;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
+
+    private final DateTimeUtil dateTimeUtil;
 
     public ResponseEntity attendCheck(String email, @NotNull AttendReqDTO reqDTO){
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -117,7 +118,7 @@ public class AttendService {
      * 2.
      **/
     public void calWorkTime(List<Attend> attendList){
-        DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.KOREA);
+        String ofPattern = "yyyyMMddHHmmss";
 
         for (int i = 0; i < attendList.size(); i++){
             Attend attend = attendList.get(i);
@@ -125,14 +126,6 @@ public class AttendService {
             String date = attend.getAttendDate();
             String in = attend.getInTime();
             String out = attend.getOutTime();
-
-            // LocalDateTime curTime = LocalDateTime.now();
-            LocalDateTime startLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_LUNCH.getTimeCodeValue(), ofPattern);                // 점심 시작 시간
-            LocalDateTime endLunchTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_LUNCH.getTimeCodeValue(), ofPattern);                    // 점심 종료 시간
-            LocalDateTime startWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_WORK.getTimeCodeValue(), ofPattern);                // 정상 출근 시간
-            LocalDateTime endWorkTimeFm = LocalDateTime.parse(date + TimeCode.TIME_CODE_END_WORK.getTimeCodeValue(), ofPattern);                    // 정상 퇴근 시간
-            LocalDateTime midnight = LocalDateTime.parse(date + TimeCode.TIME_CODE_DAY_MIDNIGHT.getTimeCodeValue(), ofPattern);                     // 자정
-            LocalDateTime startEndHalfWorkTime = LocalDateTime.parse(date + TimeCode.TIME_CODE_START_END_WORK_HALF.getTimeCodeValue(), ofPattern);  // 오전 반차 종료 & 오후 반차 시작 시간
 
             Duration duration = null;
             LocalDateTime inTime = null;
@@ -142,28 +135,28 @@ public class AttendService {
 
             try{
                 if(in != null) {
-                    inTime = LocalDateTime.parse(date + in, ofPattern);
+                    inTime = dateTimeUtil.calWorkTime(date, in, ofPattern);
                 }
                 if(out != null){
-                    outTime = LocalDateTime.parse(date + out, ofPattern);
+                    outTime = dateTimeUtil.calWorkTime(date, out, ofPattern);
                 }
 
                 switch (code){
                     case ATTEND_CODE_DAY_NORMAL :
-                    case ATTEND_CODE_DAY_HALF_HALF_MORNING :
-                    case ATTEND_CODE_DAY_HALF_HALF_AFTERNOON :
+                    case ATTEND_CODE_DAY_QUARTER_MORNING :
+                    case ATTEND_CODE_DAY_QUARTER_AFTERNOON :
                     case ATTEND_CODE_WORK_HOME :
                         if(in == null) {
-                            inTime = startWorkTimeFm;
+                            inTime = dateTimeUtil.getWorkTime(date, "TC01", ofPattern);
 
                             // 전날 PM일 경우
                             if(i != 0 && attendList.get(i-1).getAttendCode().equals(AttendCode.ATTEND_CODE_WORK_PM.getAttendCode())){
-                                inTime = midnight;
+                                inTime = dateTimeUtil.getWorkTime(date, "TC13", ofPattern);
                             }
                         }
 
                         if(out == null) {
-                            outTime = endWorkTimeFm;
+                            outTime = dateTimeUtil.getWorkTime(date, "TC02", ofPattern);
                         }
                         duration = Duration.between(inTime, outTime);
                         duration.minusMinutes(60);
@@ -172,13 +165,26 @@ public class AttendService {
                         break;
 
                     case ATTEND_CODE_DAY_HALF_MORNING :
-                    case ATTEND_CODE_DAY_HALF_AFTERNOON :
                         if(in == null) {
-                            inTime = startEndHalfWorkTime;
+                            inTime = dateTimeUtil.getWorkTime(date, "TC03", ofPattern);
                         }
 
                         if(out == null){
-                            outTime = endWorkTimeFm;
+                            outTime = dateTimeUtil.getWorkTime(date, "TC04", ofPattern);
+                        }
+
+                        duration = Duration.between(inTime, outTime);
+                        duration.minusMinutes(60);
+                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
+                        break;
+
+                    case ATTEND_CODE_DAY_HALF_AFTERNOON :
+                        if(in == null) {
+                            inTime = dateTimeUtil.getWorkTime(date, "TC05", ofPattern);
+                        }
+
+                        if(out == null){
+                            outTime = dateTimeUtil.getWorkTime(date, "TC06", ofPattern);
                         }
                         duration = Duration.between(inTime, outTime);
                         attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
@@ -186,12 +192,11 @@ public class AttendService {
 
                     case ATTEND_CODE_WORK_PM :
                         if(in == null) {
-                            inTime = midnight;
+                            inTime = dateTimeUtil.getWorkTime(date, "TC13", ofPattern);
                         }
 
                         if (out == null) {
-                            outTime = midnight.plusDays(1);
-
+                            outTime =  dateTimeUtil.getWorkTime(date, "TC13", ofPattern).plusDays(1);
                         }
                         duration = Duration.between(inTime, outTime);
                         duration.minusMinutes(60);
@@ -199,22 +204,22 @@ public class AttendService {
 
                     case ATTEND_CODE_DAY_HOLLY:
                         if(in != null && out != null) {
+                            LocalDateTime lunch_start = dateTimeUtil.getWorkTime(date, "TC11", ofPattern);
+                            LocalDateTime lunch_end = dateTimeUtil.getWorkTime(date, "TC12", ofPattern);
+
+                            if(outTime.isAfter(lunch_start) && outTime.isBefore(lunch_end)){
+                                outTime = lunch_start;
+                            }
                             duration = Duration.between(inTime, outTime);
 
-                            if(outTime.isAfter(startLunchTime) && outTime.isBefore(endLunchTime)){
-                                outTime = startLunchTime;
-                            }
-                            if(outTime.isAfter(endLunchTime)){
+                            if(outTime.isAfter(lunch_end)){
                                 duration.minusMinutes(60);
                             }
-
-                            attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
                         } else {
                             attend.updateWorkTime(0, 0);
                         }
                         break;
                 }
-
                 attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
             } catch(Exception e){
                 //throw new RuntimeException("");
