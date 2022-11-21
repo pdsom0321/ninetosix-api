@@ -2,12 +2,14 @@ package com.gsc.ninetosixapi.ninetosix.attend.util;
 
 import com.gsc.ninetosixapi.ninetosix.vo.TimeCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Slf4j
+@Service
 public class DateTimeUtil {
     public LocalDateTime calWorkTime(String date, String time, String strPattern){
         DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern(strPattern, Locale.KOREA);

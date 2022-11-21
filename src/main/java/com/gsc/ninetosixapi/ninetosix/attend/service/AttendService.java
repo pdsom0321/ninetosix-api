@@ -30,7 +30,6 @@ import java.util.Optional;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
-
     private final DateTimeUtil dateTimeUtil;
 
     public ResponseEntity attendCheck(String email, @NotNull AttendReqDTO reqDTO){
