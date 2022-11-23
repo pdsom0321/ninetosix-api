@@ -107,7 +107,7 @@ public class AttendService {
 
     public List<Attend> attendsMonth(@NotNull String email, @NotNull String month){
         Member member = authService.getMember(email);
-        List<Attend> attendList = attendRepository.findByMemberAndAttendDateContains(member, month);
+        List<Attend> attendList = attendRepository.findByMemberAndAttendDateContainsOOrderByAttendDateAsc(member, month);
         calWorkTime(attendList);
         return attendList;
     }
