@@ -22,7 +22,7 @@ public class BoardController {
 
     @GetMapping("/boards")
     public ResponseEntity<List<BoardsResDTO>> getBoards(BoardsReqDTO reqDTO) {
-        return ResponseEntity.ok(boardService.getBoards(reqDTO.getType()));
+        return ResponseEntity.ok(boardService.getBoards(reqDTO.type()));
     }
 
     @GetMapping("/board")
