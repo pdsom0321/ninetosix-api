@@ -67,6 +67,4 @@ public class AuthCodeService {
         authCode.isTrue();
         return true;
     }
-
-
 }
