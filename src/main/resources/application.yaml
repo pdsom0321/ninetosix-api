@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://3.36.28.63:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: gsmobile!@#
+    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
+    username: nts
+    password: 111111
   jpa:
     hibernate:
       ddl-auto: none # 운영에는 create 하면 안됨 >서버 재구동 시 모두 없어지므로..
