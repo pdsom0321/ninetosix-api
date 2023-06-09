@@ -45,7 +45,7 @@ public class Attend {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Attend createAttend(String attendDate, String locationCode, Member member, String code){
+    public static Attend createAttend(String attendDate, String locationCode, Member member, String code, String inTime, String outTime){
         return Attend
                 .builder()
                 .attendDate(attendDate)
@@ -53,6 +53,8 @@ public class Attend {
                 .member(member)
                 .attendCode(code)
                 .insertDate(LocalDateTime.now())
+                .inTime(inTime)
+                .outTime(outTime)
                 .build();
     }
 

@@ -28,7 +28,7 @@ public class BoardService {
     }
 
     public BoardResDTO getBoard(BoardReqDTO reqDTO) {
-        Board board = boardRepository.findByIdAndType(reqDTO.getId(), reqDTO.getType());
+        Board board = boardRepository.findByIdAndType(reqDTO.id(), reqDTO.type());
         return BoardResDTO.of(board);
     }
 }

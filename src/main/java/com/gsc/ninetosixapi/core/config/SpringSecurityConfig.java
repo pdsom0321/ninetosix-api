@@ -40,7 +40,8 @@ public class SpringSecurityConfig {
                         "/swagger*/**",
                         "/webjars/**",
                         "/auth/**").permitAll()
-                .antMatchers("/", "/**").permitAll() //.hasAuthority("ROLE_ADMIN")
+                .antMatchers("/", "/**").permitAll()
+                .antMatchers("/attends/**", "/attend/**").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated()
 
                 // h2-console 을 위한 설정을 추가
