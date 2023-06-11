@@ -1,18 +1,18 @@
 spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
-    username: nts
-    password: 111111
+  profiles:
+    active: local
   jpa:
     hibernate:
-      ddl-auto: none # 운영에는 create 하면 안됨 >서버 재구동 시 모두 없어지므로..
+      ddl-auto: none # 운영에는 create 하면 안됨 > 서버 재구동 시 모두 없어지므로..
     properties:
       hibernate:
         format_sql: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    cors:
+      mapping: "/**"
+      allow-credentials: true
   # Gmail SMTP 설정
   mail:
     host: smtp.gmail.com
@@ -29,19 +29,55 @@ spring:
 #          connectiontimeout: 5000
 #          timeout: 5000
 #          writetimeout: 5000
+
 logging:
   level:
+    root: info
     org:
       springframework:
         boot:
           autoconfigure : error
       hibernate:
-        SQL: debug
+        SQL: info
         type:
           descriptor:
             sql: trace
+
 # HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
 # Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
 # $ echo 'spring-boot-security-jwt-tutorial-jiwoon-spring-boot-security-jwt-tutorial' | base64
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ATTENDANCE
+    username: root
+    password: 1q2w3e4r
+  mvc:
+    cors:
+      allowed-origins: "http://localhost:7888"
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
+    username: nts
+    password: 111111
+  mvc:
+    cors:
+      allowed-origins: "https://deogus-dev.github.io"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
