@@ -1,6 +1,7 @@
 package com.gsc.ninetosixapi.core.jwt;
 
 import com.gsc.ninetosixapi.ninetosix.member.dto.LoginResDTO;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
+    private static final String MEMBER_ID = "id";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
     private final Key key;
@@ -38,7 +40,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public LoginResDTO generateTokenDto(Authentication authentication, String name) {
+    public LoginResDTO generateTokenDto(Authentication authentication, Member member) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -51,6 +53,7 @@ public class TokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "email"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_MEMBER"
+                .claim(MEMBER_ID, member.getId())           // payload "id" : 1
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
                 .compact();
@@ -67,7 +70,7 @@ public class TokenProvider {
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
-                .name(name)
+                .name(member.getName())
                 .build();
     }
 

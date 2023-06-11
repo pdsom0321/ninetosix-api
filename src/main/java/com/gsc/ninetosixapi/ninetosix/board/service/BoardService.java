@@ -2,7 +2,6 @@ package com.gsc.ninetosixapi.ninetosix.board.service;
 
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardReqDTO;
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardResDTO;
-import com.gsc.ninetosixapi.ninetosix.board.dto.BoardsReqDTO;
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardsResDTO;
 import com.gsc.ninetosixapi.ninetosix.board.entity.Board;
 import com.gsc.ninetosixapi.ninetosix.board.repository.BoardRepository;
@@ -23,7 +22,7 @@ public class BoardService {
     public List<BoardsResDTO> getBoards(String type) {
         System.out.println("=======type : " +type);
         return boardRepository.findAllByType(type).stream()
-                .map(BoardsResDTO::getBoards)
+                .map(BoardsResDTO::of)
                 .collect(Collectors.toList());
     }
 

@@ -34,12 +34,17 @@ public class AttendService {
     private final AuthService authService;
     private final DateTimeUtil dateTimeUtil;
 
-    public ResponseEntity processAttendance(String email, @NotNull AttendReqDTO reqDTO){
+    public void processAttendance(String email, AttendReqDTO reqDTO){
 
-        /* TODO:
-            출근하기 -> INSERT
+        /* TODO :
+            * 출근하기 -> INSERT
                     -> UPDATE intime
-            퇴근하기  -> UPDATE outtime
+              퇴근하기  -> UPDATE outtime
+            * 유효성 체크는 service가 아닌 controller에서 !!
+              controller에서는 @valid, dto에서 @notBlank같은~
+            * return ResponseEntity는 controller에서만 !!
+            * List<Attend> return은 필요한 데이터만 resDTO로 !!
+            * spring security Principal -> token의 payload 안의 id(member_id)로 attend 바로 조회해오기 jpa 아니면 jpql
          */
 
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -48,7 +53,6 @@ public class AttendService {
         String attendCode = reqDTO.attendCode();
         String locationCode = reqDTO.locationCode();
         Member member = authService.getMember(email);
-        // Member member = Optional.ofNullable(authService.getMember(email)).orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
 
        Optional.ofNullable(attendRepository.findByMemberAndAttendDate(member, ymd))
                 .ifPresentOrElse(attend -> {
@@ -76,11 +80,9 @@ public class AttendService {
         } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
             optionalAttend.get().updateOutTime(outTime);
         }*/
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
-    public ResponseEntity processAttendanceByCode(@NotNull String email, @NotNull AttendCodeReqDTO reqDTO) {
+    public ResponseEntity processAttendanceByCode(String email, AttendCodeReqDTO reqDTO) {
         String code = reqDTO.getAttendCode();
         int from = reqDTO.getFrom();
         int to = reqDTO.getTo();
@@ -109,7 +111,7 @@ public class AttendService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public List<Attend> getAttendanceList(@NotNull String email){
+    public List<Attend> getAttendanceList(String email){
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));

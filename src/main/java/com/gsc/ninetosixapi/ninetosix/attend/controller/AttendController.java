@@ -6,6 +6,7 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -31,7 +32,8 @@ public class AttendController {
 
     @PostMapping("/attend")
     public ResponseEntity attendCheck(@ApiIgnore Principal principal, @RequestBody AttendReqDTO attendReqDTO){
-        return ResponseEntity.ok(attendService.processAttendance(principal.getName(), attendReqDTO));
+        attendService.processAttendance(principal.getName(), attendReqDTO);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/attend/code")

@@ -64,7 +64,7 @@ public class AuthService {
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
         Member member = getMember(authentication.getName());
-        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication, member.getName());
+        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication, member);
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
@@ -109,7 +109,7 @@ public class AuthService {
 
         // 5. 새로운 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
         Member member = getMember(authentication.getName());
-        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication, member.getName());
+        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication, member);
 
         // 6. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(loginResDTO.getRefreshToken());
