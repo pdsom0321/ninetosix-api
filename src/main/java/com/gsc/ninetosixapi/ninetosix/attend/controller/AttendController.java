@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 @Slf4j
@@ -23,9 +24,10 @@ public class AttendController {
 
     @UserId
     @GetMapping("/attends")
-    public ResponseEntity attends(){
-        Long userId = UserContext.getUserId();
-        return ResponseEntity.ok(new AttendResDTO(attendService.getAttendanceList(userId)));
+    public ResponseEntity attends(HttpServletRequest request){
+//        Long userId = UserContext.getUserId();
+        Long memberId = (Long) request.getAttribute("memberId");
+        return ResponseEntity.ok(new AttendResDTO(attendService.getAttendanceList(memberId)));
     }
 
     @GetMapping("/attends/{month}")

@@ -86,14 +86,14 @@ public class AttendService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public List<Attend> getAttendanceList(Long userId){
+    public List<Attend> getAttendanceList(Long memberId){
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 //        Member member = authService.getMember(email);
 
 //        List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(member, startDate, endDate);
-        List<Attend> attendList = attendRepository.findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(userId, startDate, endDate);
+        List<Attend> attendList = attendRepository.findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(memberId, startDate, endDate);
 
 
         attendList = Optional.ofNullable(attendList)
