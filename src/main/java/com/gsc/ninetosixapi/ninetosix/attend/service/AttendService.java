@@ -62,24 +62,6 @@ public class AttendService {
                             Optional.ofNullable(outTime).ifPresent(time -> attend.updateOutTime(outTime));
                         },
                         () -> attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode, inTime, outTime)));
-
-
-        /*Optional<Attend> optionalAttend = attendRepository.findByMemberAndAttendDate(member, ymd);
-
-        // DB Table에 금일 데이터 유/무 체크
-        if(!optionalAttend.isPresent()){
-            // create attend object and insert
-            optionalAttend = Optional.of(attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode)));
-        } else {
-            // attend code update
-            optionalAttend.get().updateCode(member, attendCode);
-        }
-
-        if(inTime != null && !inTime.isEmpty() && !inTime.isBlank()) {
-            optionalAttend.get().updateInTime(inTime);
-        } else if(outTime != null && !outTime.isEmpty() && !outTime.isBlank()) {
-            optionalAttend.get().updateOutTime(outTime);
-        }*/
     }
 
     public ResponseEntity processAttendanceByCode(String email, AttendCodeReqDTO reqDTO) {
@@ -98,26 +80,21 @@ public class AttendService {
             Optional.ofNullable(attendRepository.findByMemberAndAttendDate(member, String.valueOf(current)))
                     .ifPresentOrElse(attend -> attend.updateCode(member, code),
                             () -> attendRepository.save(Attend.createAttendByCode(String.valueOf(finalCurrent), member, code)));
-
-            /*Optional<Attend> attend = attendRepository.findByMemberAndAttendDate(member, String.valueOf(current));
-            if(attend.isPresent()) {
-                attend.get().updateCode(member, code);
-            } else {
-                attendRepository.save(Attend.createAttendByCode(String.valueOf(current), member, code));
-            }*/
             current ++;
         }
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    public List<Attend> getAttendanceList(String email){
+    public List<Attend> getAttendanceList(Long userId){
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        Member member = authService.getMember(email);
+//        Member member = authService.getMember(email);
 
-        List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(member, startDate, endDate);
+//        List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(member, startDate, endDate);
+        List<Attend> attendList = attendRepository.findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(userId, startDate, endDate);
+
 
         attendList = Optional.ofNullable(attendList)
                 .filter(list -> list.size() == 1 && endDate.equals(list.get(0).getAttendDate()))
@@ -130,18 +107,6 @@ public class AttendService {
         for (int i = attendList.size(); i < 2; i++) {
             attendList.add(new Attend());
         }
-
-        /*if(attendList != null) {
-            if (attendList.size() == 1) {
-                if (attendList.get(0).getAttendDate().equals(endDate)) {
-                    attendList.add(0, new Attend());
-                }
-            }
-        }
-
-        for(int i = attendList.size(); i < 2; i++){
-            attendList.add(new Attend());
-        }*/
 
         return attendList;
     }

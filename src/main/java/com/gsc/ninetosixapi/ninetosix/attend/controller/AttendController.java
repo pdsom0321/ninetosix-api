@@ -1,5 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.attend.controller;
 
+import com.gsc.ninetosixapi.core.aspect.UserId;
+import com.gsc.ninetosixapi.core.jwt.UserContext;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
@@ -19,9 +21,11 @@ import java.security.Principal;
 public class AttendController {
     private final AttendService attendService;
 
+    @UserId
     @GetMapping("/attends")
-    public ResponseEntity attends(@ApiIgnore Principal principal){
-        return ResponseEntity.ok(new AttendResDTO(attendService.getAttendanceList(principal.getName())));
+    public ResponseEntity attends(){
+        Long userId = UserContext.getUserId();
+        return ResponseEntity.ok(new AttendResDTO(attendService.getAttendanceList(userId)));
     }
 
     @GetMapping("/attends/{month}")

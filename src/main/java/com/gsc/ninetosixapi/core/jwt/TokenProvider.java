@@ -94,6 +94,14 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    public Long getId(String accessToken) {
+        // 토큰 복호화
+        Claims claims = parseClaims(accessToken);
+        Long userId = claims.get("id", Long.class);
+
+        return userId;
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
