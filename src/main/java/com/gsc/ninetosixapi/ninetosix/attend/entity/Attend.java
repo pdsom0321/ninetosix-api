@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "member_id", "attendDate" }) })
 public class Attend {
 
     @Id
@@ -45,16 +45,15 @@ public class Attend {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Attend createAttend(String attendDate, String locationCode, Member member, String code, String inTime, String outTime){
+    public static Attend createAttend(String attendDate, String inTime, String attendCode, String locationCode, Member member){
         return Attend
                 .builder()
                 .attendDate(attendDate)
+                .inTime(inTime)
+                .attendCode(attendCode)
                 .locationCode(locationCode)
                 .member(member)
-                .attendCode(code)
                 .insertDate(LocalDateTime.now())
-                .inTime(inTime)
-                .outTime(outTime)
                 .build();
     }
 

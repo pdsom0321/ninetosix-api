@@ -1,10 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.attend.controller;
 
 import com.gsc.ninetosixapi.core.aspect.UserId;
-import com.gsc.ninetosixapi.core.jwt.UserContext;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +12,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -22,28 +20,55 @@ import java.security.Principal;
 public class AttendController {
     private final AttendService attendService;
 
+    /**
+     * ResponseEntity 제네릭 타입: ResponseEntity의 제네릭 타입을 Void로 변경하여 명시적으로 응답 본문이 없음을 나타냅니다. 이는 클라이언트에게 빈 본문을 반환하는 것과 동일합니다.
+     * ResponseEntity.ok().build(): ResponseEntity의 ok() 메서드를 사용하여 HTTP 상태 코드를 200 OK로 설정하고, build() 메서드를 호출하여 ResponseEntity 객체를 생성합니다. 이를 통해 간결하게 응답을 생성할 수 있습니다.@return
+     */
     @UserId
-    @GetMapping("/attends")
-    public ResponseEntity attends(HttpServletRequest request){
-//        Long userId = UserContext.getUserId();
-        Long memberId = (Long) request.getAttribute("memberId");
-        return ResponseEntity.ok(new AttendResDTO(attendService.getAttendanceList(memberId)));
+    @PostMapping("attend/on")
+    public ResponseEntity<Void> onWork(@RequestBody AttendOnReqDTO reqDTO) {
+        attendService.onWork(reqDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/attends/{month}")
-    public ResponseEntity attendsMonth(@ApiIgnore Principal principal, @PathVariable String month){
-        String email = principal.getName();
-        return ResponseEntity.ok(new AttendResDTO(attendService.attendsMonth(email, month)));
+    @UserId
+    @PutMapping("attend/on")
+    public ResponseEntity<Void> onWorkDayOff(@RequestBody AttendOnReqDTO reqDTO) {
+        attendService.onWork(reqDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/attend")
-    public ResponseEntity attendCheck(@ApiIgnore Principal principal, @RequestBody AttendReqDTO attendReqDTO){
-        attendService.processAttendance(principal.getName(), attendReqDTO);
+    @UserId
+    @PostMapping("attend/off")
+    public ResponseEntity offWork() {
+        attendService.offWork();
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/attend/code")
     public ResponseEntity createAttendByCode(@ApiIgnore Principal principal, @RequestBody AttendCodeReqDTO reqDTO) {
-        return ResponseEntity.ok(attendService.processAttendanceByCode(principal.getName(), reqDTO));
+        attendService.processAttendanceByCode(principal.getName(), reqDTO);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    @UserId
+    @GetMapping("/attend")
+    public ResponseEntity<List<AttendResDTO>> getPreviousAndCurrentAttendanceList(HttpServletRequest request){
+//        Long userId = UserContext.getUserId();
+        Long memberId = (Long) request.getAttribute("memberId");
+        return ResponseEntity.ok(attendService.getPreviousAndCurrentAttendanceList(memberId));
+    }
+
+    @UserId
+    @GetMapping("/attends/{month}")
+    public ResponseEntity<List<AttendResDTO>> getMonthlyAttendanceList(HttpServletRequest request, @PathVariable String month){
+        Long memberId = (Long) request.getAttribute("memberId");
+        return ResponseEntity.ok(attendService.getMonthlyAttendanceList(memberId, month));
+    }
+
+    /*@PostMapping("/attend")
+    public ResponseEntity attendCheck(@ApiIgnore Principal principal, @RequestBody AttendReqDTO attendReqDTO){
+        attendService.processAttendance(principal.getName(), attendReqDTO);
+        return new ResponseEntity(HttpStatus.OK);
+    }*/
 }

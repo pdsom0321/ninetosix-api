@@ -20,7 +20,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     public List<BoardsResDTO> getBoards(String type) {
-        System.out.println("=======type : " +type);
         return boardRepository.findAllByType(type).stream()
                 .map(BoardsResDTO::of)
                 .collect(Collectors.toList());

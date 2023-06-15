@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class CodeController {
     private final CodeService codeService;
 
     @GetMapping("/codes")
-    public ResponseEntity<List<CodesResDTO>> getCodes(CodesReqDTO reqDTO) {
-        return ResponseEntity.ok(codeService.getCodes(reqDTO.getCodeGroup()));
+    public ResponseEntity<List<CodesResDTO>> getCodes(@RequestBody CodesReqDTO reqDTO) {
+        return ResponseEntity.ok(codeService.getCodes(reqDTO.codeGroup()));
     }
 }

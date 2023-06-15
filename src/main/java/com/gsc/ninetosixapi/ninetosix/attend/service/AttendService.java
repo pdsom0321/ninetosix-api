@@ -1,29 +1,28 @@
 package com.gsc.ninetosixapi.ninetosix.attend.service;
 
+import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendOnReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.attend.util.DateTimeUtil;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
-import com.sun.istack.NotNull;
-import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -34,9 +33,7 @@ public class AttendService {
     private final AuthService authService;
     private final DateTimeUtil dateTimeUtil;
 
-    public void processAttendance(String email, AttendReqDTO reqDTO){
-
-        /* TODO :
+     /* TODO :
             * 출근하기 -> INSERT
                     -> UPDATE intime
               퇴근하기  -> UPDATE outtime
@@ -47,6 +44,32 @@ public class AttendService {
             * spring security Principal -> token의 payload 안의 id(member_id)로 attend 바로 조회해오기 jpa 아니면 jpql
          */
 
+    public void onWork(AttendOnReqDTO reqDTO) {
+        LocalDateTime now = LocalDateTime.now();
+        String ymd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
+
+        String attendCode = reqDTO.attendCode();
+        String locationCode = reqDTO.locationCode();
+
+        Long memberId = MemberContext.getMemberId();
+        Member member = authService.findMemberById(memberId);
+
+        attendRepository.save(Attend.createAttend(ymd, time, attendCode, locationCode, member));
+   }
+
+   public void offWork() {
+       LocalDateTime now = LocalDateTime.now();
+       String ymd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+       String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
+
+       Long memberId = MemberContext.getMemberId();
+
+       Optional.ofNullable(attendRepository.findByMemberIdAndAttendDate(memberId, ymd))
+                       .ifPresent(attend -> attend.updateOutTime(time));
+   }
+
+    /*public void processAttendance(String email, AttendReqDTO reqDTO){
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String inTime = reqDTO.inTime();
         String outTime = reqDTO.outTime();
@@ -62,12 +85,12 @@ public class AttendService {
                             Optional.ofNullable(outTime).ifPresent(time -> attend.updateOutTime(outTime));
                         },
                         () -> attendRepository.save(Attend.createAttend(ymd, locationCode, member, attendCode, inTime, outTime)));
-    }
+    }*/
 
-    public ResponseEntity processAttendanceByCode(String email, AttendCodeReqDTO reqDTO) {
-        String code = reqDTO.getAttendCode();
-        int from = reqDTO.getFrom();
-        int to = reqDTO.getTo();
+    public void processAttendanceByCode(String email, AttendCodeReqDTO reqDTO) {
+        String code = reqDTO.attendCode();
+        int from = reqDTO.from();
+        int to = reqDTO.to();
         log.info("================from : " + from);
         log.info("================to : " + to);
 
@@ -83,18 +106,17 @@ public class AttendService {
             current ++;
         }
 
-        return new ResponseEntity(HttpStatus.OK);
+//        return new ResponseEntity(HttpStatus.OK);
     }
 
-    public List<Attend> getAttendanceList(Long memberId){
+    public List<AttendResDTO> getPreviousAndCurrentAttendanceList(Long memberId){
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//        Member member = authService.getMember(email);
 
+//        Member member = authService.getMember(email);
 //        List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(member, startDate, endDate);
         List<Attend> attendList = attendRepository.findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(memberId, startDate, endDate);
-
 
         attendList = Optional.ofNullable(attendList)
                 .filter(list -> list.size() == 1 && endDate.equals(list.get(0).getAttendDate()))
@@ -108,14 +130,18 @@ public class AttendService {
             attendList.add(new Attend());
         }
 
-        return attendList;
+        // return attendList;
+        return attendList.stream()
+                .map(AttendResDTO::of)
+                .collect(Collectors.toList());
     }
 
-    public List<Attend> attendsMonth(@NotNull String email, @NotNull String month){
-        Member member = authService.getMember(email);
-        List<Attend> attendList = attendRepository.findByMemberAndAttendDateContainsOrderByAttendDateAsc(member, month);
+    public List<AttendResDTO> getMonthlyAttendanceList(Long memberId, String month){
+        List<Attend> attendList = attendRepository.findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(memberId, month);
         calWorkTime(attendList);
-        return attendList;
+        return attendList.stream()
+                .map(AttendResDTO::of)
+                .collect(Collectors.toList());
     }
 
     /**

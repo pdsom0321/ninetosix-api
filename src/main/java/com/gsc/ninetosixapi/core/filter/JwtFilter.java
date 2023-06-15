@@ -1,7 +1,7 @@
 package com.gsc.ninetosixapi.core.filter;
 
+import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
-import com.gsc.ninetosixapi.core.jwt.UserContext;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 Authentication authentication = tokenProvider.getAuthentication(jwt);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                Long userId = tokenProvider.getId(jwt);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + userId);
-                UserContext.setUserId(userId);
+                Long memberId = tokenProvider.getId(jwt);
+                MemberContext.setMemberId(memberId);
             }
 
             filterChain.doFilter(request, response);

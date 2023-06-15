@@ -18,7 +18,7 @@ public class CodeService {
 
     public List<CodesResDTO> getCodes(String codeGroup) {
         return codeRepository.findAllByCodeGroupAndUseYn(codeGroup, YNCode.Y).stream()
-                .map(CodesResDTO::getCodes)
+                .map(CodesResDTO::of)
                 .collect(Collectors.toList());
     }
 }

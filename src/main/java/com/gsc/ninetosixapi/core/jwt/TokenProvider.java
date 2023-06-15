@@ -131,22 +131,4 @@ public class TokenProvider {
         }
     }
 
-    /**
-     * 해당 엑세스 토큰의 남은 유효시간을 얻음 (redis가 아니어서 사용 안함)
-     * @param accessToken
-     * @return
-     */
-    public Long getExpiration(String accessToken) {
-        Claims claims = parseClaims(accessToken);
-
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
-
-        long now = (new Date()).getTime();
-        Date date = new Date(claims.getExpiration().getTime() - now);
-
-        return date.getTime();
-    }
-
 }
