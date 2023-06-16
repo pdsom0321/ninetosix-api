@@ -57,17 +57,16 @@ public class Attend {
                 .build();
     }
 
-    public static Attend createAttendByCode(String date, Member member, String code) {
+    public static Attend createAttendByCode(String date, String code, Member member) {
         return Attend
                 .builder()
                 .attendDate(date)
-                .member(member)
                 .attendCode(code)
+                .member(member)
                 .insertDate(LocalDateTime.now())
                 .build();
     }
-    public void updateCode(Member member, String code) {
-        this.member = member;
+    public void updateCode(String code) {
         this.attendCode = code;
         this.updateDate = LocalDateTime.now();
     }
