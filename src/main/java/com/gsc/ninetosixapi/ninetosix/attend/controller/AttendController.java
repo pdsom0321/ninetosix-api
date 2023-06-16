@@ -26,15 +26,15 @@ public class AttendController {
      */
     @UserId
     @PostMapping("attend/on")
-    public ResponseEntity<Void> onWork(@RequestBody AttendOnReqDTO reqDTO) {
+    public ResponseEntity<Void> onWork(@RequestBody OnWorkReqDTO reqDTO) {
         attendService.onWork(reqDTO);
         return ResponseEntity.ok().build();
     }
 
     @UserId
     @PutMapping("attend/on")
-    public ResponseEntity<Void> onWorkDayOff(@RequestBody AttendOnReqDTO reqDTO) {
-        attendService.onWork(reqDTO);
+    public ResponseEntity<Void> onWorkDuringDayOff(@RequestBody OnWorkDuringDayOffReqDTO reqDTO) {
+        attendService.onWorkDuringDayOff(reqDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -45,7 +45,7 @@ public class AttendController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping("/attend/code")
+    @PostMapping("/attend/{code}")
     public ResponseEntity createAttendByCode(@ApiIgnore Principal principal, @RequestBody AttendCodeReqDTO reqDTO) {
         attendService.processAttendanceByCode(principal.getName(), reqDTO);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -53,10 +53,10 @@ public class AttendController {
 
     @UserId
     @GetMapping("/attend")
-    public ResponseEntity<List<AttendResDTO>> getPreviousAndCurrentAttendanceList(HttpServletRequest request){
+    public ResponseEntity<List<AttendResDTO>> yesterdayAndTodayAttendanceList(HttpServletRequest request){
 //        Long userId = UserContext.getUserId();
         Long memberId = (Long) request.getAttribute("memberId");
-        return ResponseEntity.ok(attendService.getPreviousAndCurrentAttendanceList(memberId));
+        return ResponseEntity.ok(attendService.yesterdayAndTodayAttendanceList(memberId));
     }
 
     @UserId

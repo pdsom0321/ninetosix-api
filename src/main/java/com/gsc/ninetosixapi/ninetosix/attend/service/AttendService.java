@@ -2,9 +2,9 @@ package com.gsc.ninetosixapi.ninetosix.attend.service;
 
 import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendCodeReqDTO;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendOnReqDTO;
-import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.AttendResDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.OnWorkDuringDayOffReqDTO;
+import com.gsc.ninetosixapi.ninetosix.attend.dto.OnWorkReqDTO;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.attend.util.DateTimeUtil;
@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -44,30 +43,39 @@ public class AttendService {
             * spring security Principal -> token의 payload 안의 id(member_id)로 attend 바로 조회해오기 jpa 아니면 jpql
          */
 
-    public void onWork(AttendOnReqDTO reqDTO) {
-        LocalDateTime now = LocalDateTime.now();
-        String ymd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
-
-        String attendCode = reqDTO.attendCode();
-        String locationCode = reqDTO.locationCode();
-
+    public void onWork(OnWorkReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
         Member member = authService.findMemberById(memberId);
 
-        attendRepository.save(Attend.createAttend(ymd, time, attendCode, locationCode, member));
+        attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), reqDTO.attendCode(), reqDTO.locationCode(), member));
+   }
+
+   public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO) {
+        Long memberId = MemberContext.getMemberId();
+        Member member = authService.findMemberById(memberId);
+
+       // Optional.ofNullable(attendRepository.findByMemberIdAndAttendDate(memberId, ymd))
+       Optional<Attend> attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate());
+       attend.ifPresentOrElse(
+               o -> o.updateInTime(getCurrentTime()),
+               () -> attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), "AT01", reqDTO.locationCode(), member))
+       );
    }
 
    public void offWork() {
-       LocalDateTime now = LocalDateTime.now();
-       String ymd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-       String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
-
        Long memberId = MemberContext.getMemberId();
 
-       Optional.ofNullable(attendRepository.findByMemberIdAndAttendDate(memberId, ymd))
-                       .ifPresent(attend -> attend.updateOutTime(time));
+       Optional<Attend> attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate());
+       attend.ifPresent(o -> o.updateOutTime(getCurrentTime()));
    }
+
+    private String getCurrentTime() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+    }
+
+    private String getCurrentDate() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
 
     /*public void processAttendance(String email, AttendReqDTO reqDTO){
         String ymd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -109,7 +117,7 @@ public class AttendService {
 //        return new ResponseEntity(HttpStatus.OK);
     }
 
-    public List<AttendResDTO> getPreviousAndCurrentAttendanceList(Long memberId){
+    public List<AttendResDTO> yesterdayAndTodayAttendanceList(Long memberId){
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
