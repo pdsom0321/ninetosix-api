@@ -4,7 +4,6 @@ import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
-import com.gsc.ninetosixapi.ninetosix.attend.util.DateTimeUtil;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +14,12 @@ import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -71,17 +69,7 @@ public class AttendService {
         attend.updateOutTime(getCurrentTime());
     }
 
-    /**
-     * 1.
-     * int current = from;
-     * while(current <= to) {
-     * current ++;
-     * }
-     * 2.
-     * for (int current = from; current <= to; current++) {
-     * }
-     */
-    public void dayOff(String code, AttendCodeReqDTO reqDTO) {
+    public void dayOff(String attendCode, AttendCodeReqDTO reqDTO) {
         int from = reqDTO.from();
         int to = reqDTO.to();
         Long memberId = MemberContext.getMemberId();
@@ -90,9 +78,9 @@ public class AttendService {
         IntStream.rangeClosed(from, to)
                 .forEach(current -> {
                     Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, String.valueOf(current))
-                            .orElse(Attend.createAttendDuringDayOff(String.valueOf(current), code, member));
+                            .orElse(Attend.createAttendDayOff(String.valueOf(current), attendCode, member));
 
-                    attend.updateCode(code);
+                    attend.updateCode(attendCode);
                     attendRepository.save(attend);
                 });
     }
@@ -118,37 +106,19 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    public List<AttendResDTO> yesterdayAndTodayAttendanceList2(Long memberId) {
-        LocalDateTime now = LocalDateTime.now();
-        String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-//      List<Attend> attendList = attendRepository.findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(member, startDate, endDate);
-        List<Attend> attendList = attendRepository.findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(memberId, startDate, endDate);
-
-        attendList = Optional.ofNullable(attendList)
-                .filter(list -> list.size() == 1 && endDate.equals(list.get(0).getAttendDate()))
-                .map(list -> {
-                    list.add(0, new Attend());
-                    return list;
-                })
-                .orElse(attendList);
-
-        for (int i = attendList.size(); i < 2; i++) {
-            attendList.add(new Attend());
-        }
-
-        // return attendList;
-        return attendList.stream()
-                .map(AttendResDTO::of)
-                .collect(Collectors.toList());
-    }
-
     public List<MonthlyResDTO> monthlyAttendanceList(Long memberId, String month) {
         List<Attend> attendList = attendRepository.findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(memberId, month);
-        calWorkTime(attendList);
 
         return attendList.stream()
+                .filter(attend -> Objects.nonNull(attend.getInTime()))
+                .peek(attend -> {
+                    LocalDateTime inDateTime = LocalDateTime.parse(attend.getAttendDate() + attend.getInTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+                    LocalDateTime outDateTime = LocalDateTime.parse(attend.getAttendDate() + attend.getOutTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+
+                    Duration duration = Duration.between(inDateTime, outDateTime);
+                    duration.minusMinutes(60);
+                    attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
+                })
                 .map(MonthlyResDTO::of)
                 .collect(Collectors.toList());
     }
@@ -159,33 +129,6 @@ public class AttendService {
 
     private String getCurrentDate() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-    }
-
-    private void calWorkTime(List<Attend> attendList) {
-        String ofPattern = "yyyyMMddHHmmss";
-
-        for (int i = 0; i < attendList.size(); i++) {
-            Attend attend = attendList.get(i);
-
-            String date = attend.getAttendDate();
-            String in = attend.getInTime();
-            String out = attend.getOutTime();
-
-            Duration duration = null;
-            LocalDateTime inTime = null;
-            LocalDateTime outTime = null;
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-            inTime = LocalDateTime.parse(date + in, formatter);
-            outTime = LocalDateTime.parse(date + out, formatter);
-
-//            inTime = dateTimeUtil.calWorkTime(date, in, ofPattern);
-//            outTime = dateTimeUtil.calWorkTime(date, out, ofPattern);
-
-            duration = Duration.between(inTime, outTime);
-            duration.minusMinutes(60);
-            attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-        }
     }
 
     /**

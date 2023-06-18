@@ -56,7 +56,7 @@ public class Attend {
                 .build();
     }
 
-    public static Attend createAttendDuringDayOff(String date, String code, Member member) {
+    public static Attend createAttendDayOff(String date, String code, Member member) {
         return Attend
                 .builder()
                 .attendDate(date)
