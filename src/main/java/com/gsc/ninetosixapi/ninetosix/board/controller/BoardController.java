@@ -22,12 +22,12 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardsResDTO>> getBoards(@RequestBody BoardsReqDTO reqDTO) {
-        return ResponseEntity.ok(boardService.getBoards(reqDTO.type()));
+    public ResponseEntity<List<BoardsResDTO>> boards(@RequestBody BoardsReqDTO reqDTO) {
+        return ResponseEntity.ok(boardService.boards(reqDTO.type()));
     }
 
     @GetMapping("/board")
-    public ResponseEntity<BoardResDTO> getBoard(@RequestBody BoardReqDTO reqDTO) {
-        return ResponseEntity.ok(boardService.getBoard(reqDTO));
+    public ResponseEntity<BoardResDTO> Board(@RequestBody BoardReqDTO reqDTO) {
+        return ResponseEntity.ok(boardService.board(reqDTO));
     }
 }

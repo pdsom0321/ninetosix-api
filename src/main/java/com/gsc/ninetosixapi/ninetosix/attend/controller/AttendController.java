@@ -8,10 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -57,9 +55,9 @@ public class AttendController {
 
     @UserId
     @GetMapping("attends/{month}")
-    public ResponseEntity<List<MonthlyResDTO>> getMonthlyAttendanceList(HttpServletRequest request, @PathVariable String month){
+    public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month){
         Long memberId = (Long) request.getAttribute("memberId");
-        return ResponseEntity.ok(attendService.getMonthlyAttendanceList(memberId, month));
+        return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
     }
 
     /*@PostMapping("/attend")

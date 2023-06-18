@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "member_id", "attendDate" }) })
 public class Attend {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attend_id")
@@ -57,7 +56,7 @@ public class Attend {
                 .build();
     }
 
-    public static Attend createAttendByCode(String date, String code, Member member) {
+    public static Attend createAttendDuringDayOff(String date, String code, Member member) {
         return Attend
                 .builder()
                 .attendDate(date)
@@ -71,8 +70,9 @@ public class Attend {
         this.updateDate = LocalDateTime.now();
     }
 
-    public void updateInTime(String time){
+    public void updateInTimeAndLocationCode(String time, String locationCode){
         this.inTime = time;
+        this.locationCode = locationCode;
         this.updateDate = LocalDateTime.now();
     }
 
