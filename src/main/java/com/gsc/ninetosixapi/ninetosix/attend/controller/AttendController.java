@@ -53,10 +53,14 @@ public class AttendController {
 
     @UserId
     @GetMapping("attend")
-    public ResponseEntity<List<AttendResDTO>> yesterdayAndTodayAttendanceList(HttpServletRequest request){
+    public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request){
+        Long memberId = (Long) request.getAttribute("memberId");
+        return ResponseEntity.ok(attendService.attendInfo(memberId));
+    }
+    /*public ResponseEntity<List<AttendResDTO>> yesterdayAndTodayAttendanceList(HttpServletRequest request){
         Long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.yesterdayAndTodayAttendanceList(memberId));
-    }
+    }*/
 
     @UserId
     @GetMapping("attend/{month}")

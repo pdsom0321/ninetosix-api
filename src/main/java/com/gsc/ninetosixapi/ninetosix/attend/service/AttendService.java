@@ -85,7 +85,7 @@ public class AttendService {
                 });
     }
 
-    public AttendResDTO todayAttendanceList(long memberId) {
+    public AttendResDTO attendInfo(long memberId) {
         Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
                 .orElseGet(() -> new Attend());
 
@@ -123,12 +123,12 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    private String getCurrentTime() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
-    }
-
     private String getCurrentDate() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    private String getCurrentTime() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
     }
 
     /**
