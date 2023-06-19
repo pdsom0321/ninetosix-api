@@ -1,7 +1,9 @@
 package com.gsc.ninetosixapi.ninetosix.member.controller;
 
+import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.member.dto.*;
 import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
+import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,8 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final TokenProvider tokenProvider;
+    private final MemberService memberService;
 
     @PostMapping("/auth/new")
     public ResponseEntity<MemberResDTO> signup(@RequestBody SignupReqDTO reqDTO) {
@@ -30,8 +34,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity reissue(@RequestBody TokenReqDTO reqDTO) {
-        return ResponseEntity.ok(authService.reissue(reqDTO));
+    public ResponseEntity reissue(@ApiIgnore Principal principal, @RequestBody TokenReqDTO reqDTO) {
+        return ResponseEntity.ok(tokenProvider.reissue(reqDTO, memberService.getMember(principal.getName())));
     }
 
     @PostMapping("/auth/out")

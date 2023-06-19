@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.core.filter;
 
+import com.gsc.ninetosixapi.core.jwt.TokenConfig;
 import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import io.jsonwebtoken.JwtException;
@@ -19,10 +20,6 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
-
     private final TokenProvider tokenProvider;
 
     // 실제 필터링 로직은 doFilterInternal 에 들어감
@@ -55,8 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+        String bearerToken = request.getHeader(TokenConfig.AUTHORITIES_KEY);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TokenConfig.BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
         return null;
