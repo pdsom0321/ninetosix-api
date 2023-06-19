@@ -19,13 +19,13 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public List<BoardsResDTO> getBoards(String type) {
+    public List<BoardsResDTO> boards(String type) {
         return boardRepository.findAllByType(type).stream()
                 .map(BoardsResDTO::of)
                 .collect(Collectors.toList());
     }
 
-    public BoardResDTO getBoard(BoardReqDTO reqDTO) {
+    public BoardResDTO board(BoardReqDTO reqDTO) {
         Board board = boardRepository.findByIdAndType(reqDTO.id(), reqDTO.type());
         return BoardResDTO.of(board);
     }

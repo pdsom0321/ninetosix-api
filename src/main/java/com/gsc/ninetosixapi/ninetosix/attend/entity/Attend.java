@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "member_id", "attendDate" }) })
 public class Attend {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attend_id")
@@ -57,23 +56,23 @@ public class Attend {
                 .build();
     }
 
-    public static Attend createAttendByCode(String date, Member member, String code) {
+    public static Attend createAttendDayOff(String date, String code, Member member) {
         return Attend
                 .builder()
                 .attendDate(date)
-                .member(member)
                 .attendCode(code)
+                .member(member)
                 .insertDate(LocalDateTime.now())
                 .build();
     }
-    public void updateCode(Member member, String code) {
-        this.member = member;
+    public void updateCode(String code) {
         this.attendCode = code;
         this.updateDate = LocalDateTime.now();
     }
 
-    public void updateInTime(String time){
+    public void updateInTimeAndLocationCode(String time, String locationCode){
         this.inTime = time;
+        this.locationCode = locationCode;
         this.updateDate = LocalDateTime.now();
     }
 
