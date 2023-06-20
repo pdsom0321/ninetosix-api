@@ -2,16 +2,21 @@ package com.gsc.ninetosixapi.ninetosix.attend.controller;
 
 import com.gsc.ninetosixapi.core.aspect.UserId;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
+import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 @RestController
@@ -39,16 +44,16 @@ public class AttendController {
 
     @ApiOperation(value = "퇴근", notes = "실행: update outTime")
     @PostMapping("attend/off")
-    public ResponseEntity offWork() {
+    public ResponseEntity<Void> offWork() {
         attendService.offWork();
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "휴가 및 그외 신청", notes = "attendCode, fromDate, toDate -> insert Attend 실행")
     @PostMapping("attend/{attendCode}")
-    public ResponseEntity dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
+    public ResponseEntity<Void> dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
         attendService.dayOff(attendCode, reqDTO);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @UserId
@@ -67,5 +72,22 @@ public class AttendController {
     public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month){
         Long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
+    }
+
+    @GetMapping("attend/export/{year}/{month}")
+    public ModelAndView exportAttend(@PathVariable int year, @PathVariable int month) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int lastDayOfMonth = yearMonth.lengthOfMonth();
+
+        System.out.println("yearMonth = " + yearMonth.toString()); // 2023-06
+        // ~ 말일까지 가져오기
+        List<LocalDate> dates = IntStream.rangeClosed(1, lastDayOfMonth)
+                .mapToObj(yearMonth::atDay)
+                .collect(Collectors.toList());
+
+        // 출근 정보 가져오기
+        ModelAndView mv = new ModelAndView("attendance");
+        mv.addObject("dates", dates);
+        return mv;
     }
 }
