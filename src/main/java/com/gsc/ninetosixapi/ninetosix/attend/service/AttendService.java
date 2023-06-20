@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -87,7 +86,7 @@ public class AttendService {
 
     public AttendResDTO attendInfo(long memberId) {
         Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
-                .orElseGet(() -> new Attend());
+                .orElseGet(Attend::new);
 
         return AttendResDTO.of(attend);
     }
@@ -101,7 +100,7 @@ public class AttendService {
         return dayList.stream()
                 .sorted()   // TODO: front에서도 attendDate로 정렬할 수 있는지 check !!!
                 .map(day -> attendRepository.findByMemberIdAndAttendDate(memberId, day)
-                        .orElseGet(() -> new Attend()))
+                        .orElseGet(Attend::new))
                 .map(AttendResDTO::of)
                 .collect(Collectors.toList());
     }
