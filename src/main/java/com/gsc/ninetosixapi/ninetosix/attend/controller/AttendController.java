@@ -2,11 +2,11 @@ package com.gsc.ninetosixapi.ninetosix.attend.controller;
 
 import com.gsc.ninetosixapi.core.aspect.UserId;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
+import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -79,10 +79,13 @@ public class AttendController {
         YearMonth yearMonth = YearMonth.of(year, month);
         int lastDayOfMonth = yearMonth.lengthOfMonth();
 
+        System.out.println("yearMonth = " + yearMonth.toString()); // 2023-06
+        // ~ 말일까지 가져오기
         List<LocalDate> dates = IntStream.rangeClosed(1, lastDayOfMonth)
                 .mapToObj(yearMonth::atDay)
                 .collect(Collectors.toList());
 
+        // 출근 정보 가져오기
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", dates);
         return mv;
