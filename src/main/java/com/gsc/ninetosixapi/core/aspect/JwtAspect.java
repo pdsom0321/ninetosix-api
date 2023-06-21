@@ -34,7 +34,7 @@ public class JwtAspect {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-            String token = request.getHeader(AUTHORIZATION_HEADER).replace(BEARER_PREFIX, "");
+            String token = request.getHeader(AUTHORIZATION_HEADER).substring(7);
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             Long memberId = claims.get("id", Long.class);
 

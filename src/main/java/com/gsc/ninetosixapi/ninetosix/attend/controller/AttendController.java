@@ -2,8 +2,8 @@ package com.gsc.ninetosixapi.ninetosix.attend.controller;
 
 import com.gsc.ninetosixapi.core.aspect.UserId;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
-import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
+import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class AttendController {
     private final AttendService attendService;
+    private final AuthService authService;
 
     /**
      * ResponseEntity 제네릭 타입: ResponseEntity의 제네릭 타입을 Void로 변경하여 명시적으로 응답 본문이 없음을 나타냅니다. 이는 클라이언트에게 빈 본문을 반환하는 것과 동일합니다.
@@ -74,20 +75,33 @@ public class AttendController {
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
     }
 
+    // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
     @GetMapping("attend/export/{year}/{month}")
     public ModelAndView exportAttend(@PathVariable int year, @PathVariable int month) {
         YearMonth yearMonth = YearMonth.of(year, month);
         int lastDayOfMonth = yearMonth.lengthOfMonth();
 
-        System.out.println("yearMonth = " + yearMonth.toString()); // 2023-06
-        // ~ 말일까지 가져오기
-        List<LocalDate> dates = IntStream.rangeClosed(1, lastDayOfMonth)
+        // 말일까지 가져오기
+        List<Integer> dates = IntStream.rangeClosed(1, lastDayOfMonth)
                 .mapToObj(yearMonth::atDay)
+                .map(LocalDate::getDayOfMonth)
                 .collect(Collectors.toList());
 
-        // 출근 정보 가져오기
+        // member 출근 정보 가져오기
+        List<ExportDTO> attends = authService.findMemberAll().stream()
+                .map(member -> {
+                    String memberName = member.getName();
+                    List<AttendDTO> list = attendService.monthlyMembersAttendanceListForExport( member.getId(), String.format("%04d%02d", year, month));
+
+                    return new ExportDTO(memberName, list);
+                }).toList();
+
+        attends.forEach(System.out::println);
+
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", dates);
+        mv.addObject("attends", attends);
+
         return mv;
     }
 }

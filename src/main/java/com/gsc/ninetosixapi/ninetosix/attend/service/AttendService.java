@@ -8,6 +8,7 @@ import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -119,6 +120,12 @@ public class AttendService {
                     attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
                 })
                 .map(MonthlyResDTO::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<AttendDTO> monthlyMembersAttendanceListForExport(Long memberId, String month) {
+        return attendRepository.findByMemberIdAndAttendDateStartsWith(memberId, month).stream()
+                .map(AttendDTO::of)
                 .collect(Collectors.toList());
     }
 
