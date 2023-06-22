@@ -37,13 +37,10 @@ public class TokenProvider {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${jwt.secret}")
-    String secretKey;
-
     private final Key key;
     private final long now = (new Date()).getTime();
 
-    public TokenProvider() {
+    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
