@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 @Entity
@@ -32,7 +34,6 @@ public class Attend {
 
     private String locationCode;
 
-    @Transient
     private String workTime;
 
     private LocalDateTime insertDate;
@@ -76,13 +77,19 @@ public class Attend {
         this.updateDate = LocalDateTime.now();
     }
 
-    public void updateOutTime(String time){
+    public void updateOutTimeAndWorkTime(String time){
         this.outTime = time;
+        this.workTime = calculateWorkTime();
         this.updateDate = LocalDateTime.now();
     }
 
-    public void updateWorkTime(long hour, long min){
-        this.workTime = ((hour < 10) ? "0" : "") + hour + "시간 ";
-        this.workTime += ((min < 10) ? "0" : "") +  min + "분";
+    private String calculateWorkTime() {
+        LocalDateTime inDateTime = LocalDateTime.parse(this.getAttendDate() + this.getInTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        LocalDateTime outDateTime = LocalDateTime.parse(this.getAttendDate() + this.getOutTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+
+        Duration duration = Duration.between(inDateTime, outDateTime);
+        duration.minusMinutes(60);  // TODO: 특정 근무(ex.정상근무)에만 -60분(점심시간)으로 변경 필요
+        return String.valueOf(duration.toHours()) + duration.toMinutesPart();
     }
+
 }

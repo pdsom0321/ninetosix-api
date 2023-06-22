@@ -5,13 +5,13 @@ import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
 import com.gsc.ninetosixapi.ninetosix.member.dto.*;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Blacklist;
-import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.entity.MemberRole;
+import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
 import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
-import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
+import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -32,15 +33,13 @@ import java.util.NoSuchElementException;
 @Transactional
 public class AuthService {
 
+    public final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    public final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-
     private final BlacklistRepository blacklistRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public MemberResDTO signup(SignupReqDTO signupReqDTO) {
@@ -122,5 +121,9 @@ public class AuthService {
     public Member findMemberById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    public List<Member> findMemberAll() {
+        return memberRepository.findAll();
     }
 }

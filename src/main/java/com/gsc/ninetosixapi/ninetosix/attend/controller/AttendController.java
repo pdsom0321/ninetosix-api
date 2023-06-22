@@ -6,9 +6,9 @@ import com.gsc.ninetosixapi.ninetosix.attend.service.AttendService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -39,21 +39,21 @@ public class AttendController {
 
     @ApiOperation(value = "퇴근", notes = "실행: update outTime")
     @PostMapping("attend/off")
-    public ResponseEntity offWork() {
+    public ResponseEntity<Void> offWork() {
         attendService.offWork();
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "휴가 및 그외 신청", notes = "attendCode, fromDate, toDate -> insert Attend 실행")
     @PostMapping("attend/{attendCode}")
-    public ResponseEntity dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
+    public ResponseEntity<Void> dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
         attendService.dayOff(attendCode, reqDTO);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @UserId
     @GetMapping("attend")
-    public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request){
+    public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request) {
         Long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.attendInfo(memberId));
     }
@@ -64,8 +64,17 @@ public class AttendController {
 
     @UserId
     @GetMapping("attend/{month}")
-    public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month){
+    public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month) {
         Long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
+    }
+
+    // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
+    @GetMapping("attend/export/{year}/{month}")
+    public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month) {
+        ModelAndView mv = new ModelAndView("attendance");
+        mv.addObject("dates", attendService.getDayOfMonth(year, month));
+        mv.addObject("attends", attendService.getAttends(year, month));
+        return mv;
     }
 }

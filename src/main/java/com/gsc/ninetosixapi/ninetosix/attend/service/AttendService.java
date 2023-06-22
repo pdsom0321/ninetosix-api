@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,17 +29,6 @@ import java.util.stream.IntStream;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final AuthService authService;
-
-     /* TODO :
-            * 출근하기 -> INSERT
-                    -> UPDATE intime
-              퇴근하기  -> UPDATE outtime
-            * 유효성 체크는 service가 아닌 controller에서 !!
-              controller에서는 @valid, dto에서 @notBlank같은~
-            * return ResponseEntity는 controller에서만 !!
-            * List<Attend> return은 필요한 데이터만 resDTO로 !!
-            * spring security Principal -> token의 payload 안의 id(member_id)로 attend 바로 조회해오기 jpa 아니면 jpql
-         */
 
     public void onWork(OnWorkReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
@@ -54,10 +44,6 @@ public class AttendService {
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
         attend.updateInTimeAndLocationCode(getCurrentTime(), reqDTO.locationCode());
-//       attend.ifPresentOrElse(
-//               o -> o.updateInTime(getCurrentTime()),
-//               () -> attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), "AT01", reqDTO.locationCode(), member))
-//       );
     }
 
     public void offWork() {
@@ -66,7 +52,7 @@ public class AttendService {
         Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
-        attend.updateOutTime(getCurrentTime());
+        attend.updateOutTimeAndWorkTime(getCurrentTime());
     }
 
     public void dayOff(String attendCode, AttendCodeReqDTO reqDTO) {
@@ -87,7 +73,7 @@ public class AttendService {
 
     public AttendResDTO attendInfo(long memberId) {
         Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
-                .orElseGet(() -> new Attend());
+                .orElseGet(Attend::new);
 
         return AttendResDTO.of(attend);
     }
@@ -101,7 +87,7 @@ public class AttendService {
         return dayList.stream()
                 .sorted()   // TODO: front에서도 attendDate로 정렬할 수 있는지 check !!!
                 .map(day -> attendRepository.findByMemberIdAndAttendDate(memberId, day)
-                        .orElseGet(() -> new Attend()))
+                        .orElseGet(Attend::new))
                 .map(AttendResDTO::of)
                 .collect(Collectors.toList());
     }
@@ -111,15 +97,31 @@ public class AttendService {
 
         return attendList.stream()
                 .filter(attend -> Objects.nonNull(attend.getInTime()))
-                .peek(attend -> {
-                    LocalDateTime inDateTime = LocalDateTime.parse(attend.getAttendDate() + attend.getInTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-                    LocalDateTime outDateTime = LocalDateTime.parse(attend.getAttendDate() + attend.getOutTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-
-                    Duration duration = Duration.between(inDateTime, outDateTime);
-                    duration.minusMinutes(60);
-                    attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-                })
                 .map(MonthlyResDTO::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<Integer> getDayOfMonth(int year, int month) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int lastDayOfMonth = yearMonth.lengthOfMonth();
+
+        return IntStream.rangeClosed(1, lastDayOfMonth)
+                .mapToObj(yearMonth::atDay)
+                .map(LocalDate::getDayOfMonth)
+                .collect(Collectors.toList());
+    }
+
+    public List<ExportDTO> getAttends(int year, int month) {
+        return authService.findMemberAll().stream()  // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
+                .map(member -> {
+                    List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
+                    return new ExportDTO(member.getName(), list);
+                }).toList();
+    }
+
+    public List<AttendDTO> monthlyMembersAttendanceListForExport(Long memberId, String month) {
+        return attendRepository.findByMemberIdAndAttendDateStartsWith(memberId, month).stream()
+                .map(AttendDTO::of)
                 .collect(Collectors.toList());
     }
 

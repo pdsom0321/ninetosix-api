@@ -4,6 +4,7 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,4 +16,5 @@ public interface AttendRepository extends JpaRepository<Attend, Long>, JpaSpecif
     List<Attend> findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(Long memberId, String attendDate);
     // ArrayList<Attend> findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(Member member, String startDate, String endDate);
     ArrayList<Attend> findTop2ByMemberIdAndAttendDateBetweenOrderByAttendDateAsc(Long memberId, String startDate, String endDate);
+    List<Attend> findByMemberIdAndAttendDateStartsWith(Long memberId, String attendDate);
 }
