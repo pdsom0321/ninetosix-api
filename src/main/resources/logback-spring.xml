@@ -36,6 +36,8 @@
         <appender-ref ref="fileAppender"/>
     </logger>
 
+    <logger name="com.zaxxer.hikari" level="OFF" />
+
     <root level="DEBUG">
         <appender-ref ref="consoleAppender"/>
     </root>
