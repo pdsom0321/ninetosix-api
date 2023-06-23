@@ -1,5 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.member.vo;
 
-public enum AuthCodeFrom {
+public enum AuthenticationCodeType {
     SIGNUP, PASSWORD
 }

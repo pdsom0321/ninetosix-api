@@ -1,6 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.member.entity;
 
-import com.gsc.ninetosixapi.ninetosix.member.vo.AuthCodeFrom;
+import com.gsc.ninetosixapi.ninetosix.member.vo.AuthenticationCodeType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,32 +11,29 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthCode {
+public class AuthenticationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "auth_code_id")
+    @Column(name = "authentication_code_id")
     private Long id;
-
+    private int code;
     private String email;
-    private String ranCode;     // 인증번호
-    private Boolean expired;    // 만료 여부
-    private LocalDateTime expireDate;   // 만료 시간
-
     @Enumerated(EnumType.STRING)
-    private AuthCodeFrom fromType;
+    private AuthenticationCodeType type;
+    private Boolean expired;
+    private LocalDateTime expireDate;
 
-    public void isTrue() {
+    public void isDone() {
         this.expired = true;
     }
-
     @Transient
     private static final Long MAX_EXPIRE_TIME = 5L;
 
-    public static AuthCode createAuthCode(String email, String from, String ranCode) {
-        return AuthCode.builder()
+    public static AuthenticationCode create(int code, String email, String type) {
+        return AuthenticationCode.builder()
+                .code(code)
                 .email(email)
-                .ranCode(ranCode)
-                .fromType(AuthCodeFrom.valueOf(from))
+                .type(AuthenticationCodeType.valueOf(type))
                 .expireDate(LocalDateTime.now().plusMinutes(MAX_EXPIRE_TIME))
                 .expired(false)
                 .build();
