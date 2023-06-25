@@ -18,11 +18,6 @@ public class AuthController {
     private final TokenProvider tokenProvider;
     private final MemberService memberService;
 
-    @PostMapping("/auth/new")
-    public ResponseEntity<MemberResDTO> signup(@RequestBody SignupReqDTO reqDTO) {
-        return ResponseEntity.ok(authService.signup(reqDTO));
-    }
-
     @PostMapping("/auth")
     public ResponseEntity<LoginResDTO> login(@RequestBody LoginReqDTO reqDTO) {
         return ResponseEntity.ok(authService.login(reqDTO));

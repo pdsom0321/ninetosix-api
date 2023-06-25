@@ -22,12 +22,12 @@ public class AuthenticationCode {
     private AuthenticationCodeType type;
     private Boolean expired;
     private LocalDateTime expireDate;
+    @Transient
+    private static final Long MAX_EXPIRE_TIME = 5L;
 
     public void isDone() {
         this.expired = true;
     }
-    @Transient
-    private static final Long MAX_EXPIRE_TIME = 5L;
 
     public static AuthenticationCode create(int code, String email, String type) {
         return AuthenticationCode.builder()

@@ -42,18 +42,6 @@ public class AuthService {
     private final BlacklistRepository blacklistRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberResDTO signup(SignupReqDTO signupReqDTO) {
-        if (memberRepository.existsByEmail(signupReqDTO.getEmail())) {
-            throw new RuntimeException("이미 가입한 사용자 입니다.");
-        }
-
-        Company company = companyService.getCompany(signupReqDTO.getCompanyCode());
-        Member member = memberRepository.save(Member.createUser(signupReqDTO, company, passwordEncoder));
-        memberRoleRepository.save(MemberRole.createUserRole(member));
-
-        return MemberResDTO.of(member);
-    }
-
     public LoginResDTO login(LoginReqDTO reqDTO) {
         // TODO : JWT토큰 관련 로직 따로 뺄것
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -81,7 +69,8 @@ public class AuthService {
 
     public ResponseEntity pwdChange(@NotNull String email, @NotNull PwdChangeReqDTO reqDTO) {
         Member member = getMember(email);
-        member.updatePassword(reqDTO.getPassword(), passwordEncoder);
+        String encodePassword = passwordEncoder.encode(reqDTO.getPassword());
+        member.updatePassword(encodePassword);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -112,10 +101,7 @@ public class AuthService {
     }
 
     public Member getMember(String email) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
-
-        return member;
+        return memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 계정 입니다."));
     }
 
     public Member findMemberById(Long id) {
