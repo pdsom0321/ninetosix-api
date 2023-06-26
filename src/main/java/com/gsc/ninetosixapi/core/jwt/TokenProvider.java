@@ -33,21 +33,19 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public String generateAccessToken(String email, Long memberId) {
-        long now = (new Date()).getTime();
+    public String generateAccessToken(String email, Long memberId, long expireTime) {
         return Jwts.builder()
-                .setSubject(email)                                                          // payload "sub": "email"
-                .claim(TokenConfig.AUTHORITIES_KEY, "ROLE_MEMBER")                    // payload "auth": "ROLE_MEMBER"
-                .claim(TokenConfig.MEMBER_ID, memberId)                                     // payload "id" : 1
-                .setExpiration(new Date(now + TokenConfig.ACCESS_TOKEN_EXPIRE_TIME))        // payload "exp": 1516239022 (예시)
-                .signWith(key, SignatureAlgorithm.HS512)                                    // header "alg": "HS512"
+                .setSubject(email)                                          // payload "sub": "email"
+                .claim(TokenConfig.AUTHORITIES_KEY, "ROLE_MEMBER")    // payload "auth": "ROLE_MEMBER"
+                .claim(TokenConfig.MEMBER_ID, memberId)                     // payload "id" : 1
+                .setExpiration(new Date(expireTime))                        // payload "exp": 1516239022 (예시)
+                .signWith(key, SignatureAlgorithm.HS512)                    // header "alg": "HS512"
                 .compact();
     }
 
-    public String generateRefreshToken() {
-        long now = (new Date()).getTime();
+    public String generateRefreshToken(long expireTime) {
         return Jwts.builder()
-                .setExpiration(new Date(now + TokenConfig.REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(new Date(expireTime))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
