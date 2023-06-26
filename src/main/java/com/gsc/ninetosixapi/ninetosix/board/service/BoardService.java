@@ -19,14 +19,14 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
+    public BoardResDTO board(BoardReqDTO reqDTO) {
+        Board board = boardRepository.findByIdAndType(reqDTO.id(), reqDTO.type());
+        return BoardResDTO.of(board);
+    }
+
     public List<BoardsResDTO> boards(String type) {
         return boardRepository.findAllByType(type).stream()
                 .map(BoardsResDTO::of)
                 .collect(Collectors.toList());
-    }
-
-    public BoardResDTO board(BoardReqDTO reqDTO) {
-        Board board = boardRepository.findByIdAndType(reqDTO.id(), reqDTO.type());
-        return BoardResDTO.of(board);
     }
 }

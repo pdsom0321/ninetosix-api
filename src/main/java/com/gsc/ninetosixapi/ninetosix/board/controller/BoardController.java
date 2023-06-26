@@ -21,13 +21,13 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @GetMapping("/board")
+    public ResponseEntity<BoardResDTO> board(@RequestBody BoardReqDTO reqDTO) {
+        return ResponseEntity.ok(boardService.board(reqDTO));
+    }
+
     @GetMapping("/boards")
     public ResponseEntity<List<BoardsResDTO>> boards(@RequestBody BoardsReqDTO reqDTO) {
         return ResponseEntity.ok(boardService.boards(reqDTO.type()));
-    }
-
-    @GetMapping("/board")
-    public ResponseEntity<BoardResDTO> Board(@RequestBody BoardReqDTO reqDTO) {
-        return ResponseEntity.ok(boardService.board(reqDTO));
     }
 }
