@@ -23,10 +23,10 @@ public class AuthController {
         return ResponseEntity.ok(authService.pwdChange(principal.getName(), reqDTO));
     }
 
-    @PostMapping("/reissue")
+    /*@PostMapping("/reissue")
     public ResponseEntity reissue(@ApiIgnore Principal principal, @RequestBody TokenReqDTO reqDTO) {
         return ResponseEntity.ok(tokenProvider.reissue(reqDTO, memberService.getMemberByEmail(principal.getName())));
-    }
+    }*/
 
     @PostMapping("/auth/out")
     public ResponseEntity logout(@RequestBody LogoutReqDTO reqDTO) {

@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.member.service;
 
+import com.gsc.ninetosixapi.core.jwt.TokenConfig;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.company.service.CompanyService;
@@ -41,24 +42,25 @@ public class MemberService {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = toAuthentication(reqDTO);
 
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+        // 2. authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨. 실제로 검증 (사용자 비밀번호 체크)하는 부분
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
-        Member member = getMemberByEmail(authentication.getName());
-        LoginResDTO loginResDTO = tokenProvider.generateToken(authentication, member);
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        String email = authentication.getName();
+        Member member = getMemberByEmail(email);
+        String at = tokenProvider.generateAccessToken(email, member.getId());
+        String rt = tokenProvider.generateRefreshToken();
 
         // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(loginResDTO.refreshToken())
+        refreshTokenRepository.save(RefreshToken.create(email, rt));
+
+        return LoginResDTO.builder()
+                .grantType(TokenConfig.BEARER_PREFIX)
+                .accessToken(at)
+                .refreshToken(rt)
+                .id(member.getId())
+                .name(member.getName())
                 .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        // 5. 토큰 발급
-        return loginResDTO;
     }
 
     public SignupResDTO signup(SignupReqDTO reqDTO) {

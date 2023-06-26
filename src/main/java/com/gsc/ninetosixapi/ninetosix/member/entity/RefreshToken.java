@@ -15,13 +15,19 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Entity
 public class RefreshToken {
-
     @Id
     @Column(name = "rt_key")
     private String key;
 
     @Column(name = "rt_value")
     private String value;
+
+    public static RefreshToken create(String email, String token) {
+        return RefreshToken.builder()
+                .key(email)
+                .value(token)
+                .build();
+    }
 
     public RefreshToken updateValue(String token) {
         this.value = token;

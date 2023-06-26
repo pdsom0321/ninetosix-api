@@ -1,11 +1,6 @@
 package com.gsc.ninetosixapi.core.jwt;
 
-import com.gsc.ninetosixapi.ninetosix.member.dto.LoginResDTO;
-import com.gsc.ninetosixapi.ninetosix.member.dto.TokenReqDTO;
-import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
-import com.gsc.ninetosixapi.ninetosix.member.entity.RefreshToken;
 import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
-import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -31,59 +26,29 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     @Autowired
     private BlacklistRepository blacklistRepository;
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+
     private final Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public LoginResDTO generateToken(Authentication authentication, Member member) {
+    public String generateAccessToken(String email, Long memberId) {
         long now = (new Date()).getTime();
-        // 권한들 가져오기
-        String authorities = getAuthorities(authentication);
-
-        // Access Token 생성
-        String accessToken = generateAccessToken(authentication, member.getId(), authorities, now);
-
-        // Refresh Token 생성
-        String refreshToken = generateRefreshToken(now);
-
-        return createLoginResDTO(member.getName(), now, accessToken, refreshToken);
-    }
-
-    private String getAuthorities(Authentication authentication) {
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-    }
-
-    private LoginResDTO createLoginResDTO(String name, long now, String accessToken, String refreshToken) {
-        return LoginResDTO.builder()
-                .name(name)
-                .grantType(TokenConfig.BEARER_PREFIX)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .accessTokenExpiresIn(getTokenExpireDateTime(now))
-                .name(name)
-                .build();
-    }
-
-    private String generateRefreshToken(long now) {
         return Jwts.builder()
-                .setExpiration(new Date(now + TokenConfig.REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setSubject(email)                                                          // payload "sub": "email"
+                .claim(TokenConfig.AUTHORITIES_KEY, "ROLE_MEMBER")                    // payload "auth": "ROLE_MEMBER"
+                .claim(TokenConfig.MEMBER_ID, memberId)                                     // payload "id" : 1
+                .setExpiration(new Date(now + TokenConfig.ACCESS_TOKEN_EXPIRE_TIME))        // payload "exp": 1516239022 (예시)
+                .signWith(key, SignatureAlgorithm.HS512)                                    // header "alg": "HS512"
                 .compact();
     }
 
-    private String generateAccessToken(Authentication authentication, Long id, String authorities, long now) {
+    public String generateRefreshToken() {
+        long now = (new Date()).getTime();
         return Jwts.builder()
-                .setSubject(authentication.getName())                   // payload "sub": "email"
-                .claim(TokenConfig.AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_MEMBER"
-                .claim(TokenConfig.MEMBER_ID, id)
-                .setExpiration(new Date(now + TokenConfig.ACCESS_TOKEN_EXPIRE_TIME))        // payload "exp": 1516239022 (예시)
-                .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
+                .setExpiration(new Date(now + TokenConfig.REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -118,7 +83,7 @@ public class TokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            if(blacklistRepository.existsByAccessToken(token)) {
+            if (blacklistRepository.existsByAccessToken(token)) {
                 log.info("blacklist - 로그아웃된 사용자 입니다.");
                 throw new JwtException("로그아웃된 사용자의 JWT 토큰입니다.");
             }
@@ -136,10 +101,6 @@ public class TokenProvider {
         return false;
     }
 
-    private long getTokenExpireDateTime(long now) {
-        return new Date(now + TokenConfig.ACCESS_TOKEN_EXPIRE_TIME).getTime();
-    }
-
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
@@ -148,7 +109,7 @@ public class TokenProvider {
         }
     }
 
-    public LoginResDTO reissue(TokenReqDTO reqDTO, Member member) {
+    /*public LoginResDTO reissue(TokenReqDTO reqDTO, Member member) {
         // 1. Refresh Token 검증
         if (!validateToken(reqDTO.getRefreshToken())) {
             log.error("REQ Refresh Token : " + reqDTO.getRefreshToken());
@@ -171,7 +132,7 @@ public class TokenProvider {
         }
 
         // 5. 새로운 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
-        LoginResDTO loginResDTO = generateToken(authentication, member);
+        LoginResDTO loginResDTO = generateTokenDto(authentication, member);
 
         // 6. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(loginResDTO.refreshToken());
@@ -179,5 +140,5 @@ public class TokenProvider {
 
         // 토큰 발급
         return loginResDTO;
-    }
+    }*/
 }
