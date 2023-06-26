@@ -42,31 +42,6 @@ public class AuthService {
     private final BlacklistRepository blacklistRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public LoginResDTO login(LoginReqDTO reqDTO) {
-        // TODO : JWT토큰 관련 로직 따로 뺄것
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = reqDTO.toAuthentication();
-
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
-        Member member = getMember(authentication.getName());
-        LoginResDTO loginResDTO = tokenProvider.generateTokenDto(authentication, member);
-
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(loginResDTO.getRefreshToken())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        // 5. 토큰 발급
-        return loginResDTO;
-    }
-
     public ResponseEntity pwdChange(@NotNull String email, @NotNull PwdChangeReqDTO reqDTO) {
         Member member = getMember(email);
         String encodePassword = passwordEncoder.encode(reqDTO.getPassword());

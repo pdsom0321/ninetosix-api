@@ -27,7 +27,7 @@ public class MemberRole {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static MemberRole createUserRole(Member member) {
+    public static MemberRole create(Member member) {
         return MemberRole.builder()
                 .role(Role.ROLE_MEMBER.name())
                 .member(member)

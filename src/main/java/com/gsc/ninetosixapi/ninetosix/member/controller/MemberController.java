@@ -1,5 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.member.controller;
 
+import com.gsc.ninetosixapi.ninetosix.member.dto.LoginReqDTO;
+import com.gsc.ninetosixapi.ninetosix.member.dto.LoginResDTO;
 import com.gsc.ninetosixapi.ninetosix.member.dto.SignupReqDTO;
 import com.gsc.ninetosixapi.ninetosix.member.dto.SignupResDTO;
 import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
@@ -9,18 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("member")
 public class MemberController {
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    @ApiOperation(value = "회원가입", notes = "")
-    @PostMapping("new")
+    @ApiOperation(value = "로그인", notes = "")
+    @PostMapping("member")
+    public ResponseEntity<LoginResDTO> login(@RequestBody LoginReqDTO reqDTO) {
+        return ResponseEntity.ok(memberService.login(reqDTO));
+    }
+
+    @ApiOperation(value = "회원가입")
+    @PostMapping("member/new")
     public ResponseEntity<SignupResDTO> signup(@RequestBody SignupReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.signup(reqDTO));
     }

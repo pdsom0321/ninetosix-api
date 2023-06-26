@@ -59,7 +59,7 @@ public class Member {
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
 
-    public static Member createUser(SignupReqDTO signupReqDTO, String password, Company company1) {
+    public static Member create(SignupReqDTO signupReqDTO, String password, Company company1) {
         return Member.builder()
                 .email(signupReqDTO.email())
                 .name(signupReqDTO.name())

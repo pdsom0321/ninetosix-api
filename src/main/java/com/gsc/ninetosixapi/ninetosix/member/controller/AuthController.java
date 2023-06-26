@@ -18,11 +18,6 @@ public class AuthController {
     private final TokenProvider tokenProvider;
     private final MemberService memberService;
 
-    @PostMapping("/auth")
-    public ResponseEntity<LoginResDTO> login(@RequestBody LoginReqDTO reqDTO) {
-        return ResponseEntity.ok(authService.login(reqDTO));
-    }
-
     @PutMapping("/auth/pwd")
     public ResponseEntity pwdChange(@ApiIgnore Principal principal, @RequestBody PwdChangeReqDTO reqDTO) {
         return ResponseEntity.ok(authService.pwdChange(principal.getName(), reqDTO));
@@ -30,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity reissue(@ApiIgnore Principal principal, @RequestBody TokenReqDTO reqDTO) {
-        return ResponseEntity.ok(tokenProvider.reissue(reqDTO, memberService.getMember(principal.getName())));
+        return ResponseEntity.ok(tokenProvider.reissue(reqDTO, memberService.getMemberByEmail(principal.getName())));
     }
 
     @PostMapping("/auth/out")
