@@ -18,13 +18,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table
 public class Blacklist {
-
     @Id
     @Column()
     private String accessToken;
     private LocalDateTime insertDate;
-    // private Long expiration;
-    public static Blacklist createBlacklist(String accessToken) {
+    public static Blacklist create(String accessToken) {
         return Blacklist.builder()
                 .accessToken(accessToken)
                 .insertDate(LocalDateTime.now())

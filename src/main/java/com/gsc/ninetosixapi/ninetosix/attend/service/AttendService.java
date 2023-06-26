@@ -5,7 +5,7 @@ import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
-import com.gsc.ninetosixapi.ninetosix.member.service.AuthService;
+import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,11 +27,11 @@ import java.util.stream.IntStream;
 @Transactional
 public class AttendService {
     private final AttendRepository attendRepository;
-    private final AuthService authService;
+    private final MemberService memberService;
 
     public void onWork(OnWorkReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
-        Member member = authService.findMemberById(memberId);
+        Member member = memberService.findById(memberId);
 
         attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), reqDTO.attendCode(), reqDTO.locationCode(), member));
     }
@@ -58,7 +58,7 @@ public class AttendService {
         int from = reqDTO.from();
         int to = reqDTO.to();
         Long memberId = MemberContext.getMemberId();
-        Member member = authService.findMemberById(memberId);
+        Member member = memberService.findById(memberId);
 
         IntStream.rangeClosed(from, to)
                 .forEach(current -> {
@@ -111,7 +111,7 @@ public class AttendService {
     }
 
     public List<ExportDTO> getAttends(int year, int month) {
-        return authService.findMemberAll().stream()  // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
+        return memberService.findAll().stream()  // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
                     return new ExportDTO(member.getName(), list);

@@ -20,7 +20,7 @@ public class CompanyLocationService {
     private final MemberService memberService;
 
     public List<CompanyLocationsResDTO> companyLocations(String email) {
-        Member member = memberService.getMemberByEmail(email);
+        Member member = memberService.findByEmail(email);
 
         return companyLocationRepository.findByCompany(member.getCompany()).stream()
                 .map(CompanyLocationsResDTO::createCompanyLocation)
