@@ -1,6 +1,7 @@
 package com.gsc.ninetosixapi.core.jwt;
 
 import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
+import com.gsc.ninetosixapi.ninetosix.member.vo.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -33,26 +34,19 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public String generateAccessToken(String email, Long memberId, long expireTime) {
+    public String generateToken(String email, Long memberId, long expireTime) {
         return Jwts.builder()
                 .setSubject(email)                                          // payload "sub": "email"
-                .claim(TokenConfig.AUTHORITIES_KEY, "ROLE_MEMBER")    // payload "auth": "ROLE_MEMBER"
+                .claim(TokenConfig.AUTHORITIES_KEY, Role.ROLE_MEMBER)       // payload "auth": "ROLE_MEMBER"
                 .claim(TokenConfig.MEMBER_ID, memberId)                     // payload "id" : 1
                 .setExpiration(new Date(expireTime))                        // payload "exp": 1516239022 (예시)
                 .signWith(key, SignatureAlgorithm.HS512)                    // header "alg": "HS512"
                 .compact();
     }
 
-    public String generateRefreshToken(long expireTime) {
-        return Jwts.builder()
-                .setExpiration(new Date(expireTime))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-    }
-
-    public Authentication getAuthentication(String accessToken) {
+    public Authentication getAuthentication(String token) {
         // 토큰 복호화
-        Claims claims = parseClaims(accessToken);
+        Claims claims = parseClaims(token);
 
         if (claims.get(TokenConfig.AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -68,14 +62,6 @@ public class TokenProvider {
         UserDetails principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
-    }
-
-    public Long getId(String accessToken) {
-        // 토큰 복호화
-        Claims claims = parseClaims(accessToken);
-        Long userId = claims.get("id", Long.class);
-
-        return userId;
     }
 
     public boolean validateToken(String token) {
@@ -107,36 +93,17 @@ public class TokenProvider {
         }
     }
 
-    /*public LoginResDTO reissue(TokenReqDTO reqDTO, Member member) {
-        // 1. Refresh Token 검증
-        if (!validateToken(reqDTO.getRefreshToken())) {
-            log.error("REQ Refresh Token : " + reqDTO.getRefreshToken());
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
-        }
+    public Long getId(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("id", Long.class);
+    }
 
-        // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = getAuthentication(reqDTO.getAccessToken());
-
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-
-        // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(reqDTO.getRefreshToken())) {
-            log.error("DB Refresh Token : " + refreshToken.getValue());
-            log.error("REQ Refresh Token : " + reqDTO.getRefreshToken());
-            log.error("equals ? : " + refreshToken.getValue().equals(reqDTO.getRefreshToken()));
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
-        }
-
-        // 5. 새로운 토큰 생성 (name 넘겨주기 위해 사용자 이름 가져오는 로직 추가 22.10.21)
-        LoginResDTO loginResDTO = generateTokenDto(authentication, member);
-
-        // 6. 저장소 정보 업데이트
-        RefreshToken newRefreshToken = refreshToken.updateValue(loginResDTO.refreshToken());
-        refreshTokenRepository.save(newRefreshToken);
-
-        // 토큰 발급
-        return loginResDTO;
+    // access token / refresh token 합치면서 주석 처리 2023.06.27
+    /*public String generateRefreshToken(Long memberId, long expireTime) {
+        return Jwts.builder()
+                .claim(TokenConfig.MEMBER_ID, memberId)
+                .setExpiration(new Date(expireTime))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
     }*/
 }

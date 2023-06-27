@@ -42,4 +42,10 @@ public class MemberController {
         memberService.logout(reqDTO);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation(value="AT 토큰 재발급")
+    @PostMapping("member/reissue")
+    public ResponseEntity<ReissueResDTO> reissue(@RequestBody ReissueReqDTO reqDTO) {
+        return ResponseEntity.ok(memberService.reissue(reqDTO));
+    }
 }
