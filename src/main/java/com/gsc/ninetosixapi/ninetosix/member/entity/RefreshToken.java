@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,21 +15,18 @@ import javax.persistence.Id;
 @Entity
 public class RefreshToken {
     @Id
-    @Column(name = "rt_key")
-    private String key;
+    private String email;
 
-    @Column(name = "rt_value")
-    private String value;
+    private String token;
 
     public static RefreshToken create(String email, String token) {
         return RefreshToken.builder()
-                .key(email)
-                .value(token)
+                .email(email)
+                .token(token)
                 .build();
     }
 
-    public RefreshToken updateValue(String token) {
-        this.value = token;
-        return this;
+    public void updateToken(String token) {
+        this.token = token;
     }
 }

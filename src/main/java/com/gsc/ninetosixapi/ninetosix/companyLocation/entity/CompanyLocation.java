@@ -1,13 +1,12 @@
 package com.gsc.ninetosixapi.ninetosix.companyLocation.entity;
 
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
-import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.location.entity.Location;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

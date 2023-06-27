@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("================ loadUserByUsername - username : " + username);
         return memberRepository.findByEmail(username)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new InternalAuthenticationServiceException("해당하는 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new InternalAuthenticationServiceException("해당 계정을 찾을 수 없습니다."));
     }
 
     private UserDetails createUserDetails(Member member) {

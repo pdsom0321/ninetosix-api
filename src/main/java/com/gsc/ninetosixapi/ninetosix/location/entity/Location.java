@@ -1,6 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.location.entity;
 
-import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import lombok.*;
 

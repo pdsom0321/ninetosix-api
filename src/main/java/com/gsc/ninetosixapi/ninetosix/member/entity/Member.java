@@ -27,33 +27,45 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
+
     @Column(nullable = false, unique = true, length = 100)
     private String email;
+
     @Column(nullable = false, length = 50)
     private String name;
     @Column(nullable = false, length = 256)
     private String password;
+
     @Column(length = 50)
     private String contact;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private YNCode deleteYn;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private YNCode pushAgreeYn;
+
     /**
      * TODO : 로그인 실패횟수 체크 안할거면 삭제 필요
      */
     @Column(length = 1)
     private Integer loginFailCnt;
+
     private LocalDateTime passwordModifiedDate;
+
     private LocalDateTime insertDate;
+
     private LocalDateTime updateDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
     private Set<MemberRole> role = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
     private List<Attend> attends = new ArrayList<>();
     @Transient

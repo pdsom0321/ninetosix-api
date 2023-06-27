@@ -21,7 +21,9 @@ public class Blacklist {
     @Id
     @Column()
     private String accessToken;
+
     private LocalDateTime insertDate;
+
     public static Blacklist create(String accessToken) {
         return Blacklist.builder()
                 .accessToken(accessToken)
