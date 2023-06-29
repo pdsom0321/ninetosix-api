@@ -1,6 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.board.service;
 
-import com.gsc.ninetosixapi.ninetosix.board.dto.BoardReqDTO;
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardResDTO;
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardsResDTO;
 import com.gsc.ninetosixapi.ninetosix.board.entity.Board;
@@ -19,8 +18,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public BoardResDTO board(BoardReqDTO reqDTO) {
-        Board board = boardRepository.findByIdAndType(reqDTO.id(), reqDTO.type());
+    public BoardResDTO board(String type, Long id) {
+        Board board = boardRepository.findByIdAndType(id, type);
         return BoardResDTO.of(board);
     }
 

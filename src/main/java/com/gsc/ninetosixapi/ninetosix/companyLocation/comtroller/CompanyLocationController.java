@@ -20,7 +20,7 @@ public class CompanyLocationController {
     private final CompanyLocationService companyLocationService;
 
     @GetMapping("/company-locations")
-    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations(@ApiIgnore Principal principal) {
-        return ResponseEntity.ok(companyLocationService.companyLocations(principal.getName()));
+    public ResponseEntity<List<CompanyLocationsResDTO>> companyLocations() {
+        return ResponseEntity.ok(companyLocationService.companyLocations());
     }
 }

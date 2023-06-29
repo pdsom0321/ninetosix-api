@@ -35,11 +35,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final BlacklistRepository blacklistRepository;
     private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     public final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final BlacklistRepository blacklistRepository;
 
     public LoginResDTO login(LoginReqDTO reqDTO) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -113,14 +113,14 @@ public class MemberService {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.refreshToken())) {
             log.error("REQ Refresh Token : " + reqDTO.refreshToken());
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new RuntimeException("Refresh Token validation false !!!!!!");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
         // Authentication authentication = tokenProvider.getAuthentication(reqDTO.refreshToken());
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        Long id = tokenProvider.getId(reqDTO.refreshToken());
-        String email = memberRepository.findById(id).get().getEmail();
+        Long id = tokenProvider.getId(reqDTO.refreshToken());   // payload에서 userId 가져옴
+        String email = memberRepository.findById(id).get().getEmail();  // 아직은 구현 전이라, id를 통해 email 가져옴
         long now = new Date().getTime();
         RefreshToken refreshTokenData = refreshTokenRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
