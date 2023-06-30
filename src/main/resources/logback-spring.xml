@@ -32,7 +32,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.gsc.ninetosixapi" level="DEBUG" additivity="false"/>
+    <logger name="com.gsc.ninetosixapi" level="DEBUG" additivity="false" />
     <logger name="com.zaxxer.hikari" level="OFF" />
 
     <root level="DEBUG">
