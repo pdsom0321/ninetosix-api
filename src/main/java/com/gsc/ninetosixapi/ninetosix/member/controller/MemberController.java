@@ -18,13 +18,13 @@ public class MemberController {
     private final MemberService memberService;
 
     @ApiOperation(value = "로그인")
-    @PostMapping("member")
+    @PostMapping("login")
     public ResponseEntity<LoginResDTO> login(@RequestBody LoginReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.login(reqDTO));
     }
 
     @ApiOperation(value = "회원가입")
-    @PostMapping("member/new")
+    @PostMapping("member")
     public ResponseEntity<SignupResDTO> signup(@RequestBody SignupReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.signup(reqDTO));
     }
@@ -37,14 +37,14 @@ public class MemberController {
     }
 
     @ApiOperation(value = "로그아웃", notes = "refresh token 삭제")
-    @PostMapping("member/out")
+    @PostMapping("logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutReqDTO reqDTO) {
         memberService.logout(reqDTO);
         return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value="AT 토큰 재발급")
-    @PostMapping("member/reissue")
+    @PostMapping("reissue")
     public ResponseEntity<ReissueResDTO> reissue(@RequestBody ReissueReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.reissue(reqDTO));
     }

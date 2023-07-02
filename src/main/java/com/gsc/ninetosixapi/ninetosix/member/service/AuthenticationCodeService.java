@@ -28,7 +28,7 @@ public class AuthenticationCodeService {
         String text = "귀하의 인증 번호는 " + code + " 입니다.";
 
         sendEmail(reqDTO.email(), title, text);
-        saveAuthenticationCode(code, reqDTO.email(), reqDTO.type());
+        authenticationCodeRepository.save(AuthenticationCode.create(code, reqDTO.email(), reqDTO.type()));
     }
 
     private int generateRandomNumber() {
@@ -39,14 +39,10 @@ public class AuthenticationCodeService {
     private String getEmailTitle(String type) {
         AuthenticationCodeType authenticationCodeType = AuthenticationCodeType.valueOf(type);
 
-        switch (authenticationCodeType) {
-            case SIGNUP:
-                return "회원가입 인증 번호 발급 안내 입니다.";
-            case PASSWORD:
-                return "비밀번호 인증 번호 발급 안내 입니다.";
-            default:
-                throw new IllegalArgumentException("Unsupported authentication code type: " + type);
-        }
+        return switch (authenticationCodeType) {
+            case SIGNUP -> "회원가입 인증 번호 발급 안내 입니다.";
+            case PASSWORD -> "비밀번호 인증 번호 발급 안내 입니다.";
+        };
     }
 
     private void sendEmail(String email, String title, String text) {
@@ -55,10 +51,6 @@ public class AuthenticationCodeService {
         message.setSubject(title);
         message.setText(text);
         javaMailSender.send(message);
-    }
-
-    private void saveAuthenticationCode(int code, String email, String type) {
-        authenticationCodeRepository.save(AuthenticationCode.create(code, email, type));
     }
 
     public Boolean verifyCode(VerifyCodeReqDTO reqDTO) {

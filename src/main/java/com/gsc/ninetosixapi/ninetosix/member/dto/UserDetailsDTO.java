@@ -13,7 +13,6 @@ public class UserDetailsDTO implements UserDetails {
 
     private String email;
     private String pwd;
-    private boolean isAccountNonExpired = true;
     private Set<GrantedAuthority> role = new HashSet<>();
 
     public UserDetailsDTO(String email, String pwd, Set<GrantedAuthority> role) {
@@ -39,7 +38,7 @@ public class UserDetailsDTO implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+        return true;
     }
 
     @Override
