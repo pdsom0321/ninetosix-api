@@ -34,4 +34,7 @@ jobs:
       run: chmod +x gradlew
     
     - name: Build with Gradle
-      run: cd /ninetosix-api && ./gradlew clean build
+      run: |
+        ls  # 현재 디렉토리의 파일 목록 출력
+        pwd
+        ./gradlew clean build
