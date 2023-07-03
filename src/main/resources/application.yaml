@@ -17,8 +17,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: deogus.gsitm@gmail.com
-    password: sueqauhzjzygvjte  #  2022년 5월 30일부터는 보안 수준이 낮은 앱의 액세스가 활성된 계정으로는 SMTP 서버를 이용할 수 없게 되었습니다. >> 2단계 인증 후 앱 비밀번호
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -47,7 +47,7 @@ logging:
 # Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
 # $ echo 'spring-boot-security-jwt-tutorial-jiwoon-spring-boot-security-jwt-tutorial' | base64
 jwt:
-  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+  secret: ${JWT_SECRET_KEY}
 
 ---
 spring:
@@ -55,13 +55,17 @@ spring:
     activate:
       on-profile: local
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ATTENDANCE
-    username: root
-    password: 1q2w3e4r
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/ATTENDANCE
+#    username: root
+#    password: 1q2w3e4r
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   mvc:
     cors:
-      allowed-origins: "http://localhost:7888"
+      allowed-origins: ${LOCAL_CORS_ALLOWED_ORIGINS}
 ---
 spring:
   config:
@@ -69,12 +73,12 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
-    username: nts
-    password: 111111
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   mvc:
     cors:
-      allowed-origins: "https://deogus-dev.github.io"
+      allowed-origins: ${DEV_CORS_ALLOWED_ORIGINS}
 
 ---
 spring:
