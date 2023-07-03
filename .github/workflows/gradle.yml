@@ -15,6 +15,13 @@ on:
 
 env:
   S3_BUCKET_NAME: ninetosix-api-deploy
+  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+  LOCAL_CORS_ALLOWED_ORIGINS: ${{ secrets.LOCAL_CORS_ALLOWED_ORIGINS }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
 jobs:
   build:
