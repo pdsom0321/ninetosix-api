@@ -60,7 +60,7 @@ spring:
 #    username: root
 #    password: 1q2w3e4r
     driver-class-name: org.mariadb.jdbc.Driver
-    url: ${DB_URL}
+    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   mvc:
