@@ -13,6 +13,11 @@ spring:
     cors:
       mapping: "/**"
       allow-credentials: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
   # Gmail SMTP 설정
   mail:
     host: smtp.gmail.com
@@ -54,11 +59,6 @@ spring:
   config:
     activate:
       on-profile: local
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
-    username: ${db.username}
-    password: ${db.password}
   mvc:
     cors:
       allowed-origins: ${cors.allowed-origins}
@@ -67,11 +67,6 @@ spring:
   config:
     activate:
       on-profile: dev
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://deogus.gonetis.com:3306/ATTENDANCE?characterEncoding=UTF-8&serverTimezone=UTC
-    username: ${db.username}
-    password: ${db.password}
   mvc:
     cors:
       allowed-origins: ${cors.allowed-origins}
