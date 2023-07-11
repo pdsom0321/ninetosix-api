@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -115,7 +116,9 @@ public class AttendService {
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
                     return new ExportDTO(member.getName(), list);
-                }).toList();
+                })
+                .sorted(Comparator.comparing(ExportDTO::memberName).reversed()) // TEST: 이름 내림차순으로 정렬
+                .toList();
     }
 
     public List<AttendDTO> monthlyMembersAttendanceListForExport(Long memberId, String month) {

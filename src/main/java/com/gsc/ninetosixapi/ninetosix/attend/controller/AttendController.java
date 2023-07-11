@@ -51,6 +51,7 @@ public class AttendController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "금일 출근 정보")
     @UserId
     @GetMapping("attend")
     public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request) {
@@ -62,6 +63,7 @@ public class AttendController {
         return ResponseEntity.ok(attendService.yesterdayAndTodayAttendanceList(memberId));
     }*/
 
+    @ApiOperation(value = "한달 출근 목록")
     @UserId
     @GetMapping("attend/{month}")
     public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month) {
@@ -70,6 +72,7 @@ public class AttendController {
     }
 
     // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
+    @ApiOperation(value = "엑셀 출력(우선 모든 member 가져오는 조건으로 개발)")
     @GetMapping("attend/export/{year}/{month}")
     public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month) {
         ModelAndView mv = new ModelAndView("attendance");
