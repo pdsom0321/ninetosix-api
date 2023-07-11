@@ -20,8 +20,6 @@ public class SpringSecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-//    private final CustomUserDetailsService customUserDetailsService;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -35,12 +33,14 @@ public class SpringSecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/h2-console/**",
-                        "/v2/api-docs/**",
-                        "/swagger*/**",
+                .antMatchers("/v2/api-docs/**",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui.html",
                         "/webjars/**",
-                        "/member/**",
-                        "/auth/**").permitAll()
+                        "/member/**").permitAll()
                 .antMatchers("/", "/**").permitAll()
                 .antMatchers("/attends/**", "/attend/**").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated()
