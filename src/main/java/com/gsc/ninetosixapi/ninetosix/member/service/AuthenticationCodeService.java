@@ -4,6 +4,7 @@ import com.gsc.ninetosixapi.ninetosix.member.dto.GenerateCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.member.dto.VerifyCodeReqDTO;
 import com.gsc.ninetosixapi.ninetosix.member.entity.AuthenticationCode;
 import com.gsc.ninetosixapi.ninetosix.member.repository.AuthenticationCodeRepository;
+import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.vo.AuthenticationCodeType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -20,9 +21,14 @@ import java.util.Random;
 @Transactional
 public class AuthenticationCodeService {
     private final AuthenticationCodeRepository authenticationCodeRepository;
+    private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
 
     public void generateCode(GenerateCodeReqDTO reqDTO) {
+        if(memberRepository.existsByEmail(reqDTO.email())){
+            throw new RuntimeException("이미 가입한 계정이 있습니다.");
+        }
+
         int code = generateRandomNumber();
         String title = getEmailTitle(reqDTO.type());
         String text = "귀하의 인증 번호는 " + code + " 입니다.";

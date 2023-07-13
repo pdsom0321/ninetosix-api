@@ -69,7 +69,9 @@ public class MemberService {
     }
 
     public SignupResDTO signup(SignupReqDTO reqDTO) {
-        memberRepository.existsByEmail(reqDTO.email()).orElseThrow(() -> new RuntimeException("이미 가입한 계정이 있습니다."));
+        if(memberRepository.existsByEmail(reqDTO.email())){
+            throw new RuntimeException("이미 가입한 계정이 있습니다.");
+        }
 
         String encodePassword = passwordEncoder.encode(reqDTO.password());
         Company company = companyService.getCompany(reqDTO.companyCode());
