@@ -25,16 +25,20 @@ public class AuthenticationCodeService {
     private final JavaMailSender javaMailSender;
 
     public void generateCode(GenerateCodeReqDTO reqDTO) {
-        if(memberRepository.existsByEmail(reqDTO.email())){
-            throw new RuntimeException("이미 가입한 계정이 있습니다.");
+        String type = reqDTO.type();
+        if(AuthenticationCodeType.SIGNUP.name().equals(type)) {
+            if(memberRepository.existsByEmail(reqDTO.email())){
+                throw new RuntimeException("이미 가입한 계정이 있습니다.");
+            }
         }
 
+
         int code = generateRandomNumber();
-        String title = getEmailTitle(reqDTO.type());
+        String title = getEmailTitle(type);
         String text = "귀하의 인증 번호는 " + code + " 입니다.";
 
         sendEmail(reqDTO.email(), title, text);
-        authenticationCodeRepository.save(AuthenticationCode.create(code, reqDTO.email(), reqDTO.type()));
+        authenticationCodeRepository.save(AuthenticationCode.create(code, reqDTO.email(), type));
     }
 
     private int generateRandomNumber() {
