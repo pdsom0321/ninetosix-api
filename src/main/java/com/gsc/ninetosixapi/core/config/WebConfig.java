@@ -11,9 +11,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${spring.mvc.cors.mapping}")
     private String corsMapping;
 
-    @Value("${spring.mvc.cors.allowed-origins}")
-    private String corsAllowedOrigins;
-
     @Value("${spring.mvc.cors.allow-credentials}")
     private boolean corsAllowCredentials;
 
