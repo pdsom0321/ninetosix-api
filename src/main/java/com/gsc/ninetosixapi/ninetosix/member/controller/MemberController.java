@@ -37,7 +37,7 @@ public class MemberController {
     }
 
     @ApiOperation(value = "로그아웃", notes = "refresh token 삭제")
-    @PostMapping("logout")
+    @PostMapping("member/logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutReqDTO reqDTO) {
         memberService.logout(reqDTO);
         return ResponseEntity.ok().build();
