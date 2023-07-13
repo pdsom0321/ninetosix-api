@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationCodeController {
     private final AuthenticationCodeService authenticationCodeService;
 
-    @ApiOperation(value = "회원가입 시 인증번호 발급")
+    @ApiOperation(value = "회원가입/비밀번호 변경 시 인증번호 발급")
     @PostMapping("/member/generate-code")
     public ResponseEntity<Void> generateCode(@RequestBody GenerateCodeReqDTO reqDTO) {
         authenticationCodeService.generateCode(reqDTO);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "회원가입 시 인증번호 검증")
+    @ApiOperation(value = "회원가입/비밀번호 시 인증번호 검증")
     @PostMapping("/member/verify-code")
     public ResponseEntity<Boolean> verifyCode(@RequestBody VerifyCodeReqDTO reqDTO) {
         return ResponseEntity.ok(authenticationCodeService.verifyCode(reqDTO));
