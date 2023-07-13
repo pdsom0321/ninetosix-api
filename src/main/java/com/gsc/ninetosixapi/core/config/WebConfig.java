@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping(corsMapping)
-                .allowedOrigins(corsAllowedOrigins)
+                .allowedOrigins("https://www.ninetosixapi.tk","https://deogus-dev.github.io","http://localhost:7889")
                 .allowCredentials(corsAllowCredentials);
     }
 }
