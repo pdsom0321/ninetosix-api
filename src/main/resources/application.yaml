@@ -59,17 +59,11 @@ spring:
   config:
     activate:
       on-profile: local
-  mvc:
-    cors:
-      allowed-origins: ${cors.allowed-origins}
 ---
 spring:
   config:
     activate:
       on-profile: dev
-  mvc:
-    cors:
-      allowed-origins: ${cors.allowed-origins}
 
 ---
 spring:
