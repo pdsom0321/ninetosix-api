@@ -28,61 +28,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v2
 
-    # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
-    - name: Generate Environment Variables File for Production
-      run: |
-        echo "MAIL_USERNAME=$MAIL_USERNAME" >> ./src/main/resources/env.yml
-        echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> ./src/main/resources/env.yml
-        echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> ./src/main/resources/env.yml
-        echo "DB_URL=$DB_URL" >> ./src/main/resources/env.yml
-        echo "DB_USERNAME=$DB_USERNAME" >> ./src/main/resources/env.yml
-        echo "DB_PASSWORD=$DB_PASSWORD" >> ./src/main/resources/env.yml
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    # ./gradlw 실행 권한 부여
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    
-    # 프로젝트 build
-    - name: Build with Gradle
-      run: ./gradlew clean build
+          # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
+          - name: Generate Environment Variables File for Production
+            run: |
+              echo "MAIL_USERNAME=$MAIL_USERNAME" >> /src/main/resources/env.yml
+              echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> /src/main/resources/env.yml
+              echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> /src/main/resources/env.yml
+              echo "DB_URL=$DB_URL" >> /src/main/resources/env.yml
+              echo "DB_USERNAME=$DB_USERNAME" >> /src/main/resources/env.yml
+              echo "DB_PASSWORD=$DB_PASSWORD" >> /src/main/resources/env.yml
+
+      # ./gradlw 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 프로젝트 build
+      - name: Build with Gradle
+        run: ./gradlew clean build
       
-    # 디렉토리 생성
-    - name: Make Directory
-      run: mkdir -p deploy
-        
-    # Jar 파일 복사
-    - name: Copy Jar
-      run: cp ./build/libs/*.jar ./deploy
+      # 디렉토리 생성
+      - name: Make Directory
+        run: mkdir -p deploy
 
-    # 프로젝트 압축
-    - name: Make zip file
-      run: zip -r ./ninetosix-api.zip ./deploy
-      shell: bash
+      # Jar 파일 복사
+      - name: Copy Jar
+        run: cp ./build/libs/*.jar ./deploy
 
-    # AWS 권한 확인
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
+      # 프로젝트 압축
+      - name: Make zip file
+        run: zip -r ./ninetosix-api.zip ./deploy
+        shell: bash
 
-    # 압축한 프로젝트를 S3로 전송
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./ninetosix-api.zip s3://$S3_BUCKET_NAME/
-      
-     # 배포 그룹으로 애플리케이션 전송
-    - name: Code Deploy
-      run: aws deploy create-deployment \
-      --application-name ninetosix-deploy \
-      --deployment-config-name CodeDeployDefault.AllAtOnce \
-      --deployment-group-name ninetosix-deploy-group \
-      --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=ninetosix-api.zip
+      # AWS 권한 확인
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      # 압축한 프로젝트를 S3로 전송
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./ninetosix-api.zip s3://$S3_BUCKET_NAME/
+
+      # 배포 그룹으로 애플리케이션 전송
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ninetosix-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ninetosix-deploy-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=ninetosix-api.zip
