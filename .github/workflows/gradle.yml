@@ -15,12 +15,6 @@ on:
 
 env:
   S3_BUCKET_NAME: ninetosix-api-deploy
-  spring.mail.username: ${{ secrets.MAIL_USERNAME }}
-  spring.mail.password: ${{ secrets.MAIL_PASSWORD }}
-  jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
-  spring.datasource.url: ${{ secrets.DB_URL }}
-  spring.datasource.username: ${{ secrets.DB_USERNAME }}
-  spring.datasource.password: ${{ secrets.DB_PASSWORD }}
 
 jobs:
   build:
@@ -39,12 +33,19 @@ jobs:
       # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
       - name: Generate Environment Variables File for Production
         run: |
-          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
-          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> env.yml
-          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> env.yml
-          echo "DB_URL=${{ secrets.DB_URL }}" >> env.yml
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> env.yml
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env.yml
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> env.yml
+            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> env.yml
+            echo "DB_URL=${{ secrets.DB_URL }}" >> env.yml
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> env.yml
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env.yml
+        env:
+            spring.mail.username: ${{ secrets.MAIL_USERNAME }}
+            spring.mail.password: ${{ secrets.MAIL_PASSWORD }}
+            jwt.secret: ${{ secrets.JWT_SECRET_KEY }}
+            spring.datasource.url: ${{ secrets.DB_URL }}
+            spring.datasource.username: ${{ secrets.DB_USERNAME }}
+            spring.datasource.password: ${{ secrets.DB_PASSWORD }}
 
       # ./gradlw 실행 권한 부여
       - name: Grant execute permission for gradlew
