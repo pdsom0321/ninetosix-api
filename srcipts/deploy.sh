@@ -30,6 +30,8 @@ echo "> $JAR_NAME 에 실행권한 추가"
 
 chmod +x $JAR_NAME # Jar 파일은 실행 권한이 없는 상태이므로 권한 부여
 
+source env.yml
+
 echo "> $JAR_NAME 실행"
 nohup java -jar \
    -Dmail.username=$MAIL_USERNAME \

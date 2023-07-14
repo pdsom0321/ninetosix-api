@@ -72,12 +72,12 @@ jobs:
       # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
       - name: Generate Environment Variables File for Production
         run: |
-          echo "MAIL_USERNAME=$MAIL_USERNAME" >> /src/main/resources/env.yml
-          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> /src/main/resources/env.yml
-          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> /src/main/resources/env.yml
-          echo "DB_URL=$DB_URL" >> /src/main/resources/env.yml
-          echo "DB_USERNAME=$DB_USERNAME" >> /src/main/resources/env.yml
-          echo "DB_PASSWORD=$DB_PASSWORD" >> /src/main/resources/env.yml
+          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
+          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> env.yml
+          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> env.yml
+          echo "DB_URL=$DB_URL" >> env.yml
+          echo "DB_USERNAME=$DB_USERNAME" >> env.yml
+          echo "DB_PASSWORD=$DB_PASSWORD" >> env.yml
 
       # 배포 그룹으로 애플리케이션 전송
       - name: Code Deploy
