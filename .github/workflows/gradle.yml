@@ -40,11 +40,11 @@ jobs:
       - name: Generate Environment Variables File for Production
         run: |
           echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
-          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> env.yml
-          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> env.yml
-          echo "DB_URL=$DB_URL" >> env.yml
-          echo "DB_USERNAME=$DB_USERNAME" >> env.yml
-          echo "DB_PASSWORD=$DB_PASSWORD" >> env.yml
+          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> env.yml
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> env.yml
+          echo "DB_URL=${{ secrets.DB_URL }}" >> env.yml
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> env.yml
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env.yml
 
       # ./gradlw 실행 권한 부여
       - name: Grant execute permission for gradlew
