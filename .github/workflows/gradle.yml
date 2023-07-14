@@ -35,10 +35,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
+    
+    # ./gradlw 실행 권한 부여
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
+    # 프로젝트 build
     - name: Build with Gradle
       run: ./gradlew clean build
       
@@ -50,10 +52,12 @@ jobs:
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
 
+    # 프로젝트 압축
     - name: Make zip file
       run: zip -r ./ninetosix-api.zip ./deploy
       shell: bash
 
+    # AWS 권한 확인
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -61,5 +65,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
+    # 압축한 프로젝트를 S3로 전송
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./ninetosix-api.zip s3://$S3_BUCKET_NAME/
+      
+     # 배포 그룹으로 애플리케이션 전송
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name ninetosix-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ninetosix-deploy-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=ninetosix-api.zip
