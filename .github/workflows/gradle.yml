@@ -36,6 +36,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
+      - name: Generate Environment Variables File for Production
+        run: |
+          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
+          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> env.yml
+          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> env.yml
+          echo "DB_URL=$DB_URL" >> env.yml
+          echo "DB_USERNAME=$DB_USERNAME" >> env.yml
+          echo "DB_PASSWORD=$DB_PASSWORD" >> env.yml
+
       # ./gradlw 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -68,16 +78,6 @@ jobs:
       # 압축한 프로젝트를 S3로 전송
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./ninetosix-api.zip s3://$S3_BUCKET_NAME/
-
-      # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
-      - name: Generate Environment Variables File for Production
-        run: |
-          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> env.yml
-          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> env.yml
-          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> env.yml
-          echo "DB_URL=$DB_URL" >> env.yml
-          echo "DB_USERNAME=$DB_USERNAME" >> env.yml
-          echo "DB_PASSWORD=$DB_PASSWORD" >> env.yml
 
       # 배포 그룹으로 애플리케이션 전송
       - name: Code Deploy
