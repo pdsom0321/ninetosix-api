@@ -19,6 +19,14 @@ else
   sleep 5
 fi
 
+source env.yml
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
-nohup java -jar $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/ninetosix-api/deploy_err.log &
+nohup java -jar \
+   -Dmail.username=$MAIL_USERNAME \
+   -Dmail.password=$MAIL_PASSWORD \
+   -Djwt.key=JWT_SECRET_KEY \
+   -Ddb.url=$DB_URL \
+   -Ddb.username=$DB_USERNAME \
+   -Ddb.password=$DB_PASSWORD \
+   $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/ninetosix-api/deploy_err.log &

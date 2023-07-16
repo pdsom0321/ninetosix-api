@@ -33,7 +33,7 @@ jobs:
       # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
       - name: Generate Environment Variables File for Production
         env:
-          MAIL_USERNAME: ${{ secrets.OCCUPY_SECRET }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           DB_URL: ${{ secrets.DB_URL }}
