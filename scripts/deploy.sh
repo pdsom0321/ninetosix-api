@@ -1,5 +1,5 @@
 #!/bin/bash
-BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*.jar)
+BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> build 파일명: $JAR_NAME" >> /home/ec2-user/ninetosix-api/deploy.log
 
@@ -19,8 +19,8 @@ else
   sleep 5
 fi
 
-source env.yml
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
+source ../env.yml
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "java -jar \
