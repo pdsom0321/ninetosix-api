@@ -40,12 +40,12 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          echo MAIL_USERNAME="$MAIL_USERNAME" >> /scripts/env.yml &&
-          echo MAIL_PASSWORD="$MAIL_PASSWORD" >> /scripts/env.yml &&
-          echo JWT_SECRET_KEY="$JWT_SECRET_KEY" >> /scripts/env.yml &&
-          echo DB_URL="$DB_URL" >> /scripts/env.yml &&
-          echo DB_USERNAME="$DB_USERNAME" >> /scripts/env.yml &&
-          echo DB_PASSWORD="$DB_PASSWORD" >> /scripts/env.yml
+          echo MAIL_USERNAME="$MAIL_USERNAME" >> env.yml &&
+          echo MAIL_PASSWORD="$MAIL_PASSWORD" >> env.yml &&
+          echo JWT_SECRET_KEY="$JWT_SECRET_KEY" >> env.yml &&
+          echo DB_URL="$DB_URL" >> env.yml &&
+          echo DB_USERNAME="$DB_USERNAME" >> env.yml &&
+          echo DB_PASSWORD="$DB_PASSWORD" >> env.yml
 
       # gradlw 실행 권한 부여
       - name: Grant execute permission for gradlew
