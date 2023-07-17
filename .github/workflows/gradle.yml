@@ -30,7 +30,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Github Repository Secrets를 통해 환경 변수 파일을 생성한다.
+      # Github Repository Secrets를 통해 환경 변수 파일을 생성
       - name: Generate Environment Variables File for Production
         env:
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
@@ -47,7 +47,7 @@ jobs:
           echo DB_USERNAME="$DB_USERNAME" >> env.yml &&
           echo DB_PASSWORD="$DB_PASSWORD" >> env.yml
 
-      # ./gradlw 실행 권한 부여
+      # gradlw 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -72,7 +72,7 @@ jobs:
           --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
           --source .
 
-      # AWS EC2에 Deploy
+      # EC2에 Deploy (code Deploy)
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
