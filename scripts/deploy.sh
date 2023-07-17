@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
 echo "data now : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/ninetosix-api/deploy.log
 
 BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*SNAPSHOT.jar)
@@ -24,6 +25,7 @@ fi
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
+cat ../env.yml
 source ../env.yml
 MAIL_USERNAME=$MAIL_USERNAME
 echo "> source Test - MAIL_USERNAME: $MAIL_USERNAME"    >> /home/ec2-user/ninetosix-api/deploy.log
@@ -35,6 +37,7 @@ echo "java -jar \
          -Ddb.username=$DB_USERNAME \
          -Ddb.password=$DB_PASSWORD \
          $DEPLOY_JAR"   >> /home/ec2-user/ninetosix-api/deploy.log
+echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
 nohup java -jar \
    -Dmail.username=$MAIL_USERNAME \
    -Dmail.password=$MAIL_PASSWORD \
