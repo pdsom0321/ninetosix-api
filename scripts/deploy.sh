@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "data now : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)"
+
 BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> build 파일명: $JAR_NAME" >> /home/ec2-user/ninetosix-api/deploy.log
@@ -14,15 +16,17 @@ if [ -z $CURRENT_PID ]
 then
   echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ec2-user/ninetosix-api/deploy.log
 else
+  echo "> 현재 구동중인 애플리케이션 $CURRENT_PID" >> /home/ec2-user/ninetosix-api/deploy.log
   echo "> kill -15 $CURRENT_PID"
   kill -15 $CURRENT_PID
   sleep 5
 fi
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
-source ../env.yml
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
+source ../env.yml
+echo "> source Test - MAIL_USERNAME: $MAIL_USERNAME"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "java -jar \
          -Dmail.username=$MAIL_USERNAME \
          -Dmail.password=$MAIL_PASSWORD \
