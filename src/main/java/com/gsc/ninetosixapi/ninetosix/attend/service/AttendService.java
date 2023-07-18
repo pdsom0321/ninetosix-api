@@ -85,7 +85,7 @@ public class AttendService {
 
         List<String> dayList = List.of(startDate, endDate);
         return dayList.stream()
-                .sorted()   // TODO: front에서도 attendDate로 정렬할 수 있는지 check !!!
+                .sorted()
                 .map(day -> attendRepository.findByMemberIdAndAttendDate(memberId, day)
                         .orElseGet(Attend::new))
                 .map(AttendResDTO::of)

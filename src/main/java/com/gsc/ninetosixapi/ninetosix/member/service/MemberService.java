@@ -14,6 +14,7 @@ import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,6 +54,7 @@ public class MemberService {
         Member member = findByEmail(email);
         long id = member.getId();
         long now = new Date().getTime();
+
         String accessToken = tokenProvider.generateToken(email, id, now+TokenConfig.ACCESS_TOKEN_EXPIRE_TIME);
         String refreshToken = tokenProvider.generateToken(email, id, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
 
@@ -96,15 +98,14 @@ public class MemberService {
 
         // 1. Access Token 검증
         if (!tokenProvider.validateToken(accessToken)) {
-            throw new RuntimeException("access Token 이 유효하지 않습니다.");
+            throw new JwtException("Access Token 이 잘못되었습니다.");
         }
 
         // 2. Access Token 에서 authentication 을 가져옴
         Authentication authentication = tokenProvider.getAuthentication(accessToken);
-        // 3. DB에 저장된 Refresh Token 제거
         String email = authentication.getName();
-        // Long memberId = MemberContext.getMemberId();
-        // String email = findById(memberId).getEmail();
+
+        // 3. DB에 저장된 Refresh Token 제거
         refreshTokenRepository.deleteByEmail(email);
 
         // 4. Access Token blacklist에 등록하여 만료시키기
@@ -115,17 +116,13 @@ public class MemberService {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.refreshToken())) {
             log.error("REQ Refresh Token : " + reqDTO.refreshToken());
-            throw new RuntimeException("Refresh Token validation false !!!!!!");
+            throw new JwtException("Refresh Token 이 잘못되었습니다.");
         }
 
-        // 2. Access Token 에서 Member ID 가져오기
-        // Authentication authentication = tokenProvider.getAuthentication(reqDTO.refreshToken());
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        Long id = tokenProvider.getId(reqDTO.refreshToken());   // payload에서 userId 가져옴
-        String email = memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(""))
-                .getEmail();  // 아직은 구현 전이라, id를 통해 email 가져옴
-        long now = new Date().getTime();
+        // 2. Refresh Token 값으로 subject(email)값 가져옴
+        String email = tokenProvider.getEmail(reqDTO.refreshToken());
+
+        // 3. refresh token 만료되었거나 이미 로그아웃한 사용자인지 확인
         RefreshToken refreshTokenData = refreshTokenRepository.findByEmailAndExpireDateGreaterThan(email, new Date())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
@@ -134,10 +131,12 @@ public class MemberService {
             log.error("DB Refresh Token : " + refreshTokenData.getToken());
             log.error("Request Refresh Token : " + reqDTO.refreshToken());
             log.error("equals ? : " + refreshTokenData.getToken().equals(reqDTO.refreshToken()));
-            throw new RuntimeException("DB와 요청(Request)의 토큰이 일치하지 않습니다.");
+            throw new RuntimeException("DB와 ReqDTO의 Refresh Token 값이 일치하지 않습니다.");
         }
 
         // 5. 새로운 토큰 생성
+        Long id = tokenProvider.getId(reqDTO.refreshToken());
+        long now = new Date().getTime();
         String accessToken = tokenProvider.generateToken(email, id, now+TokenConfig.ACCESS_TOKEN_EXPIRE_TIME);
         String refreshToken = tokenProvider.generateToken(email, id, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
 

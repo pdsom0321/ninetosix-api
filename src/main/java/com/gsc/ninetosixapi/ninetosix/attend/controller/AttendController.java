@@ -21,7 +21,7 @@ public class AttendController {
 
     /**
      * ResponseEntity 제네릭 타입: ResponseEntity의 제네릭 타입을 Void로 변경하여 명시적으로 응답 본문이 없음을 나타냅니다. 이는 클라이언트에게 빈 본문을 반환하는 것과 동일합니다.
-     * ResponseEntity.ok().build(): ResponseEntity의 ok() 메서드를 사용하여 HTTP 상태 코드를 200 OK로 설정하고, build() 메서드를 호출하여 ResponseEntity 객체를 생성합니다. 이를 통해 간결하게 응답을 생성할 수 있습니다.@return
+     * ResponseEntity.ok().build(): ResponseEntity의 ok() 메서드를 사용하여 HTTP 상태 코드를 200 OK로 설정하고, build() 메서드를 호출하여 ResponseEntity 객체를 생성합니다. 이를 통해 간결하게 응답을 생성할 수 있습니다.
      */
     @ApiOperation(value = "출근", notes = "attendCode, locationCode -> insert Attend 실행")
     @PostMapping("attend/on")
@@ -72,7 +72,7 @@ public class AttendController {
     }
 
     // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
-    @ApiOperation(value = "엑셀 출력(우선 모든 member 가져오는 조건으로 개발)")
+    @ApiOperation(value = "엑셀 출력 (우선 모든 member 가져오는 조건으로 개발)")
     @GetMapping("attend/export/{year}/{month}")
     public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month) {
         ModelAndView mv = new ModelAndView("attendance");

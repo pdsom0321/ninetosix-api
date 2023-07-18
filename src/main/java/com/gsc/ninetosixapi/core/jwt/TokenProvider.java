@@ -94,8 +94,11 @@ public class TokenProvider {
     }
 
     public Long getId(String token) {
-        Claims claims = parseClaims(token);
-        return claims.get("id", Long.class);
+        return parseClaims(token).get("id", Long.class);
+    }
+
+    public String getEmail(String token) {
+        return parseClaims(token).getSubject();
     }
 
     // access token / refresh token 합치면서 주석 처리 2023.06.27
