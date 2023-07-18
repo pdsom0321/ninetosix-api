@@ -66,11 +66,6 @@ jobs:
       # S3에 업로드
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 --acl private ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/
-          # aws deploy push \
-          # --application-name ninetosix-codedeploy \
-          # --ignore-hidden-files \
-          # --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
-          # --source .
 
       # EC2에 Deploy (code Deploy)
       - name: Deploy to AWS EC2 from S3
