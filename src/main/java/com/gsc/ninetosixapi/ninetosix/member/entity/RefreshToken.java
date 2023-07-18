@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Builder
@@ -16,17 +18,23 @@ import javax.persistence.Id;
 public class RefreshToken {
     @Id
     private String email;
-
     private String token;
+    private Date expireDate;
+    private LocalDateTime insertDate;
+    private LocalDateTime updateDate;
 
-    public static RefreshToken create(String email, String token) {
+    public static RefreshToken create(String email, String token, long expireTime) {
         return RefreshToken.builder()
                 .email(email)
                 .token(token)
+                .expireDate(new Date(expireTime))
+                .insertDate(LocalDateTime.now())
                 .build();
     }
 
-    public void updateToken(String token) {
+    public void updateToken(String token, long expireTime) {
         this.token = token;
+        this.expireDate = new Date(expireTime);
+        this.updateDate = LocalDateTime.now();
     }
 }

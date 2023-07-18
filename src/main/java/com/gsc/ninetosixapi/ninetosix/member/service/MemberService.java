@@ -57,7 +57,7 @@ public class MemberService {
         String refreshToken = tokenProvider.generateToken(email, id, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
 
         // 4. RefreshToken 저장
-        refreshTokenRepository.save(RefreshToken.create(email, refreshToken));
+        refreshTokenRepository.save(RefreshToken.create(email, refreshToken, now+TokenConfig.REFRESH_TOKEN_EXPIRE_TIME));
 
         return LoginResDTO.builder()
                 .grantType(TokenConfig.BEARER_PREFIX)
@@ -126,7 +126,7 @@ public class MemberService {
                 .orElseThrow(() -> new NoSuchElementException(""))
                 .getEmail();  // 아직은 구현 전이라, id를 통해 email 가져옴
         long now = new Date().getTime();
-        RefreshToken refreshTokenData = refreshTokenRepository.findByEmail(email)
+        RefreshToken refreshTokenData = refreshTokenRepository.findByEmailAndExpireDateGreaterThan(email, new Date())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사
@@ -142,7 +142,7 @@ public class MemberService {
         String refreshToken = tokenProvider.generateToken(email, id, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
 
         // 6. 저장소 정보 업데이트
-        refreshTokenData.updateToken(refreshToken);
+        refreshTokenData.updateToken(refreshToken, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
 
         return ReissueResDTO.of(accessToken, refreshToken);
     }
