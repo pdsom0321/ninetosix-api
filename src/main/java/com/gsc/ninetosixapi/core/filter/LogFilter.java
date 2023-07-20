@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @Component
 public class LogFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(LogFilter.class);
-    private final List<String> excludedUrls = Stream.of("/swagger/**", "/webjars/**").toList();
+    private final List<String> excludedUrls = Stream.of("/swagger*/**", "/webjars/**", "/v2/api-docs/**").toList();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
