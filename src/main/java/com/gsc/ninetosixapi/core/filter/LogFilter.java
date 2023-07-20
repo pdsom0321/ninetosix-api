@@ -3,7 +3,6 @@ package com.gsc.ninetosixapi.core.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
@@ -17,28 +16,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 
 @Component
 public class LogFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(LogFilter.class);
+    private final List<String> excludedUrls = Stream.of("/swagger-ui.html", "/webjars/**").toList();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        // Swagger 관련 헬스체크 URL 패턴
-        String swaggerHealthCheckPattern = "/swagger-ui.html";
-        // Ant 경로 패턴을 사용하여 URL 비교
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String requestURL = httpRequest.getRequestURI();
+        String requestUrl = httpRequest.getRequestURI();
 
-        // Swagger 헬스체크 URL 패턴에 일치하는 경우, 로깅하지 않고 바로 다음 필터 또는 서블릿으로 진행
-        if (antPathMatcher.match(swaggerHealthCheckPattern, requestURL)) {
+        if (!excludedUrls.contains(requestUrl)) {
             chain.doFilter(request, response);
             return;
         }
