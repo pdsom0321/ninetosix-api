@@ -30,9 +30,8 @@ public class LogFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestUrl = httpRequest.getRequestURI();
-        log.info("#### [requestUrl]: " + requestUrl);
 
-        if (!excludedUrls.contains(requestUrl)) {
+        if (excludedUrls.contains(requestUrl)) {
             chain.doFilter(request, response);
             return;
         }
