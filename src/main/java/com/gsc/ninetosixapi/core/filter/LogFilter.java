@@ -3,6 +3,7 @@ package com.gsc.ninetosixapi.core.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
@@ -28,7 +29,20 @@ public class LogFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        log.info(" ================LogFilter doFilter");
+        // Swagger 관련 헬스체크 URL 패턴
+        String swaggerHealthCheckPattern = "/swagger-ui.html";
+        // Ant 경로 패턴을 사용하여 URL 비교
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String requestURL = httpRequest.getRequestURI();
+
+        // Swagger 헬스체크 URL 패턴에 일치하는 경우, 로깅하지 않고 바로 다음 필터 또는 서블릿으로 진행
+        if (antPathMatcher.match(swaggerHealthCheckPattern, requestURL)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) response);
 
