@@ -3,6 +3,7 @@ package com.gsc.ninetosixapi.core.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 @Component
 public class LogFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(LogFilter.class);
-    private final List<String> excludedUrls = Stream.of("/swagger**", "/webjars/**").toList();
+    private final List<String> excludedUrls = Stream.of("/swagger/**", "/webjars/**").toList();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -31,9 +32,11 @@ public class LogFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestUrl = httpRequest.getRequestURI();
 
-        if (excludedUrls.contains(requestUrl)) {
-            chain.doFilter(request, response);
-            return;
+        for (String excludedUrl : excludedUrls) {
+            if (new AntPathMatcher().match(excludedUrl, requestUrl)) {
+                chain.doFilter(request, response);
+                return;
+            }
         }
 
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
