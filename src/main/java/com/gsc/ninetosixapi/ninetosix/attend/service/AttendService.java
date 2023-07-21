@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -96,7 +95,7 @@ public class AttendService {
         List<Attend> attendList = attendRepository.findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(memberId, month);
 
         return attendList.stream()
-                .filter(attend -> Objects.nonNull(attend.getInTime()))
+                // .filter(attend -> Objects.nonNull(attend.getInTime()))
                 .map(MonthlyResDTO::of)
                 .collect(Collectors.toList());
     }

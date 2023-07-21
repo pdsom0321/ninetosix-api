@@ -88,8 +88,9 @@ public class Attend {
         LocalDateTime outDateTime = LocalDateTime.parse(this.getAttendDate() + this.getOutTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
 
         Duration duration = Duration.between(inDateTime, outDateTime);
+        Duration minusLunchTime = duration;
         if(Integer.parseInt(this.getInTime()) <= 1130 && Integer.parseInt(this.getOutTime()) >= 1230)
-            duration.minusMinutes(60);
-        return duration.toHours() + "시간 " + duration.toMinutesPart() + "분";
+            minusLunchTime = duration.minusMinutes(60);
+        return String.valueOf(minusLunchTime.toMinutes());      // TODO: workTime 데이터형 변환 String -> Long
     }
 }
