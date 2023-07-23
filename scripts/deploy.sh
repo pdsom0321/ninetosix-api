@@ -25,6 +25,7 @@ fi
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
+pwd
 cat ../env.yml >> /home/ec2-user/ninetosix-api/deploy.log
 source ../env.yml
 MAIL_USERNAME=$MAIL_USERNAME
