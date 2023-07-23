@@ -40,7 +40,6 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          echo MAIL_USERNAME="$MAIL_USERNAME" >> env.yml &&
           echo MAIL_PASSWORD="$MAIL_PASSWORD" >> env.yml &&
           echo JWT_SECRET_KEY="$JWT_SECRET_KEY" >> env.yml &&
           echo DB_URL="$DB_URL" >> env.yml &&
