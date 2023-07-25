@@ -6,10 +6,6 @@ BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> build 파일명: $JAR_NAME" >> /home/ec2-user/ninetosix-api/deploy.log
 
-echo "> build 파일 복사" >> /home/ec2-user/ninetosix-api/deploy.log
-DEPLOY_PATH=/home/ec2-user/ninetosix-api/
-cp $BUILD_JAR $DEPLOY_PATH
-
 echo "> 현재 실행중인 애플리케이션 pid 확인" >> /home/ec2-user/ninetosix-api/deploy.log
 CURRENT_PID=$(pgrep -f $JAR_NAME)
 
@@ -22,14 +18,14 @@ else
   sleep 5
 fi
 
+echo "> build 파일 복사" >> /home/ec2-user/ninetosix-api/deploy.log
+DEPLOY_PATH=/home/ec2-user/ninetosix-api/
+cp $BUILD_JAR $DEPLOY_PATH
+
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
-pwd >> /home/ec2-user/ninetosix-api/deploy.log
-cat /home/ec2-user/ninetosix-api/env.yml >> /home/ec2-user/ninetosix-api/deploy.log
 source /home/ec2-user/ninetosix-api/env.yml
-MAIL_USERNAME=$MAIL_USERNAME
-echo "> source Test - MAIL_USERNAME: $MAIL_USERNAME"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "java -jar \
          -Dmail.username=$MAIL_USERNAME \
          -Dmail.password=$MAIL_PASSWORD \
