@@ -2,6 +2,9 @@
 echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
 echo "data now : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/ninetosix-api/deploy.log
 
+LOG_DIR="/home/ec2-user/ninetosix-api/logs"
+CURRENT_DATE=$(date +"%Y-%m-%d")
+
 BUILD_JAR=$(ls /home/ec2-user/ninetosix-api/build/libs/*SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo "> build 파일명: $JAR_NAME" >> /home/ec2-user/ninetosix-api/deploy.log
@@ -22,6 +25,7 @@ echo "> build 파일 복사" >> /home/ec2-user/ninetosix-api/deploy.log
 DEPLOY_PATH=/home/ec2-user/ninetosix-api/
 cp $BUILD_JAR $DEPLOY_PATH
 
+mkdir -p $LOG_DIR
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/ninetosix-api/deploy.log
 echo "> DEPLOY_JAR: $DEPLOY_JAR"    >> /home/ec2-user/ninetosix-api/deploy.log
@@ -35,6 +39,7 @@ echo "java -jar \
          -Ddb.password=$DB_PASSWORD \
          $DEPLOY_JAR"   >> /home/ec2-user/ninetosix-api/deploy.log
 echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
+
 nohup java -jar \
    -Dmail.username=$MAIL_USERNAME \
    -Dmail.password=$MAIL_PASSWORD \
@@ -42,4 +47,4 @@ nohup java -jar \
    -Ddb.url=$DB_URL \
    -Ddb.username=$DB_USERNAME \
    -Ddb.password=$DB_PASSWORD \
-   $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/ninetosix-api/deploy_err.log &
+   $DEPLOY_JAR >> $LOG_DIR/deploy_$CURRENT_DATE.log 2> /home/ec2-user/ninetosix-api/deploy_err.log &
