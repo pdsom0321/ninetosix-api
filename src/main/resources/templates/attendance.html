@@ -36,8 +36,8 @@
         <th:block th:each="exportDTO : ${attends}">
             <td th:colspan="2">
                 <th:block th:if="${exportDTO.attends.size() > 0}">
-                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date}"
-                      th:text="${attendDTO.inTime}"></span>
+                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date} and ${attendDTO.inTime != null}"
+                      th:text="${#strings.substring(attendDTO.inTime, 0, 2) + ':' + #strings.substring(attendDTO.inTime, 2)}"></span>
                 </th:block>
             </td>
             <td th:rowspan="3"></td>
@@ -48,8 +48,8 @@
         <th:block th:each="exportDTO : ${attends}">
             <td th:colspan="2">
                 <th:block th:if="${exportDTO.attends.size() > 0}">
-                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date}"
-                      th:text="${attendDTO.outTime}"></span>
+                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date} and ${attendDTO.outTime != null}"
+                      th:text="${#strings.substring(attendDTO.outTime, 0, 2) + ':' + #strings.substring(attendDTO.outTime, 2)}"></span>
                 </th:block>
             </td>
         </th:block>
@@ -59,8 +59,10 @@
         <th:block th:each="exportDTO : ${attends}">
             <td th:colspan="2">
             <span th:if="${exportDTO.attends.size() > 0}">
-                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date}"
-                      th:text="${attendDTO.workTime}"></span>
+                <span th:each="attendDTO : ${exportDTO.attends}" th:if="${attendDTO.attendDate} == ${date} and ${attendDTO.workTime != null}">
+                    <span th:with="hours=${attendDTO.workTime div 60}, minutes=${attendDTO.workTime mod 60}">
+                    <span th:text="${hours + '시간 ' + minutes + '분'}"></span>
+                </span>
             </span>
             </td>
         </th:block>

@@ -34,7 +34,7 @@ public class Attend {
 
     private String locationCode;
 
-    private String workTime;
+    private Long workTime;
 
     private LocalDateTime insertDate;
 
@@ -83,7 +83,7 @@ public class Attend {
         this.updateDate = LocalDateTime.now();
     }
 
-    private String calculateWorkTime() {
+    private long calculateWorkTime() {
         LocalDateTime inDateTime = LocalDateTime.parse(this.getAttendDate() + this.getInTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
         LocalDateTime outDateTime = LocalDateTime.parse(this.getAttendDate() + this.getOutTime(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
 
@@ -91,6 +91,6 @@ public class Attend {
         Duration minusLunchTime = duration;
         if(Integer.parseInt(this.getInTime()) <= 1130 && Integer.parseInt(this.getOutTime()) >= 1230)
             minusLunchTime = duration.minusMinutes(60);
-        return String.valueOf(minusLunchTime.toMinutes());      // TODO: workTime 데이터형 변환 String -> Long
+        return minusLunchTime.toMinutes();
     }
 }

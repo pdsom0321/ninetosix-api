@@ -116,7 +116,7 @@ public class AttendService {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
                     return new ExportDTO(member.getName(), list);
                 })
-                .sorted(Comparator.comparing(ExportDTO::memberName).reversed()) // TEST: 이름 내림차순으로 정렬
+                .sorted(Comparator.comparing(ExportDTO::memberName))
                 .toList();
     }
 

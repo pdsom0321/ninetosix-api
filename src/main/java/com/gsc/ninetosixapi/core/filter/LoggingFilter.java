@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
-    private final List<String> excludedUrls = Stream.of("/swagger*/**", "/webjars/**", "/v2/api-docs/**").toList();
+    private final List<String> excludedUrls = Stream.of("/swagger*/**", "/webjars/**", "/v2/api-docs/**", "/attend/export/**").toList();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
