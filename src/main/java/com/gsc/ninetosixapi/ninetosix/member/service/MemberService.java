@@ -146,6 +146,13 @@ public class MemberService {
         return ReissueResDTO.of(accessToken, refreshToken);
     }
 
+    public MemberInfoResDTO memberInfo() {
+        Long id = MemberContext.getMemberId();
+        Member member = findById(id);
+
+        return MemberInfoResDTO.of(member);
+    }
+
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 계정 입니다."));
     }

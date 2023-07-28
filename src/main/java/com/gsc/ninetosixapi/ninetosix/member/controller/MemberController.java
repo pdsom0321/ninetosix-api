@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -47,5 +44,11 @@ public class MemberController {
     @PostMapping("reissue")
     public ResponseEntity<ReissueResDTO> reissue(@RequestBody ReissueReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.reissue(reqDTO));
+    }
+
+    @ApiOperation(value = "회원 정보. 마이페이지")
+    @GetMapping("member")
+    public ResponseEntity<MemberInfoResDTO> memberInfo() {
+        return ResponseEntity.ok(memberService.memberInfo());
     }
 }
