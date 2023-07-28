@@ -146,11 +146,11 @@ public class MemberService {
         return ReissueResDTO.of(accessToken, refreshToken);
     }
 
-    public MemberInfoResDTO memberInfo() {
+    public MyPageResDTO myPage() {
         Long id = MemberContext.getMemberId();
         Member member = findById(id);
 
-        return MemberInfoResDTO.of(member);
+        return MyPageResDTO.of(member);
     }
 
     public Member findByEmail(String email) {

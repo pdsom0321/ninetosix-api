@@ -47,8 +47,8 @@ public class MemberController {
     }
 
     @ApiOperation(value = "회원 정보. 마이페이지")
-    @GetMapping("member")
-    public ResponseEntity<MemberInfoResDTO> memberInfo() {
-        return ResponseEntity.ok(memberService.memberInfo());
+    @GetMapping("my-page")
+    public ResponseEntity<MyPageResDTO> myPage() {
+        return ResponseEntity.ok(memberService.myPage());
     }
 }
