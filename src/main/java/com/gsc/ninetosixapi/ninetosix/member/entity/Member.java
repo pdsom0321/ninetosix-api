@@ -47,13 +47,11 @@ public class Member {
     @Column(length = 1)
     private YNCode pushAgreeYn;
 
-    /**
-     * TODO : 로그인 실패횟수 체크 안할거면 삭제 필요
-     */
+    // TODO : 로그인 실패횟수 체크 안할거면 삭제 필요
     @Column(length = 1)
     private Integer loginFailCnt;
 
-    private LocalDateTime passwordModifiedDate;
+    private LocalDateTime passwordExpiryDate;
 
     private LocalDateTime insertDate;
 
@@ -68,8 +66,12 @@ public class Member {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
     private List<Attend> attends = new ArrayList<>();
+
     @Transient
     private static Integer INIT_LOGIN_FAIL_CNT = 0;
+
+    @Transient
+    private static Long PASSWORD_EXPIRY_DAY = 90L;
 
     public static Member create(SignupReqDTO signupReqDTO, String password, Company company1) {
         return Member.builder()
@@ -81,13 +83,14 @@ public class Member {
                 .deleteYn(YNCode.N)
                 .pushAgreeYn(YNCode.valueOf(signupReqDTO.pushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)
+                .passwordExpiryDate(LocalDateTime.now().plusDays(PASSWORD_EXPIRY_DAY))
                 .insertDate(LocalDateTime.now())
                 .build();
     }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
-        this.passwordModifiedDate = LocalDateTime.now();
+        this.passwordExpiryDate = LocalDateTime.now().plusDays(PASSWORD_EXPIRY_DAY);
         this.updateDate = LocalDateTime.now();
     }
 
