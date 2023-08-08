@@ -97,6 +97,13 @@ public class MemberService {
         member.updatePassword(encodePassword);
     }
 
+    public void changePasswordExpiry() {
+        Long memberId = MemberContext.getMemberId();
+        Member member = findById(memberId);
+
+        member.updatePasswordExpiry();
+    }
+
     public void logout(LogoutReqDTO reqDTO) {
         String accessToken = reqDTO.accessToken();
         log.info("accessToken : " + accessToken);

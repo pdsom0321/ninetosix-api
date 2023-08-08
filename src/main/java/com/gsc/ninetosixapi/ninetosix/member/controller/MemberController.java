@@ -33,6 +33,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "비밀번호 변경 다음에 하기", notes = "passwordExpiryDate 를 PASSWORD_EXPIRY_DAY(90일) 만큼 연장")
+    @PutMapping("member/password-expiry")
+    public ResponseEntity<Void> changePasswordExpiry() {
+        memberService.changePasswordExpiry();
+        return ResponseEntity.ok().build();
+    }
+
+
     @ApiOperation(value = "로그아웃", notes = "refresh token 삭제")
     @PostMapping("member/logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutReqDTO reqDTO) {

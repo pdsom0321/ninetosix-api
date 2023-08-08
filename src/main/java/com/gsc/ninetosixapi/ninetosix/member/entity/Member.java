@@ -94,4 +94,8 @@ public class Member {
         this.updateDate = LocalDateTime.now();
     }
 
+    public void updatePasswordExpiry() {
+        this.passwordExpiryDate = LocalDateTime.now().plusDays(PASSWORD_EXPIRY_DAY);
+    }
+
 }
