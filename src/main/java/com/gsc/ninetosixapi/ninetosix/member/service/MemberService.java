@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -61,12 +62,16 @@ public class MemberService {
         // 4. RefreshToken 저장
         refreshTokenRepository.save(RefreshToken.create(email, refreshToken, now+TokenConfig.REFRESH_TOKEN_EXPIRE_TIME));
 
+        // 5. 비밀번호 만료 확인 (PASSWORD_EXPIRY_DAY = 90)
+        boolean isPasswordExpired = member.getPasswordExpiryDate().isBefore(LocalDateTime.now());
+
         return LoginResDTO.builder()
                 .grantType(TokenConfig.BEARER_PREFIX)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .id(id)
                 .name(member.getName())
+                .isPasswordExpired(isPasswordExpired)
                 .build();
     }
 
