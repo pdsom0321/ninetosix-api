@@ -78,7 +78,7 @@ jobs:
           aws deploy create-deployment \
           --application-name ninetosix-codedeploy \
           --deployment-config-name CodeDeployDefault.OneAtATime \
-          --deployment-group-name ninetosix-codedeploy-group \
+          --deployment-group-name ninetosix-codedeploy-group-bluegreen \
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
           --region ap-northeast-2
