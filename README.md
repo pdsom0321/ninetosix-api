@@ -9,11 +9,12 @@
 + Swagger
 
 ## Main Features
-#### [Member]
-#### [Attend]
+<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/f7489168-13cc-47fe-9a26-a0743185022c"/>
+<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/32937460-0cb1-4bcc-b2c6-6378e0649ef7"/>
  
 ## Deployment
 #### [Automated CI/CD Setup with GitHub Action]
+<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/acff951f-1f54-4392-844c-6f793431b50f"/>
 <pre><code>1. 소스 코드는 GitHub에 저장
 2. GitHub Action을 설정하여 코드 변경이 발생할 때마다 자동으로 빌드와 테스트 수행
 3. 빌드와 테스트가 성공적으로 완료되면, 빌드된 애플리케이션 파일은 AWS S3에 업로드
