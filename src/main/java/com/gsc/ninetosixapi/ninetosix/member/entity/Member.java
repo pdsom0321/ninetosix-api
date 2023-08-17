@@ -3,6 +3,7 @@ package com.gsc.ninetosixapi.ninetosix.member.entity;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
 import com.gsc.ninetosixapi.ninetosix.member.dto.SignupReqDTO;
+import com.gsc.ninetosixapi.ninetosix.team.entity.Team;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,6 +62,10 @@ public class Member {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
     private Set<MemberRole> role = new HashSet<>();
 
@@ -73,13 +78,14 @@ public class Member {
     @Transient
     private static Long PASSWORD_EXPIRY_DAY = 90L;
 
-    public static Member create(SignupReqDTO signupReqDTO, String password, Company company1) {
+    public static Member create(SignupReqDTO signupReqDTO, String password, Company company1, Team team1) {
         return Member.builder()
                 .email(signupReqDTO.email())
                 .name(signupReqDTO.name())
                 .password(password)
                 .contact(signupReqDTO.contact())
                 .company(company1)
+                .team(team1)
                 .deleteYn(YNCode.N)
                 .pushAgreeYn(YNCode.valueOf(signupReqDTO.pushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)

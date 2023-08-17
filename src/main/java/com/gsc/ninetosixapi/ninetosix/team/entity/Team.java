@@ -1,6 +1,7 @@
 package com.gsc.ninetosixapi.ninetosix.team.entity;
 
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
+import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,7 @@ public class Team {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToOne(mappedBy = "team")
+    private Member member;
 }

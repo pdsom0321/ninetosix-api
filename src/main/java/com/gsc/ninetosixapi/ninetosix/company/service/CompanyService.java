@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,8 +24,8 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public Company getCompany(String code) {
-        return companyRepository.findByCode(code);
+    public Company getCompany(Long id) {
+        return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
 }

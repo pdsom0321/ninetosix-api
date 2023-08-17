@@ -14,7 +14,8 @@ public record SignupReqDTO(
         String password,
         @NotBlank(message = "연락처는 필수 입력 값 입니다.")
         String contact,
-        String companyCode,
+        Long companyId,
+        Long teamId,
         String pushAgreeYn
 ) {
 }

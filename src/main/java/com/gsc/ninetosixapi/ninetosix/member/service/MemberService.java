@@ -14,6 +14,8 @@ import com.gsc.ninetosixapi.ninetosix.member.repository.BlacklistRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
+import com.gsc.ninetosixapi.ninetosix.team.entity.Team;
+import com.gsc.ninetosixapi.ninetosix.team.service.TeamService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlacklistRepository blacklistRepository;
     private final CompanyService companyService;
+    private final TeamService teamService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     public final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -81,9 +84,10 @@ public class MemberService {
         }
 
         String encodePassword = passwordEncoder.encode(reqDTO.password());
-        Company company = companyService.getCompany(reqDTO.companyCode());
+        Company company = companyService.getCompany(reqDTO.companyId());
+        Team team = teamService.getTeam(reqDTO.teamId());
 
-        Member member = memberRepository.save(Member.create(reqDTO, encodePassword, company));
+        Member member = memberRepository.save(Member.create(reqDTO, encodePassword, company, team));
         memberRoleRepository.save(MemberRole.create(member));
 
         return SignupResDTO.of(member);
