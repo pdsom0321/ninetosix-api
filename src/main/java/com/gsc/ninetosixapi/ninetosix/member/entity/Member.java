@@ -61,7 +61,7 @@ public class Member {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
     private Set<MemberRole> role = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.LAZY)
