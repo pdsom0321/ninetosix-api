@@ -2,6 +2,7 @@ package com.gsc.ninetosixapi.ninetosix.company.entity;
 
 import com.gsc.ninetosixapi.ninetosix.companyLocation.entity.CompanyLocation;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
+import com.gsc.ninetosixapi.ninetosix.team.entity.Team;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,7 @@ public class Company {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
     private List<CompanyLocation> companyLocations = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
+    private List<Team> teams = new ArrayList<>();
 }
