@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +29,6 @@ public class Team {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToOne(mappedBy = "team")
-    private Member member;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
 }
