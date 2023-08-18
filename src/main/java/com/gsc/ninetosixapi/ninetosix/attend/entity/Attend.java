@@ -57,11 +57,10 @@ public class Attend {
                 .build();
     }
 
-    public static Attend createAttendDayOff(String date, String code, Member member) {
+    public static Attend createAttendDayOff(String date, Member member) {
         return Attend
                 .builder()
                 .attendDate(date)
-                .attendCode(code)
                 .member(member)
                 .insertDate(LocalDateTime.now())
                 .build();

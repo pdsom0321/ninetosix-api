@@ -71,13 +71,12 @@ public class AttendController {
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
     }
 
-    // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
-    @ApiOperation(value = "엑셀 출력 (우선 모든 member 가져오는 조건으로 개발)")
-    @GetMapping("attend/export/{year}/{month}")
-    public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month) {
+    @ApiOperation(value = "엑셀 출력 (팀 단위)")
+    @GetMapping("attend/export/{teamId}/{year}/{month}")
+    public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId) {
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", attendService.getDayOfMonth(year, month));
-        mv.addObject("attends", attendService.getAttends(year, month));
+        mv.addObject("attends", attendService.getAttends(year, month, teamId));
         return mv;
     }
 }

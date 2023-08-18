@@ -177,8 +177,8 @@ public class MemberService {
         return memberRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Member> findAll() {
-        return memberRepository.findAll();
+    public List<Member> findAllByTeamId(Long teamId) {
+        return memberRepository.findAllByTeamId(teamId);
     }
 
     public UsernamePasswordAuthenticationToken toAuthentication(LoginReqDTO reqDTO) {

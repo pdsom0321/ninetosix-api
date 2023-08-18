@@ -39,7 +39,7 @@ public class AttendService {
     public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO) {
         Long memberId = MemberContext.getMemberId();
 
-        Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
+        Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
         attend.updateInTimeAndLocationCode(getCurrentTime(), reqDTO.locationCode());
@@ -48,7 +48,7 @@ public class AttendService {
     public void offWork() {
         Long memberId = MemberContext.getMemberId();
 
-        Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
+        Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
         attend.updateOutTimeAndWorkTime(getCurrentTime());
@@ -62,8 +62,8 @@ public class AttendService {
 
         IntStream.rangeClosed(from, to)
                 .forEach(current -> {
-                    Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, String.valueOf(current))
-                            .orElse(Attend.createAttendDayOff(String.valueOf(current), attendCode, member));
+                    Attend attend = attendRepository.findByAttendDateAndMemberId(String.valueOf(current), memberId)
+                            .orElse(Attend.createAttendDayOff(String.valueOf(current), member));
 
                     attend.updateCode(attendCode);
                     attendRepository.save(attend);
@@ -71,7 +71,7 @@ public class AttendService {
     }
 
     public AttendResDTO attendInfo(long memberId) {
-        Attend attend = attendRepository.findByMemberIdAndAttendDate(memberId, getCurrentDate())
+        Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseGet(Attend::new);
 
         return AttendResDTO.of(attend);
@@ -85,7 +85,7 @@ public class AttendService {
         List<String> dayList = List.of(startDate, endDate);
         return dayList.stream()
                 .sorted()
-                .map(day -> attendRepository.findByMemberIdAndAttendDate(memberId, day)
+                .map(day -> attendRepository.findByAttendDateAndMemberId(day, memberId)
                         .orElseGet(Attend::new))
                 .map(AttendResDTO::of)
                 .collect(Collectors.toList());
@@ -110,8 +110,8 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExportDTO> getAttends(int year, int month) {
-        return memberService.findAll().stream()  // TODO: member 조회 시 회사, 부서 또는 팀 조건 필요 (우선 모든 member 가져오는 조건으로 개발)
+    public List<ExportDTO> getAttends(int year, int month, Long teamId) {
+        return memberService.findAllByTeamId(teamId).stream()
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
                     return new ExportDTO(member.getName(), list);
