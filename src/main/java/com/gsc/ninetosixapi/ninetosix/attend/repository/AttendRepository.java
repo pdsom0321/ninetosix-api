@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendRepository extends JpaRepository<Attend, Long>, JpaSpecificationExecutor<Attend> {
-    Attend findByMemberAndAttendDate(Member member, String attendDate);
     Optional<Attend> findByAttendDateAndMemberId(String attendDate, Long memberId);
     List<Attend> findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(Long memberId, String attendDate);
     // ArrayList<Attend> findTop2ByMemberAndAttendDateBetweenOrderByAttendDateAsc(Member member, String startDate, String endDate);

@@ -19,10 +19,6 @@ import java.util.List;
 public class AttendController {
     private final AttendService attendService;
 
-    /**
-     * ResponseEntity 제네릭 타입: ResponseEntity의 제네릭 타입을 Void로 변경하여 명시적으로 응답 본문이 없음을 나타냅니다. 이는 클라이언트에게 빈 본문을 반환하는 것과 동일합니다.
-     * ResponseEntity.ok().build(): ResponseEntity의 ok() 메서드를 사용하여 HTTP 상태 코드를 200 OK로 설정하고, build() 메서드를 호출하여 ResponseEntity 객체를 생성합니다. 이를 통해 간결하게 응답을 생성할 수 있습니다.
-     */
     @ApiOperation(value = "출근", notes = "attendCode, locationCode -> insert Attend 실행")
     @PostMapping("attend/on")
     public ResponseEntity<Void> onWork(@RequestBody OnWorkReqDTO reqDTO) {
@@ -48,6 +44,13 @@ public class AttendController {
     @PostMapping("attend/{attendCode}")
     public ResponseEntity<Void> dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
         attendService.dayOff(attendCode, reqDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "휴가 신청 철회")
+    @PostMapping("attend/cancel-dayoff/{day}")
+    public ResponseEntity<Void> cancelDayOff(@PathVariable String day) {
+        attendService.cancelDayOff(day);
         return ResponseEntity.ok().build();
     }
 

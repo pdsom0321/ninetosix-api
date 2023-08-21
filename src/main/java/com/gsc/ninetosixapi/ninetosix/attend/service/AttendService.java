@@ -6,6 +6,7 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
+import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,6 +70,17 @@ public class AttendService {
                     attend.updateCode(attendCode);
                     attendRepository.save(attend);
                 });
+    }
+
+    public void cancelDayOff(String day) {
+        Long memberId = MemberContext.getMemberId();
+
+        Attend attend = attendRepository.findByAttendDateAndMemberId(day, memberId)
+                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+
+        Optional.ofNullable(attend.getInTime())
+                .ifPresentOrElse(o -> attend.updateCode(AttendCode.ATTEND_CODE_DAY_NORMAL.getAttendCode()),
+                        () -> attendRepository.deleteById(attend.getId()));
     }
 
     public AttendResDTO attendInfo(long memberId) {
