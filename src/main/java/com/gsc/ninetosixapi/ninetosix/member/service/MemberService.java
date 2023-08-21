@@ -128,6 +128,11 @@ public class MemberService {
         blacklistRepository.save(Blacklist.create(accessToken));
     }
 
+    public void withdrawal() {
+        Long id = MemberContext.getMemberId();
+        memberRepository.deleteById(id);
+    }
+
     public ReissueResDTO reissue(ReissueReqDTO reqDTO) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.refreshToken())) {

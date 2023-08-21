@@ -40,11 +40,17 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-
     @ApiOperation(value = "로그아웃", notes = "refresh token 삭제")
     @PostMapping("member/logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutReqDTO reqDTO) {
         memberService.logout(reqDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "회원탈퇴", notes = "member, member_role, attend 데이터 모두 삭제됨")
+    @DeleteMapping("member/withdrawal")
+    public ResponseEntity<Void> withdrawal() {
+        memberService.withdrawal();
         return ResponseEntity.ok().build();
     }
 
