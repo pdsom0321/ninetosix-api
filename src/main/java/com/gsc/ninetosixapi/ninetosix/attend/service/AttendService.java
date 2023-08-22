@@ -76,10 +76,10 @@ public class AttendService {
         Long memberId = MemberContext.getMemberId();
 
         Attend attend = attendRepository.findByAttendDateAndMemberId(day, memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
 
         Optional.ofNullable(attend.getInTime())
-                .ifPresentOrElse(o -> attend.updateCode(AttendCode.ATTEND_CODE_DAY_NORMAL.getAttendCode()),
+                .ifPresentOrElse(o -> attend.updateCode(AttendCode.DAY.getAttendCode()),
                         () -> attendRepository.deleteById(attend.getId()));
     }
 
