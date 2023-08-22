@@ -13,7 +13,7 @@ public class LogController {
 
     @ApiOperation(value = "front(vue)에서 error 발생 시 파악하기 위한 로그. front error 전용 로그")
     @PostMapping("error-log")
-    public void errorLogs(@RequestBody ErrorLogReqDTO reqDTO) {
-        log.info(reqDTO.msg());
+    public void errorLog(@RequestBody ErrorLogReqDTO reqDTO) {
+        // log.info(reqDTO.msg());
     }
 }
