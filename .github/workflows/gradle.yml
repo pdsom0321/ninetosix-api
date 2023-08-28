@@ -77,7 +77,7 @@ jobs:
         run: |
           aws deploy create-deployment \
           --application-name ninetosix-codedeploy \
-          --deployment-config-name CodeDeployDefault.HalfAtATime \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
           --deployment-group-name ninetosix-bluegreen-codedeploy-group \
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
