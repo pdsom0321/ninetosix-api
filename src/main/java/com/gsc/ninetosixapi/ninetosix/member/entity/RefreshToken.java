@@ -18,23 +18,27 @@ import java.util.Date;
 public class RefreshToken {
     @Id
     private String email;
+
     private String token;
-    private Date expireDate;
+
+    private Date expiryDate;
+
     private LocalDateTime insertDate;
+
     private LocalDateTime updateDate;
 
     public static RefreshToken create(String email, String token, long expireTime) {
         return RefreshToken.builder()
                 .email(email)
                 .token(token)
-                .expireDate(new Date(expireTime))
+                .expiryDate(new Date(expireTime))
                 .insertDate(LocalDateTime.now())
                 .build();
     }
 
     public void updateToken(String token, long expireTime) {
         this.token = token;
-        this.expireDate = new Date(expireTime);
+        this.expiryDate = new Date(expireTime);
         this.updateDate = LocalDateTime.now();
     }
 }

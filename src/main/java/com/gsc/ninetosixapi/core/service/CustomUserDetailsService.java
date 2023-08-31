@@ -31,7 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws BadCredentialsException {
-        log.info("================ loadUserByUsername - username : " + username);
         return memberRepository.findByEmail(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new InternalAuthenticationServiceException("해당 계정을 찾을 수 없습니다."));

@@ -5,17 +5,13 @@ import lombok.Builder;
 
 @Builder
 public record CompanyLocationsResDTO(
-        String companyLocationCode,
-        String companyCode,
-        String locationCode,
+        Long locationId,
         String locationName,
         Float latitude,
         Float longitude) {
     public static CompanyLocationsResDTO createCompanyLocation(CompanyLocation companyLocation) {
         return CompanyLocationsResDTO.builder()
-                .companyLocationCode(companyLocation.getCode())
-                .companyCode(companyLocation.getCompany().getCode())
-                .locationCode(companyLocation.getLocation().getCode())
+                .locationId(companyLocation.getLocation().getId())
                 .locationName(companyLocation.getLocation().getName())
                 .latitude(companyLocation.getLocation().getLatitude())
                 .longitude(companyLocation.getLocation().getLongitude())

@@ -144,7 +144,7 @@ public class MemberService {
         String email = tokenProvider.getEmail(reqDTO.refreshToken());
 
         // 3. refresh token 만료되었거나 이미 로그아웃한 사용자인지 확인
-        RefreshToken refreshTokenData = refreshTokenRepository.findByEmailAndExpireDateGreaterThan(email, new Date())
+        RefreshToken refreshTokenData = refreshTokenRepository.findByEmailAndExpiryDateGreaterThan(email, new Date())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
         // 4. Refresh Token 일치하는지 검사

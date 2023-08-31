@@ -35,7 +35,7 @@ public class AttendService {
         Long memberId = MemberContext.getMemberId();
         Member member = memberService.findById(memberId);
 
-        attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), reqDTO.attendCode(), reqDTO.locationCode(), member));
+        attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), reqDTO.attendCode(), reqDTO.locationId(), member));
     }
 
     public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO) {
@@ -44,7 +44,7 @@ public class AttendService {
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
-        attend.updateInTimeAndLocationCode(getCurrentTime(), reqDTO.locationCode());
+        attend.updateInTimeAndLocationId(getCurrentTime(), reqDTO.locationId());
     }
 
     public void offWork() {

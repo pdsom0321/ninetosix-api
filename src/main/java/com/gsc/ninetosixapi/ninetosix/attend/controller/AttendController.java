@@ -19,14 +19,14 @@ import java.util.List;
 public class AttendController {
     private final AttendService attendService;
 
-    @ApiOperation(value = "출근", notes = "attendCode, locationCode -> insert Attend 실행")
+    @ApiOperation(value = "출근", notes = "attendCode, locationId -> insert Attend 실행")
     @PostMapping("attend/on")
     public ResponseEntity<Void> onWork(@RequestBody OnWorkReqDTO reqDTO) {
         attendService.onWork(reqDTO);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "출근", notes = "요청: locationCode / 실행: update inTime, locationCode")
+    @ApiOperation(value = "출근", notes = "요청: locationId / 실행: update inTime, locationId")
     @PutMapping("attend/on")
     public ResponseEntity<Void> onWorkDuringDayOff(@RequestBody OnWorkDuringDayOffReqDTO reqDTO) {
         attendService.onWorkDuringDayOff(reqDTO);

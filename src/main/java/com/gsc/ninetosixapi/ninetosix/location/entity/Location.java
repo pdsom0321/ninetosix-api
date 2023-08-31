@@ -20,10 +20,7 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true)
-    private String code;
-
-    @Column(nullable = false)
+    @Column(unique = true)
     private String name;
 
     @Column(nullable = false)

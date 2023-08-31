@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @Table
 public class Blacklist {
     @Id
-    @Column()
     private String accessToken;
 
     private LocalDateTime insertDate;

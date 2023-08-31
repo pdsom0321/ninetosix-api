@@ -19,9 +19,6 @@ public class Team {
     @Column(name = "team_id")
     private Long id;
 
-    @Column(unique = true, length = 50)
-    private String code;
-
     @Column(length = 100)
     private String name;
 

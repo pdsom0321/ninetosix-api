@@ -16,17 +16,23 @@ public class AuthenticationCode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "authentication_code_id")
     private Long id;
+
     private int code;
+
     private String email;
+
     @Enumerated(EnumType.STRING)
     private AuthenticationCodeType type;
-    private Boolean expired;
-    private LocalDateTime expireDate;
+
+    private LocalDateTime expiryDate;
+
+    private Boolean isCodeEntered;
+
     @Transient
     private static final Long MAX_EXPIRE_TIME = 5L;
 
-    public void isDone() {
-        this.expired = true;
+    public void isEntered() {
+        this.isCodeEntered = true;
     }
 
     public static AuthenticationCode create(int code, String email, String type) {
@@ -34,8 +40,8 @@ public class AuthenticationCode {
                 .code(code)
                 .email(email)
                 .type(AuthenticationCodeType.valueOf(type))
-                .expireDate(LocalDateTime.now().plusMinutes(MAX_EXPIRE_TIME))
-                .expired(false)
+                .expiryDate(LocalDateTime.now().plusMinutes(MAX_EXPIRE_TIME))
+                .isCodeEntered(false)
                 .build();
     }
 }

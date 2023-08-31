@@ -22,8 +22,6 @@ public class Company {
     private Long id;
 
     @Column(unique = true)
-    private String code;
-
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)

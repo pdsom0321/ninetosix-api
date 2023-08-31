@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface AuthenticationCodeRepository extends JpaRepository<AuthenticationCode, Long> {
-    Optional<AuthenticationCode> findByCodeAndEmailAndTypeAndExpireDateGreaterThanAndExpired(int code, String email, AuthenticationCodeType type, LocalDateTime currentTime, Boolean expired);
+    Optional<AuthenticationCode> findByCodeAndEmailAndTypeAndExpiryDateGreaterThanAndIsCodeEntered(int code, String email, AuthenticationCodeType type, LocalDateTime currentTime, Boolean isCodeEntered);
 }

@@ -64,10 +64,10 @@ public class AuthenticationCodeService {
     }
 
     public Boolean verifyCode(VerifyCodeReqDTO reqDTO) {
-        AuthenticationCode authenticationCode = authenticationCodeRepository.findByCodeAndEmailAndTypeAndExpireDateGreaterThanAndExpired(reqDTO.code(), reqDTO.email(), AuthenticationCodeType.valueOf(reqDTO.type()), LocalDateTime.now(), false)
+        AuthenticationCode authenticationCode = authenticationCodeRepository.findByCodeAndEmailAndTypeAndExpiryDateGreaterThanAndIsCodeEntered(reqDTO.code(), reqDTO.email(), AuthenticationCodeType.valueOf(reqDTO.type()), LocalDateTime.now(), false)
                 .orElseThrow(() -> new NoSuchElementException("authentication code 정보가 없습니다."));
 
-        authenticationCode.isDone();
+        authenticationCode.isEntered();
         return true;
     }
 }
