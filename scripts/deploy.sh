@@ -37,11 +37,11 @@ echo "java -jar \
 echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
 
 LOG_DIR=/home/ec2-user/ninetosix-api/logs
-nohup java -jar \
+java -jar \
    -Dmail.username=$MAIL_USERNAME \
    -Dmail.password=$MAIL_PASSWORD \
    -Djwt.key=$JWT_SECRET_KEY \
    -Ddb.url=$DB_URL \
    -Ddb.username=$DB_USERNAME \
    -Ddb.password=$DB_PASSWORD \
-   $DEPLOY_JAR >> $LOG_DIR/deploy.log 2> /home/ec2-user/ninetosix-api/deploy_err.log &
+   $DEPLOY_JAR >> $LOG_DIR/deploy.log 2> /home/ec2-user/ninetosix-api/deploy_err.log
