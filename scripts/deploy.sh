@@ -37,6 +37,9 @@ echo "java -jar \
 echo "#################################################################################################" >> /home/ec2-user/ninetosix-api/deploy.log
 
 LOG_DIR=/home/ec2-user/ninetosix-api/logs
+if [ ! -d $LOG_DIR ]; then
+    mkdir $LOG_DIR
+fi
 java -jar \
    -Dmail.username=$MAIL_USERNAME \
    -Dmail.password=$MAIL_PASSWORD \
