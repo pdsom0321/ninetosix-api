@@ -1,6 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.companyLocation.service;
 
-import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.dto.CompanyLocationsResDTO;
 import com.gsc.ninetosixapi.ninetosix.companyLocation.repository.CompanyLocationRepository;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
@@ -20,8 +19,7 @@ public class CompanyLocationService {
 
     private final MemberService memberService;
 
-    public List<CompanyLocationsResDTO> companyLocations() {
-        Long memberId = MemberContext.getMemberId();
+    public List<CompanyLocationsResDTO> companyLocations(long memberId) {
         Member member = memberService.findById(memberId);
 
         return companyLocationRepository.findByCompany(member.getCompany()).stream()

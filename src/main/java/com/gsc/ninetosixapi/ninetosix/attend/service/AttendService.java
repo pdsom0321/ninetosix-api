@@ -1,6 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.attend.service;
 
-import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.ninetosix.attend.dto.*;
 import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
@@ -31,35 +30,29 @@ public class AttendService {
     private final AttendRepository attendRepository;
     private final MemberService memberService;
 
-    public void onWork(OnWorkReqDTO reqDTO) {
-        Long memberId = MemberContext.getMemberId();
+    public void onWork(OnWorkReqDTO reqDTO, long memberId) {
         Member member = memberService.findById(memberId);
 
         attendRepository.save(Attend.createAttend(getCurrentDate(), getCurrentTime(), reqDTO.attendCode(), reqDTO.locationId(), member));
     }
 
-    public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO) {
-        Long memberId = MemberContext.getMemberId();
-
+    public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO, long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
         attend.updateInTimeAndLocationId(getCurrentTime(), reqDTO.locationId());
     }
 
-    public void offWork() {
-        Long memberId = MemberContext.getMemberId();
-
+    public void offWork(long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
 
         attend.updateOutTimeAndWorkTime(getCurrentTime());
     }
 
-    public void dayOff(String attendCode, AttendCodeReqDTO reqDTO) {
+    public void dayOff(String attendCode, AttendCodeReqDTO reqDTO, long memberId) {
         int from = reqDTO.from();
         int to = reqDTO.to();
-        Long memberId = MemberContext.getMemberId();
         Member member = memberService.findById(memberId);
 
         IntStream.rangeClosed(from, to)
@@ -72,9 +65,7 @@ public class AttendService {
                 });
     }
 
-    public void cancelDayOff(String day) {
-        Long memberId = MemberContext.getMemberId();
-
+    public void cancelDayOff(String day, long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(day, memberId)
                 .orElseThrow(() -> new NoSuchElementException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
 

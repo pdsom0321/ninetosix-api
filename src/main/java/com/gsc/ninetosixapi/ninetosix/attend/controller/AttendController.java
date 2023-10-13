@@ -19,38 +19,48 @@ import java.util.List;
 public class AttendController {
     private final AttendService attendService;
 
+    @UserId
     @ApiOperation(value = "출근", notes = "attendCode, locationId -> insert Attend 실행")
     @PostMapping("attend/on")
-    public ResponseEntity<Void> onWork(@RequestBody OnWorkReqDTO reqDTO) {
-        attendService.onWork(reqDTO);
+    public ResponseEntity<Void> onWork(HttpServletRequest request, @RequestBody OnWorkReqDTO reqDTO) {
+        long memberId = (long) request.getAttribute("memberId");
+        attendService.onWork(reqDTO, memberId);
         return ResponseEntity.ok().build();
     }
 
+    @UserId
     @ApiOperation(value = "출근", notes = "요청: locationId / 실행: update inTime, locationId")
     @PutMapping("attend/on")
-    public ResponseEntity<Void> onWorkDuringDayOff(@RequestBody OnWorkDuringDayOffReqDTO reqDTO) {
-        attendService.onWorkDuringDayOff(reqDTO);
+    public ResponseEntity<Void> onWorkDuringDayOff(HttpServletRequest request, @RequestBody OnWorkDuringDayOffReqDTO reqDTO) {
+        long memberId = (long) request.getAttribute("memberId");
+        attendService.onWorkDuringDayOff(reqDTO, memberId);
         return ResponseEntity.ok().build();
     }
 
+    @UserId
     @ApiOperation(value = "퇴근", notes = "실행: update outTime")
     @PostMapping("attend/off")
-    public ResponseEntity<Void> offWork() {
-        attendService.offWork();
+    public ResponseEntity<Void> offWork(HttpServletRequest request) {
+        long memberId = (long) request.getAttribute("memberId");
+        attendService.offWork(memberId);
         return ResponseEntity.ok().build();
     }
 
+    @UserId
     @ApiOperation(value = "휴가 및 그외 신청", notes = "attendCode, fromDate, toDate -> insert Attend 실행")
     @PostMapping("attend/{attendCode}")
-    public ResponseEntity<Void> dayOff(@PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
-        attendService.dayOff(attendCode, reqDTO);
+    public ResponseEntity<Void> dayOff(HttpServletRequest request, @PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
+        long memberId = (long) request.getAttribute("memberId");
+        attendService.dayOff(attendCode, reqDTO, memberId);
         return ResponseEntity.ok().build();
     }
 
+    @UserId
     @ApiOperation(value = "휴가 신청 철회")
     @PostMapping("attend/cancel-dayoff/{day}")
-    public ResponseEntity<Void> cancelDayOff(@PathVariable String day) {
-        attendService.cancelDayOff(day);
+    public ResponseEntity<Void> cancelDayOff(HttpServletRequest request, @PathVariable String day) {
+        long memberId = (long) request.getAttribute("memberId");
+        attendService.cancelDayOff(day, memberId);
         return ResponseEntity.ok().build();
     }
 

@@ -1,6 +1,5 @@
 package com.gsc.ninetosixapi.ninetosix.member.service;
 
-import com.gsc.ninetosixapi.core.jwt.MemberContext;
 import com.gsc.ninetosixapi.core.jwt.TokenConfig;
 import com.gsc.ninetosixapi.core.jwt.TokenProvider;
 import com.gsc.ninetosixapi.ninetosix.company.entity.Company;
@@ -93,17 +92,15 @@ public class MemberService {
         return SignupResDTO.of(member);
     }
 
-    public void changePassword(PasswordReqDTO reqDTO) {
-        Long memberId = MemberContext.getMemberId();
-        Member member = findById(memberId);
+    public void changePassword(PasswordReqDTO reqDTO, long id) {
+        Member member = findById(id);
 
         String encodePassword = passwordEncoder.encode(reqDTO.password());
         member.updatePassword(encodePassword);
     }
 
-    public void changePasswordExpiry() {
-        Long memberId = MemberContext.getMemberId();
-        Member member = findById(memberId);
+    public void changePasswordExpiry(long id) {
+        Member member = findById(id);
 
         member.updatePasswordExpiry();
     }
@@ -128,8 +125,7 @@ public class MemberService {
         blacklistRepository.save(Blacklist.create(accessToken));
     }
 
-    public void withdrawal() {
-        Long id = MemberContext.getMemberId();
+    public void withdrawal(long id) {
         memberRepository.deleteById(id);
     }
 
@@ -167,8 +163,7 @@ public class MemberService {
         return ReissueResDTO.of(accessToken, refreshToken);
     }
 
-    public MyPageResDTO myPage() {
-        Long id = MemberContext.getMemberId();
+    public MyPageResDTO myPage(long id) {
         Member member = findById(id);
 
         return MyPageResDTO.of(member);
