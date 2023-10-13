@@ -29,12 +29,10 @@ public class MemberController {
         return ResponseEntity.ok(memberService.signup(reqDTO));
     }
 
-    @UserId
     @ApiOperation(value = "비밀번호 변경")
     @PutMapping("member/password")
-    public ResponseEntity<Void> changePassword(HttpServletRequest request, @RequestBody PasswordReqDTO reqDTO) {
-        long memberId = (long) request.getAttribute("memberId");
-        memberService.changePassword(reqDTO, memberId);
+    public ResponseEntity<Void> changePassword(@RequestBody PasswordReqDTO reqDTO) {
+        memberService.changePassword(reqDTO);
         return ResponseEntity.ok().build();
     }
 

@@ -92,8 +92,8 @@ public class MemberService {
         return SignupResDTO.of(member);
     }
 
-    public void changePassword(PasswordReqDTO reqDTO, long id) {
-        Member member = findById(id);
+    public void changePassword(PasswordReqDTO reqDTO) {
+        Member member = findByEmail(reqDTO.email());
 
         String encodePassword = passwordEncoder.encode(reqDTO.password());
         member.updatePassword(encodePassword);
