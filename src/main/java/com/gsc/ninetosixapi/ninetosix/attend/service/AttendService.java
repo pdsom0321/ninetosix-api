@@ -144,7 +144,7 @@ public class AttendService {
         List<Integer> dates = getDayOfMonth(year, month);
 
         String templateFileName = "form1.xlsx";
-        try (FileInputStream file = new FileInputStream(docPath + "/" + templateFileName);
+        try (FileInputStream file = new FileInputStream(docPath + templateFileName);
              XSSFWorkbook wb = new XSSFWorkbook(file)) {
 
             //템플릿 시트에 월 미리 세팅

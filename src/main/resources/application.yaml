@@ -36,7 +36,7 @@ spring:
 #          timeout: 5000
 #          writetimeout: 5000
 api-docs:
-  path: ninetosix-api/doc
+  path: /home/ec2-user/ninetosix-api/doc/
 
 logging:
   level:
