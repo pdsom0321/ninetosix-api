@@ -8,6 +8,7 @@ import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
@@ -140,7 +141,7 @@ public class AttendService {
     }
 
     public void downloadExcel(HttpServletResponse response, long teamId, int year, int month) {
-        List<ExportDTO> memberList = getAttends(teamId, year, month);
+        List<ExportDTO> teamMembers = getAttends(teamId, year, month);
         List<Integer> dates = getDayOfMonth(year, month);
 
         String templateFileName = "form1.xlsx";
@@ -149,10 +150,8 @@ public class AttendService {
 
             //템플릿 시트에 월 미리 세팅
             wb.getSheetAt(0).getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
-            wb.getSheetAt(0)
-                    .getRow(6).getCell(20).setCellValue(year);
-            wb.getSheetAt(0)
-                    .getRow(6).getCell(21).setCellValue(month);
+            wb.getSheetAt(0).getRow(6).getCell(20).setCellValue(year);
+            wb.getSheetAt(0).getRow(6).getCell(21).setCellValue(month);
 
             XSSFSheet workSheet = wb.cloneSheet(0);
 
@@ -161,7 +160,7 @@ public class AttendService {
             int row = 8;
             int col = 2;
 
-            for (ExportDTO member : memberList) {
+            for (ExportDTO member : teamMembers) {
                 //팀원 6명 초과 시 시트 복제 후 처음부터
                 if (col > nameRow * 3) {
                     col = 2;
@@ -174,6 +173,11 @@ public class AttendService {
                 for (int day : dates) {
                     for (AttendDTO attend : member.attends()) {
                         if (Integer.valueOf(attend.attendDate()).equals(day)) {
+                            if(attend.attendCode().equals(AttendCode.HOLIDAY.getAttendCode())) {
+                                workSheet.addMergedRegion(new CellRangeAddress(row, row+2, col, col+1));
+                                workSheet.getRow(row).getCell(col).setCellValue(AttendCode.HOLIDAY.getAttendCodeName());
+                                break;
+                            }
                             setCellValue(workSheet, row, col, attend.inTime());
                             setCellValue(workSheet, row + 1, col, attend.outTime());
                             setWorkTimeCellValue(workSheet, row + 2, col, attend.workTime());
