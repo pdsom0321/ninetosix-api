@@ -8,9 +8,15 @@ import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -29,6 +35,9 @@ import java.util.stream.IntStream;
 public class AttendService {
     private final AttendRepository attendRepository;
     private final MemberService memberService;
+
+    @Value("${server.doc-path}")
+    private String docPath;
 
     public void onWork(OnWorkReqDTO reqDTO, long memberId) {
         Member member = memberService.findById(memberId);
@@ -114,7 +123,7 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExportDTO> getAttends(int year, int month, Long teamId) {
+    public List<ExportDTO> getAttends(long teamId, int year, int month) {
         return memberService.findAllByTeamId(teamId).stream()
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
@@ -130,6 +139,85 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
+    public void downloadExcel(HttpServletResponse response, long teamId, int year, int month) {
+        List<ExportDTO> memberList = getAttends(teamId, year, month);
+        List<Integer> dates = getDayOfMonth(year, month);
+
+        String templateFileName = "form1.xlsx";
+        try (FileInputStream file = new FileInputStream(docPath + templateFileName);
+             XSSFWorkbook wb = new XSSFWorkbook(file)) {
+
+            //템플릿 시트에 월 미리 세팅
+            wb.getSheetAt(0).getRow(1).getCell(0).setCellValue(String.format("%02d", month) + "월 출근부");
+            wb.getSheetAt(0)
+                    .getRow(6).getCell(20).setCellValue(year);
+            wb.getSheetAt(0)
+                    .getRow(6).getCell(21).setCellValue(month);
+
+            XSSFSheet workSheet = wb.cloneSheet(0);
+
+            // 템플릿 내의 이름, 출근시간, 퇴근시간, 근무시간 데이터 셋팅
+            int nameRow = 6;
+            int row = 8;
+            int col = 2;
+
+            for (ExportDTO member : memberList) {
+                //팀원 6명 초과 시 시트 복제 후 처음부터
+                if (col > nameRow * 3) {
+                    col = 2;
+                    workSheet = wb.cloneSheet(0);
+                }
+
+                //팀원 이름 셋팅
+                workSheet.getRow(nameRow).getCell(col).setCellValue(member.memberName());
+
+                for (int day : dates) {
+                    for (AttendDTO attend : member.attends()) {
+                        if (Integer.valueOf(attend.attendDate()).equals(day)) {
+                            setCellValue(workSheet, row, col, attend.inTime());
+                            setCellValue(workSheet, row + 1, col, attend.outTime());
+                            setWorkTimeCellValue(workSheet, row + 2, col, attend.workTime());
+                        }
+                    }
+                    // 다음 멤버(한명당 3개 행 차지)
+                    row += 3;
+                }
+                row = 8;
+                col += 3;
+            }
+            wb.removeSheetAt(0);
+
+            String fileName = "[NineToSix] " + year + "년 " + month + "월 출근부";
+
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" +
+                    new String(fileName.getBytes("euc-kr"), "8859_1") + ".xlsx\"");
+
+            wb.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setCellValue(XSSFSheet workSheet, int row, int col, String time) {
+        if (time != null) {
+            int hour = Integer.parseInt(time.substring(0, 2));
+            int minute = Integer.parseInt(time.substring(2, 4));
+            workSheet.getRow(row).getCell(col).setCellValue(hour);
+            workSheet.getRow(row).getCell(col + 1).setCellValue(minute);
+        }
+    }
+
+    private void setWorkTimeCellValue(XSSFSheet workSheet, int row, int col, Long workTime) {
+        if(workTime != null) {
+            long hours = Math.floorDiv(workTime, 60);
+            long minutes = Math.floorMod(workTime, 60);
+            workSheet.getRow(row).getCell(col).setCellValue(String.format("%02d", hours));
+            workSheet.getRow(row).getCell(col + 1).setCellValue(String.format("%02d", minutes));
+        }
+    }
+
     private String getCurrentDate() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
@@ -138,117 +226,4 @@ public class AttendService {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
     }
 
-    /**
-     * 1. 11시 30분 ~ 12시 30분 점심시간시 근무시간에서 제외
-     * 2.
-     **/
-    /*public void calWorkTime(List<Attend> attendList){
-        String ofPattern = "yyyyMMddHHmmss";
-
-        for (int i = 0; i < attendList.size(); i++){
-            Attend attend = attendList.get(i);
-
-            String date = attend.getAttendDate();
-            String in = attend.getInTime();
-            String out = attend.getOutTime();
-
-            Duration duration = null;
-            LocalDateTime inTime = null;
-            LocalDateTime outTime = null;
-
-            AttendCode code = AttendCode.findByStatusCode(attend.getAttendCode());
-
-            try{
-                if(in != null) {
-                    inTime = dateTimeUtil.calWorkTime(date, in, ofPattern);
-                }
-                if(out != null){
-                    outTime = dateTimeUtil.calWorkTime(date, out, ofPattern);
-                }
-
-                switch (code){
-                    case ATTEND_CODE_DAY_NORMAL :
-                    case ATTEND_CODE_DAY_QUARTER_MORNING :
-                    case ATTEND_CODE_DAY_QUARTER_AFTERNOON :
-                    case ATTEND_CODE_WORK_HOME :
-                        if(in == null) {
-                            inTime = dateTimeUtil.getWorkTime(date, "TC01", ofPattern);
-
-                            // 전날 PM일 경우
-                            if(i != 0 && attendList.get(i-1).getAttendCode().equals(AttendCode.ATTEND_CODE_WORK_PM.getAttendCode())){
-                                inTime = dateTimeUtil.getWorkTime(date, "TC13", ofPattern);
-                            }
-                        }
-
-                        if(out == null) {
-                            outTime = dateTimeUtil.getWorkTime(date, "TC02", ofPattern);
-                        }
-                        duration = Duration.between(inTime, outTime);
-                        duration.minusMinutes(60);
-
-                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-                        break;
-
-                    case ATTEND_CODE_DAY_HALF_MORNING :
-                        if(in == null) {
-                            inTime = dateTimeUtil.getWorkTime(date, "TC03", ofPattern);
-                        }
-
-                        if(out == null){
-                            outTime = dateTimeUtil.getWorkTime(date, "TC04", ofPattern);
-                        }
-
-                        duration = Duration.between(inTime, outTime);
-                        duration.minusMinutes(60);
-                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-                        break;
-
-                    case ATTEND_CODE_DAY_HALF_AFTERNOON :
-                        if(in == null) {
-                            inTime = dateTimeUtil.getWorkTime(date, "TC05", ofPattern);
-                        }
-
-                        if(out == null){
-                            outTime = dateTimeUtil.getWorkTime(date, "TC06", ofPattern);
-                        }
-                        duration = Duration.between(inTime, outTime);
-                        attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-                        break;
-
-                    case ATTEND_CODE_WORK_PM :
-                        if(in == null) {
-                            inTime = dateTimeUtil.getWorkTime(date, "TC13", ofPattern);
-                        }
-
-                        if (out == null) {
-                            outTime =  dateTimeUtil.getWorkTime(date, "TC13", ofPattern).plusDays(1);
-                        }
-                        duration = Duration.between(inTime, outTime);
-                        duration.minusMinutes(60);
-                        break;
-
-                    case ATTEND_CODE_DAY_HOLLY:
-                        if(in != null && out != null) {
-                            LocalDateTime lunch_start = dateTimeUtil.getWorkTime(date, "TC11", ofPattern);
-                            LocalDateTime lunch_end = dateTimeUtil.getWorkTime(date, "TC12", ofPattern);
-
-                            if(outTime.isAfter(lunch_start) && outTime.isBefore(lunch_end)){
-                                outTime = lunch_start;
-                            }
-                            duration = Duration.between(inTime, outTime);
-
-                            if(outTime.isAfter(lunch_end)){
-                                duration.minusMinutes(60);
-                            }
-                        } else {
-                            attend.updateWorkTime(0, 0);
-                        }
-                        break;
-                }
-                attend.updateWorkTime(duration.toHours(), duration.toMinutesPart());
-            } catch(Exception e){
-                //throw new RuntimeException("");
-            }
-        }
-    }*/
 }

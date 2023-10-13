@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Slf4j
@@ -89,7 +90,13 @@ public class AttendController {
     public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId) {
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", attendService.getDayOfMonth(year, month));
-        mv.addObject("attends", attendService.getAttends(year, month, teamId));
+        mv.addObject("attends", attendService.getAttends(teamId, year, month));
         return mv;
+    }
+
+    @ApiOperation(value = "출근부 엑셀 다운로드")
+    @GetMapping("attend/excel/{teamId}/{year}/{month}")
+    public void downloadExcel(HttpServletResponse response, @PathVariable long teamId, @PathVariable int year, @PathVariable int month) {
+        attendService.downloadExcel(response, teamId, year, month);
     }
 }
