@@ -35,8 +35,8 @@ spring:
 #          connectiontimeout: 5000
 #          timeout: 5000
 #          writetimeout: 5000
-server:
-  doc-path: doc/
+api-docs:
+  path: /doc
 
 logging:
   level:
