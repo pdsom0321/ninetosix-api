@@ -17,18 +17,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
-
     private final BoardService boardService;
-
-    @ApiOperation(value = "게시글 상세")
-    @GetMapping("/board/{type}/{id}")
-    public ResponseEntity<BoardResDTO> board(@PathVariable String type, @PathVariable Long id) {
-        return ResponseEntity.ok(boardService.board(type, id));
-    }
 
     @ApiOperation(value = "게시글 목록")
     @GetMapping("/board/{type}")
     public ResponseEntity<List<BoardsResDTO>> boards(@PathVariable String type) {
         return ResponseEntity.ok(boardService.boards(type));
+    }
+
+    @ApiOperation(value = "게시글 상세")
+    @GetMapping("/board/{type}/{id}")
+    public ResponseEntity<BoardResDTO> board(@PathVariable String type, @PathVariable Long id) {
+        return ResponseEntity.ok(boardService.board(type, id));
     }
 }
