@@ -1,37 +1,83 @@
-# ninetosix-api 
-<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/5782140a-422f-4716-8fc8-1a649261455d" />
+# [APP] NineToSix
 
-## Environment
-+ Java 17
-+ Gradle
-+ Spring Boot 2.7.1
-+ JPA
-+ jwt
-+ Swagger
+|  |  |
+| --- | --- |
+| 📝 한 줄 소개 | 위치 기반 출퇴근 관리 애플리케이션 |
+| 👀 진행 배경 | 매달 수기로 출근부를 작성하고 본사에 제출하는 번거로움을 해소하기 위해 애플리케이션을 개발함 |
+| 📅 진행 기간  | 2023.04 ~ 진행 중 |
+| 🗒️ 스킬 |  JAVA   Spring Boot   JPA   MySQL   AWS   Github  Vue.js   Bootstrap 5.0  |
+| 🧑‍🤝‍🧑 프로젝트 구성 | 기획/디자인 1명, 프론트엔드 1명, 백엔드 1명 |
 
-## Main Features
-<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/f7489168-13cc-47fe-9a26-a0743185022c"/>
-<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/32937460-0cb1-4bcc-b2c6-6378e0649ef7"/>
- 
-## Deployment
-#### [Automated CI/CD Setup with GitHub Action]
-<img src="https://github.com/pdsom0321/ninetosix-api/assets/103908220/acff951f-1f54-4392-844c-6f793431b50f"/>
-<pre><code>1. 소스 코드는 GitHub에 저장
-2. GitHub Action을 설정하여 코드 변경이 발생할 때마다 자동으로 빌드와 테스트 수행
-3. 빌드와 테스트가 성공적으로 완료되면, 빌드된 애플리케이션 파일은 AWS S3에 업로드
-4. AWS EC2 인스턴스에 CodeDeploy 에이전트가 설치되어 있으며, S3에 업로드된 애플리케이션 파일은 CodeDeploy를 통해 배포
-5. CodeDeploy는 배포 중 애플리케이션의 상태를 모니터링하며, 배포가 성공적으로 완료되면 애플리케이션을 자동으로 시작</code></pre>
+**Project Leader**
 
-## Convention
-#### [commit convention]
-<pre><code>Add : 추가
-Modify : 수정
-Fix : 버그 수정
-Refactor : 리팩토링, 기능은 그대로 두고 코드를 수정
-Style : formatting, 세미콜론 추가 / 코드 변경은 없음
-Test : 테스트 추가, 서버 설정 관련 테스트
-Rename : 파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우
-Remove : 파일을 삭제하는 작업만 수행한 경우
-Chore : 라이브러리 설치, 빌드 작업 업데이트
-Comment	: 필요한 주석 추가 및 변경
-Docs : 문서 변경</code></pre>
+**Backend Developer**
+
+🔗 **Github** [ninetosix-api](https://github.com/pdsom0321/ninetosix-api) (운영 API)  ****
+
+🔗 **Github** [ninetosix-multimodule](https://github.com/pdsom0321/ninetosix) (개발 API + Back-office)
+
+개발 2023.04 ~ 2023.09
+
+운영 2023.10 ~ (회사 팀)
+
+### 담당 역할
+
+✅ Back-end 개발 80%
+
+✅ Front-end 개발 20%
+
+✅ JPA 테이블과 엔티티 설계
+
+✅ AWS를 활용하여 API 서버 구축
+
+✅ Gradle 멀티 모듈 프로젝트 구축
+
+# 기술 스택
+
+
+**Back**  JAVA   Spring Boot 2.7.1   jdk 17   JPA   MySQL   AWS   Github   Spring Security   Swagger   jwt
+
+**Front**  Vue.js 3.0    Vite   Bootstrap 5.0    Pinia    KakaoMap   axios 
+
+# 서비스 소개
+
+
+**위치를 기반으로 한 출퇴근 관리 애플리케이션**
+
+### 주요 기능
+
+🚶 **출근 및 퇴근 기록 기능**
+
+사용자는 출근 및 퇴근 시간을 기록할 수 있습니다.
+
+🚩 **출근 지점 제어**
+
+출근을 등록할 때, 지정된 위치 반경 50m 이내에서만 가능합니다. 이를 통해 출근 지점을 정확하게 제어할 수 있습니다.
+
+📅 **출근 정보 제공**
+
+출근 정보는 달력 형식과 리스트 형식으로 제공됩니다. 사용자는 원하는 방식으로 출근 정보를 확인할 수 있습니다.
+
+📁 **월간 출근 정보 엑셀 다운로드**
+
+한 달 동안의 출근 정보에 대해 팀 별로 엑셀 파일을 다운로드할 수 있습니다. 이로써 수기로 작성하던 출근부를 자동화 할 수 있습니다.
+
+📰 **Back Office**
+
+회사 및 근무지 등록과 같은 관리 작업은 Back Office에서 수행할 수 있습니다.
+
+그 외에도 다양한 기능을 제공합니다. 이러한 기능에 대한 자세한 정보는 하위 페이지에서 확인할 수 있습니다. 
+
+# Back-end 관련 상세 페이지 (하위 페이지)
+
+
+[API server(aws)](https://www.notion.so/API-server-aws-3fd2ef1adadb4e07aa51943e7ee0a080?pvs=21)
+
+[Database](https://www.notion.so/Database-c883822626f644dd8438f2ad85e9f00e?pvs=21)
+
+[JAVA Project](https://www.notion.so/JAVA-Project-dcd34f1fde1f4bcbb53a148a4725ceec?pvs=21)
+
+# 서비스 화면
+
+
+![ninetosix-Application_%E1%84%8F%E1%85%B3%E1%84%80%E1%85%A6](https://github.com/pdsom0321/ninetosix-api/assets/103908220/9138f7cf-ec94-4620-b8a3-03d37004e8fd)
