@@ -15,6 +15,7 @@ import com.gsc.ninetosixapi.ninetosix.member.repository.MemberRoleRepository;
 import com.gsc.ninetosixapi.ninetosix.member.repository.RefreshTokenRepository;
 import com.gsc.ninetosixapi.ninetosix.team.entity.Team;
 import com.gsc.ninetosixapi.ninetosix.team.service.TeamService;
+import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -178,7 +179,7 @@ public class MemberService {
     }
 
     public List<Member> findAllByTeamId(Long teamId) {
-        return memberRepository.findAllByTeamId(teamId);
+        return memberRepository.findAllByTeamIdAndUseYnAndDeleteYn(teamId, YNCode.Y, YNCode.N);
     }
 
     public UsernamePasswordAuthenticationToken toAuthentication(LoginReqDTO reqDTO) {

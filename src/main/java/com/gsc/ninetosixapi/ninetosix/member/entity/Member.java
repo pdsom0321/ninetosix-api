@@ -34,11 +34,16 @@ public class Member {
 
     @Column(nullable = false, length = 50)
     private String name;
+
     @Column(nullable = false, length = 256)
     private String password;
 
     @Column(length = 50)
     private String contact;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 1)
+    private YNCode useYn;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
@@ -86,6 +91,7 @@ public class Member {
                 .contact(signupReqDTO.contact())
                 .company(company1)
                 .team(team1)
+                .useYn(YNCode.Y)
                 .deleteYn(YNCode.N)
                 .pushAgreeYn(YNCode.valueOf(signupReqDTO.pushAgreeYn()))
                 .loginFailCnt(INIT_LOGIN_FAIL_CNT)
