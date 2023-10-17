@@ -1,5 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.board.entity;
 
+import com.gsc.ninetosixapi.ninetosix.vo.BoardType;
 import com.gsc.ninetosixapi.ninetosix.vo.YNCode;
 import lombok.Getter;
 
@@ -16,16 +17,17 @@ public class Board {
     @Column(name = "board_id")
     private Long id;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private BoardType type;
 
     private String title;
 
     @Lob
     private String content;
 
-    private LocalDateTime startDate;
+    private String startDate;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
@@ -34,4 +36,12 @@ public class Board {
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private YNCode deleteYn;
+
+    private String insertId;
+
+    private LocalDateTime insertDate;
+
+    private String updateId;
+
+    private LocalDateTime updateDate;
 }
