@@ -21,7 +21,8 @@ public class MemberRole {
     @Column(name = "member_role_id")
     private Long id;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
@@ -29,7 +30,7 @@ public class MemberRole {
 
     public static MemberRole create(Member member) {
         return MemberRole.builder()
-                .role(Role.ROLE_MEMBER.name())
+                .role(Role.ROLE_MEMBER)
                 .member(member)
                 .build();
     }

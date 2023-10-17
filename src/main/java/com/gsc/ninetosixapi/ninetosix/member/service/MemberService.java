@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -126,10 +127,6 @@ public class MemberService {
         blacklistRepository.save(Blacklist.create(accessToken));
     }
 
-    public void withdrawal(long id) {
-        memberRepository.deleteById(id);
-    }
-
     public ReissueResDTO reissue(ReissueReqDTO reqDTO) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(reqDTO.refreshToken())) {
@@ -153,7 +150,7 @@ public class MemberService {
         }
 
         // 5. 새로운 토큰 생성
-        Long id = tokenProvider.getId(reqDTO.refreshToken());
+        long id = tokenProvider.getId(reqDTO.refreshToken());
         long now = new Date().getTime();
         String accessToken = tokenProvider.generateToken(email, id, now+TokenConfig.ACCESS_TOKEN_EXPIRE_TIME);
         String refreshToken = tokenProvider.generateToken(email, id, now+ TokenConfig.REFRESH_TOKEN_EXPIRE_TIME);
@@ -170,15 +167,25 @@ public class MemberService {
         return MyPageResDTO.of(member);
     }
 
+    public List<String> role(long id) {
+        return findById(id).getRole().stream()
+                .map(memberRole ->memberRole.getRole().name())
+                .collect(Collectors.toList());
+    }
+
+    public void withdrawal(long id) {
+        // memberRepository.deleteById(id);
+    }
+
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 계정 입니다."));
     }
 
-    public Member findById(Long id) {
+    public Member findById(long id) {
         return memberRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Member> findAllByTeamId(Long teamId) {
+    public List<Member> findAllByTeamId(long teamId) {
         return memberRepository.findAllByTeamIdAndUseYnAndDeleteYn(teamId, YNCode.Y, YNCode.N);
     }
 

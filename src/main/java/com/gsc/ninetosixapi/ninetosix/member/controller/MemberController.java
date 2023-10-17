@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -52,15 +53,6 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @UserId
-    @ApiOperation(value = "회원탈퇴", notes = "member, member_role, attend 데이터 모두 삭제됨")
-    @DeleteMapping("member/withdrawal")
-    public ResponseEntity<Void> withdrawal(HttpServletRequest request) {
-        long memberId = (long) request.getAttribute("memberId");
-        memberService.withdrawal(memberId);
-        return ResponseEntity.ok().build();
-    }
-
     @ApiOperation(value="AT 토큰 재발급")
     @PostMapping("reissue")
     public ResponseEntity<ReissueResDTO> reissue(@RequestBody ReissueReqDTO reqDTO) {
@@ -73,5 +65,22 @@ public class MemberController {
     public ResponseEntity<MyPageResDTO> myPage(HttpServletRequest request) {
         long memberId = (long) request.getAttribute("memberId");
         return ResponseEntity.ok(memberService.myPage(memberId));
+    }
+
+    @UserId
+    @ApiOperation(value = "role 조회", notes = "ROLE_ADMIN(관리자), ROLE_MANAGER(팀장), ROLE_MEMBER(팀원)")
+    @GetMapping("role")
+    public ResponseEntity<List<String>> role(HttpServletRequest request) {
+        long memberId = (long) request.getAttribute("memberId");
+        return ResponseEntity.ok(memberService.role(memberId));
+    }
+
+    @UserId
+    @ApiOperation(value = "회원탈퇴", notes = "member, member_role, attend 데이터 모두 삭제됨 -> 삭제 안하고 플래그(delete_yn) 변경할 예정 이므로 주석 처리 2023-10-17")
+    @DeleteMapping("member/withdrawal")
+    public ResponseEntity<Void> withdrawal(HttpServletRequest request) {
+        long memberId = (long) request.getAttribute("memberId");
+        memberService.withdrawal(memberId);
+        return ResponseEntity.ok().build();
     }
 }

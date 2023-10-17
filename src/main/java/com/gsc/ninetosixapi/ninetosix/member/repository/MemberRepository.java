@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
-    List<Member> findAllByTeamIdAndUseYnAndDeleteYn(Long teamId, YNCode useYn, YNCode deleteYn);
+    List<Member> findAllByTeamIdAndUseYnAndDeleteYn(long teamId, YNCode useYn, YNCode deleteYn);
     Boolean existsByEmail(String email);
 }
