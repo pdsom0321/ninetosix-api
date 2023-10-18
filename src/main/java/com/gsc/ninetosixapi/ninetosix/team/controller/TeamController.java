@@ -18,7 +18,7 @@ public class TeamController {
 
     @ApiOperation(value = "회사의 팀 목록")
     @GetMapping("teams/{companyId}")
-    public ResponseEntity<List<TeamsResDTO>> teams(@PathVariable Long companyId) {
+    public ResponseEntity<List<TeamsResDTO>> teams(@PathVariable long companyId) {
         return ResponseEntity.ok(teamService.teams(companyId));
     }
 

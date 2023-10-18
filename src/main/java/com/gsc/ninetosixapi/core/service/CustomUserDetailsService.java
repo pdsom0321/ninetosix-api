@@ -25,10 +25,12 @@ import java.util.Set;
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private MemberRepository memberRepository;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws BadCredentialsException {
         return memberRepository.findByEmail(username)
@@ -47,7 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private Set<GrantedAuthority> converSimpleAuthorities(Set<MemberRole> roleList) {
         Set<GrantedAuthority> authorities = new HashSet<>();
         for(MemberRole item : roleList) {
-            authorities.add(new SimpleGrantedAuthority(item.getRole()));
+            authorities.add(new SimpleGrantedAuthority(item.getRole().name()));
         }
         return authorities;
     }

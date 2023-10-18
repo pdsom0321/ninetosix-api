@@ -69,7 +69,7 @@ public class AttendController {
     @UserId
     @GetMapping("attend")
     public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request) {
-        Long memberId = (Long) request.getAttribute("memberId");
+        long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.attendInfo(memberId));
     }
     /*public ResponseEntity<List<AttendResDTO>> yesterdayAndTodayAttendanceList(HttpServletRequest request){
@@ -81,7 +81,7 @@ public class AttendController {
     @UserId
     @GetMapping("attend/{month}")
     public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month) {
-        Long memberId = (Long) request.getAttribute("memberId");
+        long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
     }
 

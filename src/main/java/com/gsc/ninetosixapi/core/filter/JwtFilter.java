@@ -42,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
-            logger.error("JwtException !!!!!!");
+            log.error("JwtException !!!!!!");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized!!");
         }
     }

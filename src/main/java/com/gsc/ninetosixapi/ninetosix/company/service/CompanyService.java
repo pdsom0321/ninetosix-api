@@ -24,7 +24,7 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public Company getCompany(Long id) {
+    public Company getCompany(long id) {
         return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 

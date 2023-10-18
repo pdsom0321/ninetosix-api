@@ -1,7 +1,6 @@
 package com.gsc.ninetosixapi.ninetosix.board.controller;
 
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardResDTO;
-import com.gsc.ninetosixapi.ninetosix.board.dto.BoardSDTO;
 import com.gsc.ninetosixapi.ninetosix.board.dto.BoardsResDTO;
 import com.gsc.ninetosixapi.ninetosix.board.service.BoardService;
 import io.swagger.annotations.ApiOperation;

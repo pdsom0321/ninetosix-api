@@ -91,7 +91,7 @@ public class AttendService {
         return AttendResDTO.of(attend);
     }
 
-    public List<AttendResDTO> yesterdayAndTodayAttendanceList(Long memberId) {
+    public List<AttendResDTO> yesterdayAndTodayAttendanceList(long memberId) {
         LocalDateTime now = LocalDateTime.now();
         String startDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String endDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -105,7 +105,7 @@ public class AttendService {
                 .collect(Collectors.toList());
     }
 
-    public List<MonthlyResDTO> monthlyAttendanceList(Long memberId, String month) {
+    public List<MonthlyResDTO> monthlyAttendanceList(long memberId, String month) {
         List<Attend> attendList = attendRepository.findByMemberIdAndAttendDateContainsOrderByAttendDateAsc(memberId, month);
 
         return attendList.stream()
@@ -134,7 +134,7 @@ public class AttendService {
                 .toList();
     }
 
-    public List<AttendDTO> monthlyMembersAttendanceListForExport(Long memberId, String month) {
+    public List<AttendDTO> monthlyMembersAttendanceListForExport(long memberId, String month) {
         return attendRepository.findByMemberIdAndAttendDateStartsWith(memberId, month).stream()
                 .map(AttendDTO::of)
                 .collect(Collectors.toList());

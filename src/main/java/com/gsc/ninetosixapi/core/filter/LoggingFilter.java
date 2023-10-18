@@ -2,8 +2,7 @@ package com.gsc.ninetosixapi.core.filter;
 
 import com.gsc.ninetosixapi.core.service.RequestWrapper;
 import com.gsc.ninetosixapi.core.service.ResponseWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -23,9 +22,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+@Slf4j
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
-    private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
     private final List<String> excludedUrls = Stream.of("/swagger*/**", "/webjars/**", "/v2/api-docs/**", "/attend/export/**").toList();
 
     @Override

@@ -6,7 +6,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,12 +24,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class TokenProvider {
-    @Autowired
-    private BlacklistRepository blacklistRepository;
+    private final BlacklistRepository blacklistRepository;
 
     private final Key key;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(BlacklistRepository blacklistRepository, @Value("${jwt.secret}") String secretKey) {
+        this.blacklistRepository = blacklistRepository;
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
@@ -93,20 +92,11 @@ public class TokenProvider {
         }
     }
 
-    public Long getId(String token) {
+    public long getId(String token) {
         return parseClaims(token).get("id", Long.class);
     }
 
     public String getEmail(String token) {
         return parseClaims(token).getSubject();
     }
-
-    // access token / refresh token 합치면서 주석 처리 2023.06.27
-    /*public String generateRefreshToken(Long memberId, long expireTime) {
-        return Jwts.builder()
-                .claim(TokenConfig.MEMBER_ID, memberId)
-                .setExpiration(new Date(expireTime))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-    }*/
 }
