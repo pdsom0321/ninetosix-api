@@ -53,14 +53,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value="AT 토큰 재발급")
+    @ApiOperation(value="토큰 재발급", notes = "AT, RT 재발급")
     @PostMapping("reissue")
     public ResponseEntity<ReissueResDTO> reissue(@RequestBody ReissueReqDTO reqDTO) {
         return ResponseEntity.ok(memberService.reissue(reqDTO));
     }
 
     @UserId
-    @ApiOperation(value = "회원 정보. 마이페이지")
+    @ApiOperation(value = "회원 정보. 마이 페이지")
     @GetMapping("my-page")
     public ResponseEntity<MyPageResDTO> myPage(HttpServletRequest request) {
         long memberId = (long) request.getAttribute("memberId");

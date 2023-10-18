@@ -21,7 +21,7 @@ public class AttendController {
     private final AttendService attendService;
 
     @UserId
-    @ApiOperation(value = "출근", notes = "attendCode, locationId -> insert Attend 실행")
+    @ApiOperation(value = "출근", notes = "일반적인 출근. 출근 코드(AT01)와 위치 정보를 통해 attend 데이터 저장(insert)")
     @PostMapping("attend/on")
     public ResponseEntity<Void> onWork(HttpServletRequest request, @RequestBody OnWorkReqDTO reqDTO) {
         long memberId = (long) request.getAttribute("memberId");
@@ -30,7 +30,7 @@ public class AttendController {
     }
 
     @UserId
-    @ApiOperation(value = "출근", notes = "요청: locationId / 실행: update inTime, locationId")
+    @ApiOperation(value = "(반차, 반반차 신청 한 날) 출근", notes = "출근 코드는 등록되어 있으니 위치 정보로 inTime 저장(update)")
     @PutMapping("attend/on")
     public ResponseEntity<Void> onWorkDuringDayOff(HttpServletRequest request, @RequestBody OnWorkDuringDayOffReqDTO reqDTO) {
         long memberId = (long) request.getAttribute("memberId");
@@ -39,7 +39,7 @@ public class AttendController {
     }
 
     @UserId
-    @ApiOperation(value = "퇴근", notes = "실행: update outTime")
+    @ApiOperation(value = "퇴근", notes = "outTime 저장(update)")
     @PostMapping("attend/off")
     public ResponseEntity<Void> offWork(HttpServletRequest request) {
         long memberId = (long) request.getAttribute("memberId");
@@ -48,7 +48,7 @@ public class AttendController {
     }
 
     @UserId
-    @ApiOperation(value = "휴가 및 그외 신청", notes = "attendCode, fromDate, toDate -> insert Attend 실행")
+    @ApiOperation(value = "휴가 및 그외 신청", notes = "attendCode, fromDate, toDate -> attend 데이터 저장(insert)")
     @PostMapping("attend/{attendCode}")
     public ResponseEntity<Void> dayOff(HttpServletRequest request, @PathVariable String attendCode, @RequestBody AttendCodeReqDTO reqDTO) {
         long memberId = (long) request.getAttribute("memberId");
@@ -85,18 +85,18 @@ public class AttendController {
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
     }
 
-    @ApiOperation(value = "엑셀 출력 (팀 단위)")
+    @ApiOperation(value = "출근부 엑셀 다운로드 (팀 단위)")
+    @GetMapping("attend/excel/{teamId}/{year}/{month}")
+    public void downloadExcel(HttpServletResponse response, @PathVariable long teamId, @PathVariable int year, @PathVariable int month) {
+        attendService.downloadExcel(response, teamId, year, month);
+    }
+
+    @ApiOperation(value = "팀 전체 인원 출근부 화면", notes = "attendance.html")
     @GetMapping("attend/export/{teamId}/{year}/{month}")
     public ModelAndView exportAttendance(@PathVariable int year, @PathVariable int month, @PathVariable Long teamId) {
         ModelAndView mv = new ModelAndView("attendance");
         mv.addObject("dates", attendService.getDayOfMonth(year, month));
         mv.addObject("attends", attendService.getAttends(teamId, year, month));
         return mv;
-    }
-
-    @ApiOperation(value = "출근부 엑셀 다운로드")
-    @GetMapping("attend/excel/{teamId}/{year}/{month}")
-    public void downloadExcel(HttpServletResponse response, @PathVariable long teamId, @PathVariable int year, @PathVariable int month) {
-        attendService.downloadExcel(response, teamId, year, month);
     }
 }
