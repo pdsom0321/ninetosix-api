@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,7 +18,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     public Team getTeam(Long id) {
-        return teamRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     public List<TeamsResDTO> teams(Long companyId) {

@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +25,7 @@ public class CompanyService {
     }
 
     public Company getCompany(long id) {
-        return companyRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return companyRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
 }

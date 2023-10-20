@@ -12,8 +12,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 @Service
@@ -65,7 +65,7 @@ public class AuthenticationCodeService {
 
     public Boolean verifyCode(VerifyCodeReqDTO reqDTO) {
         AuthenticationCode authenticationCode = authenticationCodeRepository.findByCodeAndEmailAndTypeAndExpiryDateGreaterThanAndIsCodeEntered(reqDTO.code(), reqDTO.email(), AuthenticationCodeType.valueOf(reqDTO.type()), LocalDateTime.now(), false)
-                .orElseThrow(() -> new NoSuchElementException("authentication code 정보가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("authentication code 정보가 없습니다."));
 
         authenticationCode.isEntered();
         return true;
