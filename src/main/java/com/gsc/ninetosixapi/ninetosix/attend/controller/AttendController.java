@@ -65,8 +65,8 @@ public class AttendController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "금일 출근 정보")
     @UserId
+    @ApiOperation(value = "금일 출근 정보")
     @GetMapping("attend")
     public ResponseEntity<AttendResDTO> attendInfo(HttpServletRequest request) {
         long memberId = (Long) request.getAttribute("memberId");
@@ -77,12 +77,20 @@ public class AttendController {
         return ResponseEntity.ok(attendService.yesterdayAndTodayAttendanceList(memberId));
     }*/
 
-    @ApiOperation(value = "한달 출근 목록")
     @UserId
+    @ApiOperation(value = "한달 출근 목록")
     @GetMapping("attend/{month}")
     public ResponseEntity<List<MonthlyResDTO>> monthlyAttendanceList(HttpServletRequest request, @PathVariable String month) {
         long memberId = (Long) request.getAttribute("memberId");
         return ResponseEntity.ok(attendService.monthlyAttendanceList(memberId, month));
+    }
+
+    @UserId
+    @ApiOperation(value = "팀원 일일 출근 목록 확인(팀장 전용)", notes = "팀장 memberId를 통해 teamId를 찾은 후 yyyymmdd 출근 목록 노출")
+    @GetMapping("attend/dailyList")
+    public ResponseEntity<List<DailyAttendanceResDTO>> dailyAttendanceListForTeamLeader(HttpServletRequest request, @RequestParam String date) {
+        long memberId = (Long) request.getAttribute("memberId");
+        return ResponseEntity.ok(attendService.dailyAttendanceListForTeamLeader(memberId, date));
     }
 
     @ApiOperation(value = "출근부 엑셀 다운로드 (팀 단위)")

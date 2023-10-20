@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
@@ -24,7 +25,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -48,14 +48,14 @@ public class AttendService {
 
     public void onWorkDuringDayOff(OnWorkDuringDayOffReqDTO reqDTO, long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
 
         attend.updateInTimeAndLocationId(getCurrentTime(), reqDTO.locationId());
     }
 
     public void offWork(long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(getCurrentDate(), memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
 
         attend.updateOutTimeAndWorkTime(getCurrentTime());
     }
@@ -77,7 +77,7 @@ public class AttendService {
 
     public void cancelDayOff(String day, long memberId) {
         Attend attend = attendRepository.findByAttendDateAndMemberId(day, memberId)
-                .orElseThrow(() -> new NoSuchElementException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없어 신청한 휴가정보를 철회할 수 없습니다."));
 
         Optional.ofNullable(attend.getInTime())
                 .ifPresentOrElse(o -> attend.updateCode(AttendCode.DAY.getAttendCode()),
@@ -111,6 +111,19 @@ public class AttendService {
         return attendList.stream()
                 // .filter(attend -> Objects.nonNull(attend.getInTime()))
                 .map(MonthlyResDTO::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<DailyAttendanceResDTO> dailyAttendanceListForTeamLeader(long memberId, String date) {
+        long teamId = memberService.findById(memberId).getTeam().getId();
+
+        return memberService.findAllByTeamId(teamId).stream()
+                .map(member -> {
+                    Attend attend = attendRepository.findByAttendDateAndMemberId(date, memberId)
+                            .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
+                    return new DailyAttendanceResDTO(member.getName(), attend.getAttendCode(), attend.getInTime(), attend.getOutTime(), attend.getWorkTime());
+                })
+                .sorted(Comparator.comparing(DailyAttendanceResDTO::memberName))
                 .collect(Collectors.toList());
     }
 
