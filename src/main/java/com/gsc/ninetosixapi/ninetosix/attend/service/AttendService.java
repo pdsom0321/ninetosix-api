@@ -120,7 +120,7 @@ public class AttendService {
         return memberService.findAllByTeamId(teamId).stream()
                 .map(member -> {
                     Attend attend = attendRepository.findByAttendDateAndMemberId(date, member.getId())
-                            .orElseThrow(() -> new EntityNotFoundException("attend 정보가 없습니다."));
+                            .orElseGet(Attend::new);
                     return new DailyAttendanceResDTO(member.getName(), attend.getAttendCode(), attend.getInTime(), attend.getOutTime(), attend.getWorkTime());
                 })
                 .sorted(Comparator.comparing(DailyAttendanceResDTO::memberName))
