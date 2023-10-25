@@ -54,7 +54,7 @@ public class JwtAspect {
             LocalDateTime passwordExpiryDate = member.getPasswordExpiryDate();
             if(passwordExpiryDate.isBefore(LocalDateTime.now())) {
                 HttpServletResponse response = ((ServletRequestAttributes) requestAttributes).getResponse();
-                response.setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Password has expired.");
 
                 return null; // 메서드 실행 중단
