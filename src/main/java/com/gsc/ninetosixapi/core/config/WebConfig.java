@@ -18,13 +18,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping(corsMapping)
-                .allowedOrigins("https://www.ninetosixapi.tk","https://deogus-dev.github.io","http://localhost:7889")
+                .allowedOrigins("https://www.ninetosixapi.tk", "https://deogus-dev.github.io", "http://localhost:7889")
                 .allowCredentials(corsAllowCredentials)
                 .allowedMethods(
-                    HttpMethod.GET.name(),
-                    HttpMethod.HEAD.name(),
-                    HttpMethod.POST.name(),
-                    HttpMethod.PUT.name());
+                        HttpMethod.GET.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name());
 
     }
 }
