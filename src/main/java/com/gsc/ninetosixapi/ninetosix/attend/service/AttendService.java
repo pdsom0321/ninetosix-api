@@ -5,9 +5,12 @@ import com.gsc.ninetosixapi.ninetosix.attend.entity.Attend;
 import com.gsc.ninetosixapi.ninetosix.attend.repository.AttendRepository;
 import com.gsc.ninetosixapi.ninetosix.member.entity.Member;
 import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
+import com.gsc.ninetosixapi.ninetosix.signature.entity.Signature;
+import com.gsc.ninetosixapi.ninetosix.signature.repository.SignatureRepository;
 import com.gsc.ninetosixapi.ninetosix.vo.AttendCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import javax.xml.bind.DatatypeConverter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -35,6 +39,7 @@ import java.util.stream.IntStream;
 @Transactional
 public class AttendService {
     private final AttendRepository attendRepository;
+    private final SignatureRepository signatureRepository;
     private final MemberService memberService;
 
     @Value("${api-docs.path}")
@@ -141,7 +146,7 @@ public class AttendService {
         return memberService.findAllByTeamId(teamId).stream()
                 .map(member -> {
                     List<AttendDTO> list = monthlyMembersAttendanceListForExport(member.getId(), String.format("%04d%02d", year, month));
-                    return new ExportDTO(member.getName(), list);
+                    return new ExportDTO(member.getId(), member.getName(), list);
                 })
                 .sorted(Comparator.comparing(ExportDTO::memberName))
                 .toList();
@@ -183,9 +188,13 @@ public class AttendService {
                 //팀원 이름 셋팅
                 workSheet.getRow(nameRow).getCell(col).setCellValue(member.memberName());
 
+                Optional<Signature> sign = signatureRepository.findByMemberId(member.memberId());
+
                 for (int day : dates) {
                     for (AttendDTO attend : member.attends()) {
                         if (Integer.valueOf(attend.attendDate()).equals(day)) {
+                            setSignatureCellValue(wb, workSheet, row, col, sign);
+
                             if(attend.attendCode().equals(AttendCode.HOLIDAY.getAttendCode())) {
                                 workSheet.addMergedRegion(new CellRangeAddress(row, row+2, col, col+1));
                                 workSheet.getRow(row).getCell(col).setCellValue(AttendCode.HOLIDAY.getAttendCodeName());
@@ -232,6 +241,27 @@ public class AttendService {
             long minutes = Math.floorMod(workTime, 60);
             workSheet.getRow(row).getCell(col).setCellValue(String.format("%02d", hours));
             workSheet.getRow(row).getCell(col + 1).setCellValue(String.format("%02d", minutes));
+        }
+    }
+
+    private void setSignatureCellValue(XSSFWorkbook wb, XSSFSheet workSheet, int row, int col, Optional<Signature> sign) {
+        if(sign.isPresent()){
+            String signature = sign.get().getSignature().split(",")[1];
+            byte[] bytes = DatatypeConverter.parseBase64Binary(signature);
+            int pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+
+            CreationHelper helper = wb.getCreationHelper();
+            Drawing drawing = workSheet.createDrawingPatriarch();
+            ClientAnchor anchor = helper.createClientAnchor();
+
+            anchor.setCol1(col+2);
+            anchor.setRow1(row+1);
+
+            anchor.setCol2(col+3);
+            anchor.setRow2(row+2);
+
+            // 그림 만들기
+            drawing.createPicture(anchor, pictureIdx);
         }
     }
 
