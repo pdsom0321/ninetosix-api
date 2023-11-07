@@ -6,6 +6,7 @@ import com.gsc.ninetosixapi.ninetosix.member.service.MemberService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +31,15 @@ public class MemberController {
         return ResponseEntity.ok(memberService.signup(reqDTO));
     }
 
-    @ApiOperation(value = "비밀번호 변경")
+    @ApiOperation(value = "비밀번호 재설정(90일 이후), 비밀번호 찾기(변경)")
     @PutMapping("member/password")
-    public ResponseEntity<Void> changePassword(@RequestBody PasswordReqDTO reqDTO) {
-        memberService.changePassword(reqDTO);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> changePassword(@RequestBody PasswordReqDTO reqDTO) {
+        try {
+            memberService.changePassword(reqDTO);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호를 확인하신 후 회원정보를 변경하세요.");
+        }
     }
 
     @UserId

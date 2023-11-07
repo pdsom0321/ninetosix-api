@@ -97,7 +97,12 @@ public class MemberService {
     public void changePassword(PasswordReqDTO reqDTO) {
         Member member = findByEmail(reqDTO.email());
 
-        String encodePassword = passwordEncoder.encode(reqDTO.password());
+        if(!reqDTO.oldPassword().isEmpty()) {
+           if(!passwordEncoder.matches(reqDTO.oldPassword(), member.getPassword()))
+               throw new IllegalArgumentException();
+        }
+
+        String encodePassword = passwordEncoder.encode(reqDTO.newPassword());
         member.updatePassword(encodePassword);
     }
 
