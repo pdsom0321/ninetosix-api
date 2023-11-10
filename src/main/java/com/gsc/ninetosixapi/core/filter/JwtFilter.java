@@ -38,6 +38,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
 //                Long memberId = tokenProvider.getId(jwt);
 //                MemberContext.setMemberId(memberId);
+
+                String userAgent = request.getHeader("User-Agent");
+                log.info("####################################################");
+                log.info("user-agent: {}", userAgent);
+                log.info("####################################################");
+                if (!userAgent.contains("Mobile")) {
+                    response.sendError(500, "다시 시도하세요.");
+                }
+
             }
 
             filterChain.doFilter(request, response);
