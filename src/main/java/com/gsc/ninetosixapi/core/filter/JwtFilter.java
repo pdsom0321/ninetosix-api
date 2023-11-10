@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 log.info("####################################################");
                 log.info("user-agent: {}", userAgent);
                 log.info("####################################################");
-                if (!userAgent.contains("iPhone") && !userAgent.contains("Android")) {
+                if (!userAgent.toLowerCase().contains("iphone") && !userAgent.toLowerCase().contains("android")) {
                     response.sendError(500, "다시 시도하세요.");
                 }
 
