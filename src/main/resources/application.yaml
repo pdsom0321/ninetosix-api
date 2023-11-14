@@ -51,6 +51,8 @@ decorator:
 
 jwt:
   secret: ${jwt.key}
+auth:
+  key: ${auth.key}
 
 ---
 spring:
