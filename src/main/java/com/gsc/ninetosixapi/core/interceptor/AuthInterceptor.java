@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Objects;
 
 @Slf4j
@@ -55,19 +54,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private boolean isValidAuth(String uuidHeader, String authHeader, String validStr) {
         String validString = String.join(uuidHeader, validStr);
-
-        byte[] salt = generateSalt();
-        byte[] hashedValidString = hashString(validString, salt);
-        log.info("validString: {}", validString);
+        byte[] hashedValidString = hashString(validString);
 
         return MessageDigest.isEqual(hashedValidString, hexStringToByteArray(authHeader));
     }
 
-    private byte[] hashString(String input, byte[] salt) {
+    private byte[] hashString(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.reset();
-            digest.update(salt);
             return digest.digest(input.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-256 algorithm not available", e);
@@ -82,12 +76,5 @@ public class AuthInterceptor implements HandlerInterceptor {
                     + Character.digit(hexString.charAt(i + 1), 16));
         }
         return data;
-    }
-
-    private static byte[] generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-        return salt;
     }
 }
