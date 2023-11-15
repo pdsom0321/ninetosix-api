@@ -32,11 +32,10 @@ public class WebConfig implements WebMvcConfigurer {
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name());
-
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor).excludePathPatterns("/swagger*/**", "/login", "/member*/**");
+        registry.addInterceptor(authInterceptor).excludePathPatterns("/v2/api-docs/**", "/swagger*/**", "/webjars/**", "/login", "/member*/**");
     }
 }
