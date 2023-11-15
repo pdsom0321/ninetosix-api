@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Objects;
 
 @Slf4j
@@ -25,6 +27,10 @@ public class AuthInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if(!(handler instanceof HandlerMethod)) {
+            return true;
+        }
+
         String validStr = environment.getProperty("auth.key");
         if (!isValidAccess(request, validStr)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden!!!!!!");
@@ -49,15 +55,19 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private boolean isValidAuth(String uuidHeader, String authHeader, String validStr) {
         String validString = String.join(uuidHeader, validStr);
-        byte[] hashedValidString = hashString(validString);
+
+        byte[] salt = generateSalt();
+        byte[] hashedValidString = hashString(validString, salt);
         log.info("validString: {}", validString);
 
         return MessageDigest.isEqual(hashedValidString, hexStringToByteArray(authHeader));
     }
 
-    private byte[] hashString(String input) {
+    private byte[] hashString(String input, byte[] salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.reset();
+            digest.update(salt);
             return digest.digest(input.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-256 algorithm not available", e);
@@ -72,5 +82,12 @@ public class AuthInterceptor implements HandlerInterceptor {
                     + Character.digit(hexString.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    private static byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return salt;
     }
 }
