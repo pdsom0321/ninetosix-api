@@ -53,6 +53,8 @@ jwt:
   secret: ${jwt.key}
 auth:
   key: ${auth.key}
+aes:
+  key: ${aes.key}
 
 ---
 spring:
