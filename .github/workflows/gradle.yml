@@ -37,6 +37,7 @@ jobs:
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           AUTH_KEY: ${{ secrets.AUTH_KEY }}
+          AES_KEY: ${{ secrets.AES_KEY }}
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -45,6 +46,7 @@ jobs:
           echo MAIL_PASSWORD="$MAIL_PASSWORD" >> env.yml &&
           echo JWT_SECRET_KEY="$JWT_SECRET_KEY" >> env.yml &&
           echo AUTH_KEY="$AUTH_KEY" >> env.yml &&
+          echo AES_KEY="$AES_KEY" >> env.yml &&
           echo DB_URL="$DB_URL" >> env.yml &&
           echo DB_USERNAME="$DB_USERNAME" >> env.yml &&
           echo DB_PASSWORD="$DB_PASSWORD" >> env.yml

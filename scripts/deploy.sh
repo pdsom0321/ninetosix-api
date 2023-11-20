@@ -31,6 +31,7 @@ echo "java -jar \
          -Dmail.password=$MAIL_PASSWORD \
          -Djwt.key=$JWT_SECRET_KEY \
          -Dauth.key=$AUTH_KEY \
+         -Daes.key=$AES_KEY \
          -Ddb.url=$DB_URL \
          -Ddb.username=$DB_USERNAME \
          -Ddb.password=$DB_PASSWORD \
@@ -46,6 +47,7 @@ nohup java -jar \
    -Dmail.password=$MAIL_PASSWORD \
    -Djwt.key=$JWT_SECRET_KEY \
    -Dauth.key=$AUTH_KEY \
+   -Daes.key=$AES_KEY \
    -Ddb.url=$DB_URL \
    -Ddb.username=$DB_USERNAME \
    -Ddb.password=$DB_PASSWORD \
